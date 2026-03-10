@@ -22,7 +22,6 @@ public class Program {
         UsuarioControlador usuarioControlador =
                 new UsuarioControlador(usuarioRepo);
 
-        // Aquí iría tu org.DavidParada.vista o pruebas
     }
 
 }
