@@ -1,13 +1,13 @@
 package controlador;
 
-import org.DavidParada.controlador.ProgramaControlador;
-import org.DavidParada.excepcion.ValidationException;
-import org.DavidParada.modelo.dto.JuegosPopularesDto;
-import org.DavidParada.modelo.dto.ReporteUsuariosDto;
-import org.DavidParada.modelo.dto.ReporteVentasDto;
-import org.DavidParada.modelo.enums.*;
-import org.DavidParada.modelo.formulario.*;
-import org.DavidParada.repositorio.implementacionMemoria.*;
+import org.davidparada.controlador.ProgramaControlador;
+import org.davidparada.excepcion.ValidationException;
+import org.davidparada.modelo.dto.JuegosPopularesDto;
+import org.davidparada.modelo.dto.ReporteUsuariosDto;
+import org.davidparada.modelo.dto.ReporteVentasDto;
+import org.davidparada.modelo.enums.*;
+import org.davidparada.modelo.formulario.*;
+import org.davidparada.repositorio.implementacionMemoria.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

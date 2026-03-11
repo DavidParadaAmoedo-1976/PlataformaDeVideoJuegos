@@ -1,16 +1,16 @@
 package controlador;
 
-import org.DavidParada.controlador.JuegoControlador;
-import org.DavidParada.excepcion.ValidationException;
-import org.DavidParada.modelo.dto.JuegoDto;
-import org.DavidParada.modelo.enums.ClasificacionJuegoEnum;
-import org.DavidParada.modelo.enums.EstadoJuegoEnum;
-import org.DavidParada.modelo.enums.OrdenarJuegosEnum;
-import org.DavidParada.modelo.formulario.JuegoForm;
-import org.DavidParada.modelo.formulario.validacion.JuegoFormValidador;
+import org.davidparada.controlador.JuegoControlador;
+import org.davidparada.excepcion.ValidationException;
+import org.davidparada.modelo.dto.JuegoDto;
+import org.davidparada.modelo.enums.ClasificacionJuegoEnum;
+import org.davidparada.modelo.enums.EstadoJuegoEnum;
+import org.davidparada.modelo.enums.OrdenarJuegosEnum;
+import org.davidparada.modelo.formulario.JuegoForm;
+import org.davidparada.modelo.formulario.validacion.JuegoFormValidador;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.DavidParada.repositorio.implementacionMemoria.JuegoRepo;
+import org.davidparada.repositorio.implementacionMemoria.JuegoRepo;
 
 import java.time.LocalDate;
 import java.util.List;

@@ -1,18 +1,18 @@
 package controlador;
 
-import org.DavidParada.controlador.ResenaControlador;
-import org.DavidParada.excepcion.ValidationException;
-import org.DavidParada.modelo.dto.ResenaDto;
-import org.DavidParada.modelo.entidad.JuegoEntidad;
-import org.DavidParada.modelo.entidad.ResenaEntidad;
-import org.DavidParada.modelo.entidad.UsuarioEntidad;
-import org.DavidParada.modelo.enums.*;
-import org.DavidParada.modelo.formulario.JuegoForm;
-import org.DavidParada.modelo.formulario.ResenaForm;
-import org.DavidParada.modelo.formulario.UsuarioForm;
-import org.DavidParada.repositorio.implementacionMemoria.JuegoRepo;
-import org.DavidParada.repositorio.implementacionMemoria.ResenaRepo;
-import org.DavidParada.repositorio.implementacionMemoria.UsuarioRepo;
+import org.davidparada.controlador.ResenaControlador;
+import org.davidparada.excepcion.ValidationException;
+import org.davidparada.modelo.dto.ResenaDto;
+import org.davidparada.modelo.entidad.JuegoEntidad;
+import org.davidparada.modelo.entidad.ResenaEntidad;
+import org.davidparada.modelo.entidad.UsuarioEntidad;
+import org.davidparada.modelo.enums.*;
+import org.davidparada.modelo.formulario.JuegoForm;
+import org.davidparada.modelo.formulario.ResenaForm;
+import org.davidparada.modelo.formulario.UsuarioForm;
+import org.davidparada.repositorio.implementacionMemoria.JuegoRepo;
+import org.davidparada.repositorio.implementacionMemoria.ResenaRepo;
+import org.davidparada.repositorio.implementacionMemoria.UsuarioRepo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

@@ -1,16 +1,16 @@
 package controlador;
 
-import org.DavidParada.controlador.BibliotecaControlador;
-import org.DavidParada.controlador.CompraControlador;
-import org.DavidParada.excepcion.ValidationException;
-import org.DavidParada.modelo.dto.CompraDto;
-import org.DavidParada.modelo.dto.DetallesCompraDto;
-import org.DavidParada.modelo.dto.FacturaDto;
-import org.DavidParada.modelo.enums.*;
-import org.DavidParada.modelo.formulario.CompraForm;
-import org.DavidParada.modelo.formulario.JuegoForm;
-import org.DavidParada.modelo.formulario.UsuarioForm;
-import org.DavidParada.repositorio.implementacionMemoria.*;
+import org.davidparada.controlador.BibliotecaControlador;
+import org.davidparada.controlador.CompraControlador;
+import org.davidparada.excepcion.ValidationException;
+import org.davidparada.modelo.dto.CompraDto;
+import org.davidparada.modelo.dto.DetallesCompraDto;
+import org.davidparada.modelo.dto.FacturaDto;
+import org.davidparada.modelo.enums.*;
+import org.davidparada.modelo.formulario.CompraForm;
+import org.davidparada.modelo.formulario.JuegoForm;
+import org.davidparada.modelo.formulario.UsuarioForm;
+import org.davidparada.repositorio.implementacionMemoria.*;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
