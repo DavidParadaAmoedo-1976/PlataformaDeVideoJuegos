@@ -7,14 +7,14 @@ public enum EstadoPublicacionEnum {
     OCULTA("Oculta"),
     ELIMINADA("Eliminada");
 
-    private final String TEXTO;
+    private final String descripcion;
 
-    EstadoPublicacionEnum(String TEXTO) {
-        this.TEXTO = TEXTO;
+    EstadoPublicacionEnum(String descripcion) {
+        this.descripcion = descripcion;
     }
 
-    public String getTexto() {
-        return TEXTO;
+    public String getDescripcion() {
+        return descripcion;
     }
 }
 

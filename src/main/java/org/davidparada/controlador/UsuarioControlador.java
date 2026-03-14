@@ -10,9 +10,12 @@ import org.davidparada.modelo.formulario.validacion.ErrorModel;
 import org.davidparada.modelo.formulario.validacion.UsuarioFormValidador;
 import org.davidparada.modelo.mapper.UsuarioEntidadADtoMapper;
 import org.davidparada.repositorio.interfaces.IUsuarioRepo;
+import org.davidparada.util.EncriptarPassword;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.davidparada.controlador.util.ComprobarErrores.comprobarListaErrores;
 
 public class UsuarioControlador {
 
@@ -24,15 +27,43 @@ public class UsuarioControlador {
 
     //Registrar nuevo usuario
 
+//    public UsuarioDto registrarUsuario(UsuarioForm form)
+//            throws ValidationException {
+//
+//        UsuarioFormValidador.validarUsuario(form);
+//
+//        UsuarioEntidad usuario = usuarioRepo.crear(form);
+//
+//        return UsuarioEntidadADtoMapper.usuarioEntidadADto(usuario);
+//    }
+
     public UsuarioDto registrarUsuario(UsuarioForm form)
             throws ValidationException {
 
         UsuarioFormValidador.validarUsuario(form);
 
-        UsuarioEntidad usuario = usuarioRepo.crear(form);
+        // Generar hash de la contraseña
+        String passwordHash = EncriptarPassword.generarHash(form.getPassword());
+
+        // Crear nuevo form con la password encriptada
+        UsuarioForm formHash = new UsuarioForm(
+                form.getNombreUsuario(),
+                form.getEmail(),
+                passwordHash,
+                form.getNombreReal(),
+                form.getPais(),
+                form.getFechaNacimiento(),
+                form.getFechaRegistro(),
+                form.getAvatar(),
+                form.getSaldo(),
+                form.getEstadoCuenta()
+        );
+
+        UsuarioEntidad usuario = usuarioRepo.crear(formHash);
 
         return UsuarioEntidadADtoMapper.usuarioEntidadADto(usuario);
     }
+
 
     // Consultar perfil
 
@@ -110,53 +141,79 @@ public class UsuarioControlador {
         return usuario.getSaldo();
     }
 
-    private void comprobarListaErrores(List<ErrorModel> errores) throws ValidationException {
-        if (!errores.isEmpty()) {
-            throw new ValidationException(errores);
-        }
-    }
-/*
-    // Cambiar estado
-
-    public void cambiarEstado(Long id,
-                                    EstadoCuentaEnum nuevoEstado)
-            throws ValidationException {
+    public UsuarioDto login(String nombreUsuario, String password) throws ValidationException {
 
         List<ErrorModel> errores = new ArrayList<>();
 
-        if (id == null)
-            errores.add(new ErrorModel("id", TipoErrorEnum.OBLIGATORIO));
+        if (nombreUsuario == null || nombreUsuario.isBlank()) {
+            errores.add(new ErrorModel("nombreUsuario", TipoErrorEnum.OBLIGATORIO));
+        }
 
-        if (nuevoEstado == null)
-            errores.add(new ErrorModel("estadoCuenta", TipoErrorEnum.OBLIGATORIO));
+        if (password == null || password.isBlank()) {
+            errores.add(new ErrorModel("password", TipoErrorEnum.OBLIGATORIO));
+        }
 
-        if (!errores.isEmpty())
-            throw new ValidationException(errores);
+        comprobarListaErrores(errores);
 
-        UsuarioEntidad usuario = usuarioRepo.buscarPorId(id);
+        // buscar usuario
+        UsuarioEntidad usuario = usuarioRepo.buscarPorNombreUsuario(nombreUsuario);
 
-        if (usuario == null)
-            throw new ValidationException(List.of(
-                    new ErrorModel("id", TipoErrorEnum.NO_ENCONTRADO)));
+        if (usuario == null) {
+            errores.add(new ErrorModel("usuario", TipoErrorEnum.NO_ENCONTRADO));
+            comprobarListaErrores(errores);
+        }
 
-        usuarioRepo.actualizar(usuario.getIdUsuario(), new UsuarioForm(
-                usuario.getNombreUsuario(),
-                usuario.getEmail(),
-                usuario.getPassword(),
-                usuario.getNombreReal(),
-                usuario.getPais(),
-                usuario.getFechaNacimiento(),
-                usuario.getFechaRegistro(),
-                usuario.getAvatar(),
-                usuario.getSaldo(),
-                nuevoEstado
-        ));
+        // hash password introducida
+        String passwordHash = EncriptarPassword.generarHash(password);
+
+        if (!usuario.getPassword().equals(passwordHash)) {
+            errores.add(new ErrorModel("password", TipoErrorEnum.NO_COINCIDE));
+            comprobarListaErrores(errores);
+        }
+
+        return UsuarioEntidadADtoMapper.usuarioEntidadADto(usuario);
     }
-
-    // Eliminar usuario
-
-    public boolean eliminarUsuario(Long id) {
-        return usuarioRepo.eliminar(id);
-    }
-*/
+//
+//    // Cambiar estado
+//
+//    public void cambiarEstado(Long id,
+//                                    EstadoCuentaEnum nuevoEstado)
+//            throws ValidationException {
+//
+//        List<ErrorModel> errores = new ArrayList<>();
+//
+//        if (id == null)
+//            errores.add(new ErrorModel("id", TipoErrorEnum.OBLIGATORIO));
+//
+//        if (nuevoEstado == null)
+//            errores.add(new ErrorModel("estadoCuenta", TipoErrorEnum.OBLIGATORIO));
+//
+//        if (!errores.isEmpty())
+//            throw new ValidationException(errores);
+//
+//        UsuarioEntidad usuario = usuarioRepo.buscarPorId(id);
+//
+//        if (usuario == null)
+//            throw new ValidationException(List.of(
+//                    new ErrorModel("id", TipoErrorEnum.NO_ENCONTRADO)));
+//
+//        usuarioRepo.actualizar(usuario.getIdUsuario(), new UsuarioForm(
+//                usuario.getNombreUsuario(),
+//                usuario.getEmail(),
+//                usuario.getPassword(),
+//                usuario.getNombreReal(),
+//                usuario.getPais(),
+//                usuario.getFechaNacimiento(),
+//                usuario.getFechaRegistro(),
+//                usuario.getAvatar(),
+//                usuario.getSaldo(),
+//                nuevoEstado
+//        ));
+//    }
+//
+//    // Eliminar usuario
+//
+//    public boolean eliminarUsuario(Long id) {
+//        return usuarioRepo.eliminar(id);
+//    }
 }

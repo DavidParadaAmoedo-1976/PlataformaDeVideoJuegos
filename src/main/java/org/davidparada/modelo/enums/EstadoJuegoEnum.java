@@ -8,14 +8,14 @@ public enum EstadoJuegoEnum {
     PREVENTA("Preventa"),
     ACCESO_ANTICIPADO("Acceso Anticipado");
 
-    private final String TEXTO;
+    private final String descripcion;
 
-    EstadoJuegoEnum(String TEXTO) {
-        this.TEXTO = TEXTO;
+    EstadoJuegoEnum(String descripcion) {
+        this.descripcion = descripcion;
     }
 
-    public String getTexto() {
-        return TEXTO;
+    public String getDescripcion() {
+        return descripcion;
     }
 }
 

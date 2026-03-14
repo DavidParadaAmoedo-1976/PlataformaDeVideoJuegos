@@ -23,13 +23,15 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.davidparada.controlador.util.ComprobarErrores.comprobarListaErrores;
+
 public class ResenaControlador {
 
     private final IResenaRepo resenaRepo;
     private final IUsuarioRepo usuarioRepo;
     private final IJuegoRepo juegoRepo;
 
-    public ResenaControlador(IResenaRepo reseniaRepo, IUsuarioRepo usuarioRepo, IJuegoRepo juegoRepo){
+    public ResenaControlador(IResenaRepo reseniaRepo, IUsuarioRepo usuarioRepo, IJuegoRepo juegoRepo) throws ValidationException {
         this.resenaRepo = reseniaRepo;
         this.usuarioRepo = usuarioRepo;
         this.juegoRepo = juegoRepo;
@@ -212,13 +214,6 @@ public class ResenaControlador {
                     );
                 })
                 .toList();
-    }
-
-
-    private void comprobarListaErrores(List<ErrorModel> errores) throws ValidationException {
-        if (!errores.isEmpty()) {
-            throw new ValidationException(errores);
-        }
     }
 }
 

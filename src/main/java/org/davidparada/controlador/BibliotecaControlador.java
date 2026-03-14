@@ -1,5 +1,6 @@
 package org.davidparada.controlador;
 
+import org.davidparada.controlador.util.ComprobarErrores;
 import org.davidparada.excepcion.ValidationException;
 import org.davidparada.modelo.dto.BibliotecaDto;
 import org.davidparada.modelo.dto.EstadisticasBibliotecaDto;
@@ -25,6 +26,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+
+import static org.davidparada.controlador.util.ComprobarErrores.comprobarListaErrores;
 
 public class BibliotecaControlador {
 
@@ -107,7 +110,7 @@ public class BibliotecaControlador {
 
         List<BibliotecaEntidad> bibliotecasEntidad = bibliotecaRepo.buscarPorUsuario(idUsuario);
 
-        boolean yaTieneJuego = bibliotecasEntidad.stream().anyMatch(b -> b.getIdJuego().equals(idJuego));
+        Boolean yaTieneJuego = bibliotecasEntidad.stream().anyMatch(b -> b.getIdJuego().equals(idJuego));
 
         if (yaTieneJuego) {
             errores.add(new ErrorModel("juego", TipoErrorEnum.DUPLICADO));
@@ -206,7 +209,7 @@ public class BibliotecaControlador {
         // Diferencia real
         Duration duracion = Duration.between(ultimaFechaHoraDeJuego, horaActual);
 
-        long horasEnTotal = duracion.toHours();
+        Long horasEnTotal = duracion.toHours();
 
         // Convertimos para mostrar
         ZonedDateTime fechaLocal = ultimaFechaHoraDeJuego
@@ -215,11 +218,13 @@ public class BibliotecaControlador {
         DateTimeFormatter formatter =
                 DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
 
-        return "Hace " + horasEnTotal
+        String mensaje = "Hace " + horasEnTotal
                 + " horas de la última vez que jugó, "
                 + "que fue: ( "
                 + fechaLocal.format(formatter)
                 + " ).";
+
+        return mensaje;
 
     }
     // Filtrar biblioteca
@@ -324,9 +329,4 @@ public class BibliotecaControlador {
         }
     }
 
-    private void comprobarListaErrores(List<ErrorModel> errores) throws ValidationException {
-        if (!errores.isEmpty()) {
-            throw new ValidationException(errores);
-        }
-    }
 }

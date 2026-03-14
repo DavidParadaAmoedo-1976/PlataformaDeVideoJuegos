@@ -7,17 +7,16 @@ public enum MetodoPagoEnum {
     TARJETA("Tarjeta de Credito"),
     PAYPAL("Paypal"),
     CARTERA_STEAM("Cartera de Steam"),
-    TRANSFERENCIA("Transferencia bancaria"),
-    ;
+    TRANSFERENCIA("Transferencia bancaria");
 
-    private final String TEXTO;
+    private final String descripcion;
 
-    MetodoPagoEnum(String TEXTO) {
-        this.TEXTO = TEXTO;
+    MetodoPagoEnum(String descripcion) {
+        this.descripcion = descripcion;
     }
 
-    public String getTexto() {
-        return TEXTO;
+    public String getDescripcion() {
+        return descripcion;
     }
 }
 

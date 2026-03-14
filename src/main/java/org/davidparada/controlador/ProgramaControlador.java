@@ -12,6 +12,8 @@ import org.davidparada.repositorio.interfaces.*;
 import java.time.Instant;
 import java.util.*;
 
+import static org.davidparada.controlador.util.ComprobarErrores.comprobarListaErrores;
+
 public class ProgramaControlador {
 
     private final ICompraRepo compraRepo;
@@ -36,7 +38,10 @@ public class ProgramaControlador {
 
     // Generar reportes de ventas
 
-    public ReporteVentasDto generarReporteVentas(Instant inicio, Instant fin, Long idJuego, String desarrollador) throws ValidationException {
+    public ReporteVentasDto generarReporteVentas(Instant inicio,
+                                                 Instant fin,
+                                                 Long idJuego,
+                                                 String desarrollador) throws ValidationException {
         List<ErrorModel> errores = new ArrayList<>();
 
         if (inicio == null || fin == null) {
@@ -48,12 +53,10 @@ public class ProgramaControlador {
 
         List<CompraEntidad> comprasFiltradas = compraRepo.listarTodos().stream()
 
-                .filter(c -> {
-                    assert inicio != null;
+                .filter(c -> { assert inicio != null;
                     return c.getFechaCompra().isAfter(inicio);
                 })
-                .filter(c -> {
-                    assert fin != null;
+                .filter(c -> { assert fin != null;
                     return c.getFechaCompra().isBefore(fin);
                 })
                 .filter(c -> idJuego == null || c.getIdJuego().equals(idJuego))
@@ -75,7 +78,8 @@ public class ProgramaControlador {
 
     // Generar reportes de usuarios
 
-    public ReporteUsuariosDto generarReporteUsuarios(Instant inicio, Instant fin) throws ValidationException {
+    public ReporteUsuariosDto generarReporteUsuarios(Instant inicio,
+                                                     Instant fin) throws ValidationException {
         List<ErrorModel> errores = new ArrayList<>();
         if (inicio == null || fin == null) {
             errores.add(new ErrorModel("fechas", TipoErrorEnum.OBLIGATORIO));
@@ -98,7 +102,8 @@ public class ProgramaControlador {
 
     // Consultar juegos mas populares
 
-    public List<JuegosPopularesDto> consultarJuegosMasPopulares(CriterioPopularidadEnum criterio, Integer limite) throws ValidationException {
+    public List<JuegosPopularesDto> consultarJuegosMasPopulares(CriterioPopularidadEnum criterio,
+                                                                Integer limite) throws ValidationException {
         List<ErrorModel> errores = new ArrayList<>();
         List<JuegosPopularesDto> resultado;
         if (criterio == null) {
@@ -106,7 +111,7 @@ public class ProgramaControlador {
         } else if (limite == null) {
             errores.add(new ErrorModel("limite", TipoErrorEnum.OBLIGATORIO));
         } else if (limite <= 0) {
-            errores.add(new ErrorModel("limite", TipoErrorEnum.NO_PERMITIDO));
+            errores.add(new ErrorModel( "limite",TipoErrorEnum.NO_PERMITIDO));
         }
         comprobarListaErrores(errores);
 
@@ -115,9 +120,8 @@ public class ProgramaControlador {
             case MAS_VENDIDOS -> resultado = juegosMasVendidos(limite);
             case MEJOR_VALORADOS -> resultado = juegosMejorValorados(limite);
             case MAS_JUGADOS -> resultado = juegosMasJugados(limite);
-            default -> resultado = List.of();
-        }
-        ;
+            default -> resultado  = List.of();
+        };
         return resultado;
     }
 
@@ -210,11 +214,5 @@ public class ProgramaControlador {
         }
 
         return resultado;
-    }
-
-    private void comprobarListaErrores(List<ErrorModel> errores) throws ValidationException {
-        if (!errores.isEmpty()) {
-            throw new ValidationException(errores);
-        }
     }
 }

@@ -8,14 +8,14 @@ public enum EstadoCompraEnum {
     CANCELADA("Cancelada"),
     REEMBOLSADA("Reembolsada");
 
-    private final String TEXTO;
+    private final String descripcion;
 
-    EstadoCompraEnum(String TEXTO) {
-        this.TEXTO = TEXTO;
+    EstadoCompraEnum(String descripcion) {
+        this.descripcion = descripcion;
     }
 
-    public String getTexto() {
-        return TEXTO;
+    public String getDescripcion() {
+        return descripcion;
     }
 }
 

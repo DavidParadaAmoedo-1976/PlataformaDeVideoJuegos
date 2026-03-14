@@ -8,14 +8,14 @@ public enum EstadoCuentaEnum {
     BANEADA("Baneada");
 
 
-    private final String TEXTO;
+    private final String descripcion;
 
-    EstadoCuentaEnum(String TEXTO) {
-        this.TEXTO = TEXTO;
+    EstadoCuentaEnum(String texto) {
+        this.descripcion = texto;
     }
 
-    public String getTexto() {
-        return TEXTO;
+    public String getDescripcion() {
+        return descripcion;
     }
 }
 
