@@ -10,7 +10,6 @@ import org.davidparada.modelo.formulario.validacion.ErrorModel;
 import org.davidparada.modelo.formulario.validacion.UsuarioFormValidador;
 import org.davidparada.modelo.mapper.UsuarioEntidadADtoMapper;
 import org.davidparada.repositorio.interfaces.IUsuarioRepo;
-import org.davidparada.util.EncriptarPassword;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,43 +26,15 @@ public class UsuarioControlador {
 
     //Registrar nuevo usuario
 
-//    public UsuarioDto registrarUsuario(UsuarioForm form)
-//            throws ValidationException {
-//
-//        UsuarioFormValidador.validarUsuario(form);
-//
-//        UsuarioEntidad usuario = usuarioRepo.crear(form);
-//
-//        return UsuarioEntidadADtoMapper.usuarioEntidadADto(usuario);
-//    }
-
     public UsuarioDto registrarUsuario(UsuarioForm form)
             throws ValidationException {
 
         UsuarioFormValidador.validarUsuario(form);
 
-        // Generar hash de la contraseña
-        String passwordHash = EncriptarPassword.generarHash(form.getPassword());
-
-        // Crear nuevo form con la password encriptada
-        UsuarioForm formHash = new UsuarioForm(
-                form.getNombreUsuario(),
-                form.getEmail(),
-                passwordHash,
-                form.getNombreReal(),
-                form.getPais(),
-                form.getFechaNacimiento(),
-                form.getFechaRegistro(),
-                form.getAvatar(),
-                form.getSaldo(),
-                form.getEstadoCuenta()
-        );
-
-        UsuarioEntidad usuario = usuarioRepo.crear(formHash);
+        UsuarioEntidad usuario = usuarioRepo.crear(form);
 
         return UsuarioEntidadADtoMapper.usuarioEntidadADto(usuario);
     }
-
 
     // Consultar perfil
 
@@ -141,38 +112,6 @@ public class UsuarioControlador {
         return usuario.getSaldo();
     }
 
-    public UsuarioDto login(String nombreUsuario, String password) throws ValidationException {
-
-        List<ErrorModel> errores = new ArrayList<>();
-
-        if (nombreUsuario == null || nombreUsuario.isBlank()) {
-            errores.add(new ErrorModel("nombreUsuario", TipoErrorEnum.OBLIGATORIO));
-        }
-
-        if (password == null || password.isBlank()) {
-            errores.add(new ErrorModel("password", TipoErrorEnum.OBLIGATORIO));
-        }
-
-        comprobarListaErrores(errores);
-
-        // buscar usuario
-        UsuarioEntidad usuario = usuarioRepo.buscarPorNombreUsuario(nombreUsuario);
-
-        if (usuario == null) {
-            errores.add(new ErrorModel("usuario", TipoErrorEnum.NO_ENCONTRADO));
-            comprobarListaErrores(errores);
-        }
-
-        // hash password introducida
-        String passwordHash = EncriptarPassword.generarHash(password);
-
-        if (!usuario.getPassword().equals(passwordHash)) {
-            errores.add(new ErrorModel("password", TipoErrorEnum.NO_COINCIDE));
-            comprobarListaErrores(errores);
-        }
-
-        return UsuarioEntidadADtoMapper.usuarioEntidadADto(usuario);
-    }
 //
 //    // Cambiar estado
 //

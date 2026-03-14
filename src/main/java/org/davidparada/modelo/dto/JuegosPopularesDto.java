@@ -6,7 +6,9 @@ public class JuegosPopularesDto {
     private JuegoDto juego;
     private Double metricaPrincipal;
 
-    public JuegosPopularesDto(Integer posicion, JuegoDto juego, Double metricaPrincipal) {
+    public JuegosPopularesDto(Integer posicion,
+                              JuegoDto juego,
+                              Double metricaPrincipal) {
         this.posicion = posicion;
         this.juego = juego;
         this.metricaPrincipal = metricaPrincipal;

@@ -53,20 +53,20 @@ public class UsuarioFormValidador {
 
         // Email
         ValidacionesComunes.obligatorio("email", form.getEmail(), errores);
-        ValidacionesComunes.LongitudMaxima("email", form.getEmail(), LONGITUD_EMAIL_USUARIO_MAX, errores);
+        ValidacionesComunes.longitudMaxima("email", form.getEmail(), LONGITUD_EMAIL_USUARIO_MAX, errores);
         validarFormatoEmail(form.getEmail(), errores);
         validarEmailUnico(form.getEmail(), errores);
 
         // Password
         ValidacionesComunes.obligatorio("password", form.getPassword(), errores);
-        ValidacionesComunes.LongitudMinima("password", form.getPassword(), PASSWORD_MINIMA, errores);
-        ValidacionesComunes.LongitudMaxima("password", form.getPassword(), PASSWORD_MAX, errores);
+        ValidacionesComunes.longitudMinima("password", form.getPassword(), PASSWORD_MINIMA, errores);
+        ValidacionesComunes.longitudMaxima("password", form.getPassword(), PASSWORD_MAX, errores);
         validarFormatoPassword(form.getPassword(), errores);
 
         // Nombre real
         ValidacionesComunes.obligatorio("nombreReal", form.getNombreReal(), errores);
-        ValidacionesComunes.LongitudMinima("nombreReal", form.getNombreReal(), LONGITUD_NOMBRE_REAL_MINIMA, errores);
-        ValidacionesComunes.LongitudMaxima("nombreReal", form.getNombreReal(), LONGITUD_NOMBRE_REAL_MAXIMA, errores);
+        ValidacionesComunes.longitudMinima("nombreReal", form.getNombreReal(), LONGITUD_NOMBRE_REAL_MINIMA, errores);
+        ValidacionesComunes.longitudMaxima("nombreReal", form.getNombreReal(), LONGITUD_NOMBRE_REAL_MAXIMA, errores);
 
         // Pais
         validarPaisEnLista(form.getPais(), errores);
@@ -75,7 +75,7 @@ public class UsuarioFormValidador {
         validarFechaNacimiento(form.getFechaNacimiento(), errores);
 
         // Avatar
-        ValidacionesComunes.LongitudMaxima("avatar", form.getAvatar(), LONGITUD_AVATAR_MAX, errores);
+        ValidacionesComunes.longitudMaxima("avatar", form.getAvatar(), LONGITUD_AVATAR_MAX, errores);
 
         // Saldo
         ValidacionesComunes.valorNoNegativo("saldo", form.getSaldo(), errores);

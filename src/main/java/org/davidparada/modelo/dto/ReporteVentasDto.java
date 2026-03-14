@@ -9,7 +9,10 @@ public class ReporteVentasDto {
     private Integer totalVentas;
     private Double ingresosTotales;
 
-    public ReporteVentasDto(Instant fechaInicio, Instant fechaFin, Integer totalVentas, Double ingresosTotales) {
+    public ReporteVentasDto(Instant fechaInicio,
+                            Instant fechaFin,
+                            Integer totalVentas,
+                            Double ingresosTotales) {
         this.fechaInicio = fechaInicio;
         this.fechaFin = fechaFin;
         this.totalVentas = totalVentas;

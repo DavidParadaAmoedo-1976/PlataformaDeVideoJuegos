@@ -1,6 +1,7 @@
 package org.davidparada.modelo.enums;
 
 public enum PaisEnum {
+
     ESPANA("España"),
     FRANCIA("Francia"),
     ALEMANIA("Alemania"),

@@ -1,6 +1,7 @@
 package org.davidparada.modelo.enums;
 
 public enum OrdenarJuegosEnum {
+
     ALFABETICO("Alfabetico"),
     PRECIO("Precio"),
     FECHA("Fecha"),;

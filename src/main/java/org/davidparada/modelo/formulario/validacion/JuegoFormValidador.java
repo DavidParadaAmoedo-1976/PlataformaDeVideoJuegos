@@ -27,17 +27,17 @@ public class JuegoFormValidador {
 
         // Titulo
         ValidacionesComunes.obligatorio("titulo", form.getTitulo(), errores);
-        ValidacionesComunes.LongitudMinima("titulo", form.getTitulo(), 1, errores);
-        ValidacionesComunes.LongitudMaxima("titulo", form.getTitulo(), 100, errores);
+        ValidacionesComunes.longitudMinima("titulo", form.getTitulo(), 1, errores);
+        ValidacionesComunes.longitudMaxima("titulo", form.getTitulo(), 100, errores);
         validarTituloUnico(form.getTitulo(), errores);
 
         // Descripcion
-        ValidacionesComunes.LongitudMaxima("descripcion", form.getDescripcion(), 2000, errores);
+        ValidacionesComunes.longitudMaxima("descripcion", form.getDescripcion(), 2000, errores);
 
         // Desarrollador
         ValidacionesComunes.obligatorio("desarrollador", form.getDesarrollador(), errores);
-        ValidacionesComunes.LongitudMinima("desarrollador", form.getDesarrollador(), 2, errores);
-        ValidacionesComunes.LongitudMaxima("desarrollador", form.getDesarrollador(), 100, errores);
+        ValidacionesComunes.longitudMinima("desarrollador", form.getDesarrollador(), 2, errores);
+        ValidacionesComunes.longitudMaxima("desarrollador", form.getDesarrollador(), 100, errores);
 
         // Fecha de Lanzamiento
         validarFechaLanzamiento(form.getFechaLanzamiento(), errores);

@@ -2,7 +2,6 @@ package org.davidparada.modelo.enums;
 
 public enum MetodoPagoEnum {
 
-
     SALIR("Salir"),
     TARJETA("Tarjeta de Credito"),
     PAYPAL("Paypal"),

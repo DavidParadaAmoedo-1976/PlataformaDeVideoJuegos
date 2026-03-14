@@ -1,6 +1,5 @@
 package org.davidparada.modelo.formulario;
 
-
 import org.davidparada.modelo.enums.EstadoPublicacionEnum;
 
 import java.time.Instant;

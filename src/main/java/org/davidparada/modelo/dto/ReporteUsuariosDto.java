@@ -9,7 +9,10 @@ public class ReporteUsuariosDto {
     private Integer nuevosUsuarios;
     private Integer usuariosActivos;
 
-    public ReporteUsuariosDto(Instant fechaInicio, Instant fechaFin, Integer nuevosUsuarios, Integer usuariosActivos) {
+    public ReporteUsuariosDto(Instant fechaInicio,
+                              Instant fechaFin,
+                              Integer nuevosUsuarios,
+                              Integer usuariosActivos) {
         this.fechaInicio = fechaInicio;
         this.fechaFin = fechaFin;
         this.nuevosUsuarios = nuevosUsuarios;
