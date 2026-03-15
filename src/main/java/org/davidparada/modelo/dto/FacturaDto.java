@@ -4,7 +4,7 @@ import org.davidparada.modelo.enums.MetodoPagoEnum;
 
 import java.time.Instant;
 
-public record FacturaDto(Long numeroFactura,
+public record FacturaDto(String numeroFactura,
                          Long idCompra,
                          String nombreUsuario,
                          String email,

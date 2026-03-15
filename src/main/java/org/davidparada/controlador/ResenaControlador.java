@@ -1,29 +1,27 @@
-package org.davidparada.controlador;
+package org.DavidParada.controlador;
 
-import org.davidparada.excepcion.ValidationException;
-import org.davidparada.modelo.dto.JuegoDto;
-import org.davidparada.modelo.dto.ResenaDto;
-import org.davidparada.modelo.dto.UsuarioDto;
-import org.davidparada.modelo.entidad.JuegoEntidad;
-import org.davidparada.modelo.entidad.ResenaEntidad;
-import org.davidparada.modelo.entidad.UsuarioEntidad;
-import org.davidparada.modelo.enums.EstadoPublicacionEnum;
-import org.davidparada.modelo.enums.TipoErrorEnum;
-import org.davidparada.modelo.formulario.ResenaForm;
-import org.davidparada.modelo.formulario.validacion.ErrorModel;
-import org.davidparada.modelo.formulario.validacion.ResenaFormValidador;
-import org.davidparada.modelo.mapper.JuegoEntidadADtoMapper;
-import org.davidparada.modelo.mapper.ResenaEntidadADtoMapper;
-import org.davidparada.modelo.mapper.UsuarioEntidadADtoMapper;
-import org.davidparada.repositorio.interfaces.IJuegoRepo;
-import org.davidparada.repositorio.interfaces.IResenaRepo;
-import org.davidparada.repositorio.interfaces.IUsuarioRepo;
+import org.DavidParada.excepcion.ValidationException;
+import org.DavidParada.modelo.dto.JuegoDto;
+import org.DavidParada.modelo.dto.ResenaDto;
+import org.DavidParada.modelo.dto.UsuarioDto;
+import org.DavidParada.modelo.entidad.JuegoEntidad;
+import org.DavidParada.modelo.entidad.ResenaEntidad;
+import org.DavidParada.modelo.entidad.UsuarioEntidad;
+import org.DavidParada.modelo.enums.EstadoPublicacionEnum;
+import org.DavidParada.modelo.enums.TipoErrorEnum;
+import org.DavidParada.modelo.formulario.ResenaForm;
+import org.DavidParada.modelo.formulario.validacion.ErrorModel;
+import org.DavidParada.modelo.formulario.validacion.ResenaFormValidador;
+import org.DavidParada.modelo.mapper.JuegoEntidadADtoMapper;
+import org.DavidParada.modelo.mapper.ResenaEntidadADtoMapper;
+import org.DavidParada.modelo.mapper.UsuarioEntidadADtoMapper;
+import org.DavidParada.repositorio.interfaces.IJuegoRepo;
+import org.DavidParada.repositorio.interfaces.IResenaRepo;
+import org.DavidParada.repositorio.interfaces.IUsuarioRepo;
 
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.davidparada.controlador.util.ComprobarErrores.comprobarListaErrores;
 
 public class ResenaControlador {
 
@@ -214,6 +212,13 @@ public class ResenaControlador {
                     );
                 })
                 .toList();
+    }
+
+
+    private void comprobarListaErrores(List<ErrorModel> errores) throws ValidationException {
+        if (!errores.isEmpty()) {
+            throw new ValidationException(errores);
+        }
     }
 }
 

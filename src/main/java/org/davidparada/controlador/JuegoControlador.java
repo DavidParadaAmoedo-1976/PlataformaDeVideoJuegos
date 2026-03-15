@@ -1,23 +1,21 @@
-package org.davidparada.controlador;
+package org.DavidParada.controlador;
 
-import org.davidparada.excepcion.ValidationException;
-import org.davidparada.modelo.dto.JuegoDto;
-import org.davidparada.modelo.entidad.JuegoEntidad;
-import org.davidparada.modelo.enums.ClasificacionJuegoEnum;
-import org.davidparada.modelo.enums.EstadoJuegoEnum;
-import org.davidparada.modelo.enums.OrdenarJuegosEnum;
-import org.davidparada.modelo.enums.TipoErrorEnum;
-import org.davidparada.modelo.formulario.JuegoForm;
-import org.davidparada.modelo.formulario.validacion.ErrorModel;
-import org.davidparada.modelo.formulario.validacion.JuegoFormValidador;
-import org.davidparada.modelo.mapper.JuegoEntidadADtoMapper;
-import org.davidparada.repositorio.interfaces.IJuegoRepo;
+import org.DavidParada.excepcion.ValidationException;
+import org.DavidParada.modelo.dto.JuegoDto;
+import org.DavidParada.modelo.entidad.JuegoEntidad;
+import org.DavidParada.modelo.enums.ClasificacionJuegoEnum;
+import org.DavidParada.modelo.enums.EstadoJuegoEnum;
+import org.DavidParada.modelo.enums.OrdenarJuegosEnum;
+import org.DavidParada.modelo.enums.TipoErrorEnum;
+import org.DavidParada.modelo.formulario.JuegoForm;
+import org.DavidParada.modelo.formulario.validacion.ErrorModel;
+import org.DavidParada.modelo.formulario.validacion.JuegoFormValidador;
+import org.DavidParada.modelo.mapper.JuegoEntidadADtoMapper;
+import org.DavidParada.repositorio.interfaces.IJuegoRepo;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-
-import static org.davidparada.controlador.util.ComprobarErrores.comprobarListaErrores;
 
 public class JuegoControlador {
 
@@ -157,6 +155,12 @@ public class JuegoControlador {
                 juego.getPrecioBase(), juego.getDescuento(),
                 juego.getCategoria(), juego.getClasificacionPorEdad(),
                 juego.getIdiomas(), nuevoEstado));
+    }
+
+    private void comprobarListaErrores(List<ErrorModel> errores) throws ValidationException {
+        if (!errores.isEmpty()) {
+            throw new ValidationException(errores);
+        }
     }
 
     // Eliminar el juego

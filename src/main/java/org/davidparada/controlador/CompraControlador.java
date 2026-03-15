@@ -29,8 +29,11 @@ import static org.davidparada.controlador.util.ObtenerEntidadesOptional.*;
 
 public class CompraControlador {
 
+    public static final int UNO = 1;
     private static final int FECHA_LIMITE_PARA_REEMBOLSO = 30;
     private static final int HORAS_MAXIMAS_PARA_REEMBOLSO = 5;
+    public static final int CERO = 0;
+    public static final double POR_CIENTO_DOBLE = 100.0;
     private final ICompraRepo compraRepo;
     private final IUsuarioRepo usuarioRepo;
     private final IJuegoRepo juegoRepo;
@@ -50,7 +53,7 @@ public class CompraControlador {
         this.bibliotecaControlador = bibliotecaControlador;
     }
 
-        // Realizar compra
+    // Realizar compra
     public CompraDto realizarCompra(CompraForm form) throws ValidationException {
         List<ErrorModel> errores = new ArrayList<>();
         // Validación básica
@@ -281,7 +284,9 @@ public class CompraControlador {
         comprobarListaErrores(errores);
 
         UsuarioEntidad usuarioEntidad = obtenerUsuario(idUsuario, errores);
-        CompraEntidad compraEntidad = obtenerCompra(idCompra, errores);
+        // Compruebo que exista esa compra asociada a ese usuario
+        CompraEntidad compraEntidad = obtenerCompraUsuario(idCompra, idUsuario, errores);
+        // Busco el juego asociado a esa compra
         JuegoEntidad juegoEntidad = obtenerJuego(compraEntidad.getIdJuego(), errores);
 
         CompraDto compraDto = CompraEntidadADtoMapper.compraEntidadADto(
@@ -296,7 +301,6 @@ public class CompraControlador {
 
         return new DetallesCompraDto(compraDto, juegoDto, facturaDto);
     }
-
 
     // Solicitar reembolso
     public void solicitarReembolso(Long idCompra) throws ValidationException {
@@ -324,24 +328,24 @@ public class CompraControlador {
             errores.add(new ErrorModel("horasDeJuego", TipoErrorEnum.NO_PERMITIDO));
         }
         comprobarListaErrores(errores);
-        
+
         // Busco usuario y juego asociado a la compra
         UsuarioEntidad usuarioEntidad = obtenerUsuario(compraEntidad.getIdUsuario(), errores);
 
         // Devolver dinero a cartera
         Double precioJuego = precioFinal(compraEntidad.getPrecioBase(), compraEntidad.getDescuento());
         Double nuevoSaldo = usuarioEntidad.getSaldo() + precioJuego;
-            usuarioRepo.actualizar(usuarioEntidad.getIdUsuario(), new UsuarioForm(
-                    usuarioEntidad.getNombreUsuario(),
-                    usuarioEntidad.getEmail(),
-                    usuarioEntidad.getPassword(),
-                    usuarioEntidad.getNombreReal(),
-                    usuarioEntidad.getPais(),
-                    usuarioEntidad.getFechaNacimiento(),
-                    usuarioEntidad.getFechaRegistro(),
-                    usuarioEntidad.getAvatar(),
-                    nuevoSaldo,
-                    usuarioEntidad.getEstadoCuenta()));
+        usuarioRepo.actualizar(usuarioEntidad.getIdUsuario(), new UsuarioForm(
+                usuarioEntidad.getNombreUsuario(),
+                usuarioEntidad.getEmail(),
+                usuarioEntidad.getPassword(),
+                usuarioEntidad.getNombreReal(),
+                usuarioEntidad.getPais(),
+                usuarioEntidad.getFechaNacimiento(),
+                usuarioEntidad.getFechaRegistro(),
+                usuarioEntidad.getAvatar(),
+                nuevoSaldo,
+                usuarioEntidad.getEstadoCuenta()));
 
         // Cambiar estado
         CompraForm nuevaCompra = new CompraForm(
@@ -368,12 +372,10 @@ public class CompraControlador {
         comprobarListaErrores(errores);
         CompraEntidad compraEntidad = obtenerCompra(idCompra, errores);
         UsuarioEntidad usuarioEntidad = obtenerUsuario(compraEntidad.getIdUsuario(), errores);
+        obtenerJuego(compraEntidad.getIdJuego(), errores);
 
-
-        // igualo numero de factura a idCompra, no estoy segura de tener que guardarlas,
-        // en ese caso tengo que crear entidad y repositorio.
-
-        return new FacturaDto(idCompra,
+        String numeroFactura = generarNumeroFactura(idCompra);
+        return new FacturaDto(numeroFactura,
                 idCompra,
                 usuarioEntidad.getNombreReal(),
                 usuarioEntidad.getEmail(),
@@ -393,10 +395,9 @@ public class CompraControlador {
                 precioFinal(juegoEntidad.getPrecioBase(),compraEntidad.getDescuento()),
                 EstadoCompraEnum.COMPLETADA
         );
-
         compraRepo.actualizar(compraEntidad.getIdCompra(), nuevaCompra);
     }
-    
+
     private boolean estadoJuegoValido(EstadoJuegoEnum estado) {
         return estado != EstadoJuegoEnum.DISPONIBLE
                 && estado != EstadoJuegoEnum.PREVENTA
@@ -404,12 +405,19 @@ public class CompraControlador {
     }
 
     private Double precioFinal(Double precioBase, Integer descuento) {
-        if (descuento == 0) {
+        if (descuento == CERO) {
             return precioBase;
         } else {
-            return precioBase * (1 - descuento / 100.0);
+            return precioBase * (UNO - descuento / POR_CIENTO_DOBLE);
         }
     }
+
+    private String generarNumeroFactura(Long idCompra) {
+
+        int anio = Instant.now()
+                .atZone(java.time.ZoneId.systemDefault())
+                .getYear();
+
+        return anio + "-" + String.format("%06d", idCompra);
+    }
 }
-
-

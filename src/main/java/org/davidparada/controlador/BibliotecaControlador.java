@@ -199,13 +199,13 @@ public class BibliotecaControlador {
         ZonedDateTime fechaLocal = ultimaFechaHoraDeJuego
                 .atZone(ZoneId.systemDefault());
 
-        DateTimeFormatter formatter =
+        DateTimeFormatter formato =
                 DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
 
         return "Hace " + horasEnTotal
                 + " horas de la última vez que jugó, "
                 + "que fue: ( "
-                + fechaLocal.format(formatter)
+                + fechaLocal.format(formato)
                 + " ).";
 
     }
@@ -265,7 +265,9 @@ public class BibliotecaControlador {
 
             JuegoEntidad juego = juegoRepo.buscarPorId(b.getIdJuego()).orElse(null);
 
-            if (juego == null) continue;
+            if (juego == null){
+                continue;
+            }
 
             horasTotales += b.getHorasDeJuego();
             valorTotal += juego.getPrecioBase();
@@ -297,7 +299,7 @@ public class BibliotecaControlador {
     // Comprobaciones
 
     private void comprobarIdUsuario(Long idUsuario, List<ErrorModel> errores) throws ValidationException {
-
+        // Compruebo que idUsuario no sea nulo
         if (idUsuario == null) {
             errores.add(new ErrorModel("usuario", TipoErrorEnum.OBLIGATORIO));
         }
@@ -306,7 +308,7 @@ public class BibliotecaControlador {
 
 
     private void comprobarIdJuego(Long idJuego, List<ErrorModel> errores) throws ValidationException {
-        // Compruebo que idJuego no se nulo
+        // Compruebo que idJuego no sea nulo
         if (idJuego == null) {
             errores.add(new ErrorModel("juego", TipoErrorEnum.OBLIGATORIO));
         }

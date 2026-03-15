@@ -14,6 +14,8 @@ import org.davidparada.repositorio.interfaces.IUsuarioRepo;
 
 import java.util.List;
 
+import static org.davidparada.controlador.util.ComprobarErrores.comprobarListaErrores;
+
 public class ObtenerEntidadesOptional {
 
     private static ICompraRepo compraRepo = null;
@@ -32,6 +34,16 @@ public class ObtenerEntidadesOptional {
     public static CompraEntidad obtenerCompra(Long idCompra, List<ErrorModel> errores) throws ValidationException {
 
         return compraRepo.buscarPorId(idCompra)
+                .orElseThrow(() -> {
+                    errores.add(new ErrorModel("compra", TipoErrorEnum.NO_ENCONTRADO));
+                    return new ValidationException(errores);
+                });
+    }
+
+    public static CompraEntidad obtenerCompraUsuario(Long idCompra, Long idUsuario, List<ErrorModel> errores)
+            throws ValidationException {
+
+        return compraRepo.buscarPorCompraYUsuario(idCompra, idUsuario)
                 .orElseThrow(() -> {
                     errores.add(new ErrorModel("compra", TipoErrorEnum.NO_ENCONTRADO));
                     return new ValidationException(errores);
