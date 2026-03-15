@@ -1,6 +1,7 @@
 package org.davidparada.repositorio.interfaces;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ICrud<E, F, I> {
 
@@ -9,7 +10,7 @@ public interface ICrud<E, F, I> {
     E crear(F formulario);
 
     // Leer
-    E buscarPorId(I id);
+    Optional <E> buscarPorId(I id);
 
     List<E> listarTodos();
 

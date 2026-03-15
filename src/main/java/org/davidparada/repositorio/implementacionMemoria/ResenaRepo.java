@@ -7,6 +7,7 @@ import org.davidparada.repositorio.interfaces.IResenaRepo;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class ResenaRepo implements IResenaRepo {
 
@@ -28,11 +29,10 @@ public class ResenaRepo implements IResenaRepo {
     }
 
     @Override
-    public ResenaEntidad buscarPorId(Long idEntidad) {
+    public Optional<ResenaEntidad> buscarPorId(Long idEntidad) {
         return reseniasEntidad.stream()
                 .filter(r -> r.getIdResena().equals(idEntidad))
-                .findFirst()
-                .orElse(null);
+                .findFirst();
     }
 
     @Override
@@ -42,7 +42,7 @@ public class ResenaRepo implements IResenaRepo {
 
     @Override
     public ResenaEntidad actualizar(Long idEntidad, ResenaForm form) {
-        ResenaEntidad resenaEntidad = buscarPorId(idEntidad);
+        Optional<ResenaEntidad> resenaEntidad = buscarPorId(idEntidad);
         if (resenaEntidad == null) {
             return null;
         }
@@ -54,7 +54,7 @@ public class ResenaRepo implements IResenaRepo {
 
     @Override
     public boolean eliminar(Long idEntidad) {
-        ResenaEntidad resenaEntidad = buscarPorId(idEntidad);
+        Optional<ResenaEntidad> resenaEntidad = buscarPorId(idEntidad);
         if (resenaEntidad == null) {
             return false;
         }

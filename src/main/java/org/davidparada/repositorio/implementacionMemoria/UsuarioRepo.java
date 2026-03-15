@@ -7,6 +7,7 @@ import org.davidparada.repositorio.interfaces.IUsuarioRepo;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class UsuarioRepo implements IUsuarioRepo {
 
@@ -28,11 +29,10 @@ public class UsuarioRepo implements IUsuarioRepo {
     }
 
     @Override
-    public UsuarioEntidad buscarPorId(Long idEntidad) {
+    public Optional<UsuarioEntidad> buscarPorId(Long idEntidad) {
         return usuariosEntidad.stream()
                 .filter(u -> u.getIdUsuario().equals(idEntidad))
-                .findFirst()
-                .orElse(null);
+                .findFirst();
     }
 
     @Override
@@ -42,7 +42,7 @@ public class UsuarioRepo implements IUsuarioRepo {
 
     @Override
     public UsuarioEntidad actualizar(Long idEntidad, UsuarioForm form) {
-        UsuarioEntidad usuario = buscarPorId(idEntidad);
+        Optional<UsuarioEntidad> usuario = buscarPorId(idEntidad);
         if (usuario == null) return null;
 
         UsuarioEntidad nuevoUsuario = UsuarioFormularioAEntidadMapper.actualizarUsuarioEntidad(idEntidad, form);
@@ -54,7 +54,7 @@ public class UsuarioRepo implements IUsuarioRepo {
 
     @Override
     public boolean eliminar(Long idEntidad) {
-        UsuarioEntidad usuarioEntidad = buscarPorId(idEntidad);
+        Optional<UsuarioEntidad> usuarioEntidad = buscarPorId(idEntidad);
         if (usuarioEntidad == null) {
             return false;
         }
@@ -62,18 +62,16 @@ public class UsuarioRepo implements IUsuarioRepo {
     }
 
     @Override
-    public UsuarioEntidad buscarPorEmail(String email) {
+    public Optional<UsuarioEntidad> buscarPorEmail(String email) {
         return usuariosEntidad.stream()
                 .filter(u -> u.getEmail().equalsIgnoreCase(email))
-                .findFirst()
-                .orElse(null);
+                .findFirst();
     }
 
     @Override
-    public UsuarioEntidad buscarPorNombreUsuario(String nombreUsuario) {
+    public Optional<UsuarioEntidad> buscarPorNombreUsuario(String nombreUsuario) {
         return usuariosEntidad.stream()
                 .filter(u -> u.getNombreUsuario().equalsIgnoreCase(nombreUsuario))
-                .findFirst()
-                .orElse(null);
+                .findFirst();
     }
 }

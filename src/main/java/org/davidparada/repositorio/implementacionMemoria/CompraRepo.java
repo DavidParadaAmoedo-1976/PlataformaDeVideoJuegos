@@ -7,6 +7,7 @@ import org.davidparada.repositorio.interfaces.ICompraRepo;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class CompraRepo implements ICompraRepo {
 
@@ -28,11 +29,10 @@ public class CompraRepo implements ICompraRepo {
     }
 
     @Override
-    public CompraEntidad buscarPorId(Long idEntidad) {
+    public Optional<CompraEntidad> buscarPorId(Long idEntidad) {
         return comprasEntidad.stream()
                 .filter(c -> c.getIdCompra().equals(idEntidad))
-                .findFirst()
-                .orElse(null);
+                .findFirst();
     }
 
     @Override
@@ -42,7 +42,7 @@ public class CompraRepo implements ICompraRepo {
 
     @Override
     public CompraEntidad actualizar(Long idEntidad, CompraForm form) {
-        CompraEntidad compraEntidad = buscarPorId(idEntidad);
+        Optional<CompraEntidad> compraEntidad = buscarPorId(idEntidad);
         if (compraEntidad == null) {
             return null;
         }
@@ -55,7 +55,7 @@ public class CompraRepo implements ICompraRepo {
 
     @Override
     public boolean eliminar(Long idEntidad) {
-        CompraEntidad compraEntidad = buscarPorId(idEntidad);
+        Optional<CompraEntidad> compraEntidad = buscarPorId(idEntidad);
         if (compraEntidad == null) return false;
         return comprasEntidad.removeIf(c -> c.getIdCompra().equals(idEntidad));
     }
@@ -68,12 +68,10 @@ public class CompraRepo implements ICompraRepo {
     }
 
     @Override
-    public CompraEntidad buscarPorCompraYUsuario(Long idCompra, Long idUsuario) {
+    public Optional<CompraEntidad> buscarPorCompraYUsuario(Long idCompra, Long idUsuario) {
         if (idCompra == null || idUsuario == null) return null;
         return comprasEntidad.stream()
                 .filter(c -> c.getIdCompra().equals(idCompra) && c.getIdUsuario().equals(idUsuario))
-                .findFirst()
-                .orElse(null);
-
+                .findFirst();
     }
 }

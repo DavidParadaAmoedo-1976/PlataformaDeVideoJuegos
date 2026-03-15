@@ -7,6 +7,7 @@ import org.davidparada.repositorio.interfaces.IBibliotecaRepo;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class BibliotecaRepo implements IBibliotecaRepo {
     private final List<BibliotecaEntidad> bibliotecasEntidad = new ArrayList<>();
@@ -19,11 +20,10 @@ public class BibliotecaRepo implements IBibliotecaRepo {
     }
 
     @Override
-    public BibliotecaEntidad buscarPorId(Long idEntidad) {
+    public Optional<BibliotecaEntidad> buscarPorId(Long idEntidad) {
         return bibliotecasEntidad.stream()
                 .filter(b -> b.getIdBiblioteca().equals(idEntidad))
-                .findFirst()
-                .orElse(null);
+                .findFirst();
     }
 
     @Override
@@ -33,7 +33,7 @@ public class BibliotecaRepo implements IBibliotecaRepo {
 
     @Override
     public BibliotecaEntidad actualizar(Long id, BibliotecaForm form) {
-        BibliotecaEntidad bibliotecaEntidad = buscarPorId(id);
+        Optional<BibliotecaEntidad> bibliotecaEntidad = buscarPorId(id);
         if (bibliotecaEntidad == null) return null;
 
         BibliotecaEntidad nuevaBiblioteca = BibliotecaFormularioAEntidadMapper.actualizarBibliotecaEntidad(id, form);
@@ -45,7 +45,7 @@ public class BibliotecaRepo implements IBibliotecaRepo {
 
     @Override
     public boolean eliminar(Long id) {
-        BibliotecaEntidad bibliotecaEntidad = buscarPorId(id);
+        Optional<BibliotecaEntidad> bibliotecaEntidad = buscarPorId(id);
         if (bibliotecaEntidad == null) return false;
         return bibliotecasEntidad.removeIf(b -> b.getIdBiblioteca().equals(id));
     }
@@ -65,15 +65,14 @@ public class BibliotecaRepo implements IBibliotecaRepo {
     }
 
     @Override
-    public BibliotecaEntidad buscarPorUsuarioYJuego(Long idUsuario, Long idJuego) {
+    public Optional <BibliotecaEntidad> buscarPorUsuarioYJuego(Long idUsuario, Long idJuego) {
         if (idUsuario == null || idJuego == null) {
-            return null;
+            return Optional.empty();
         }
 
         return bibliotecasEntidad.stream()
                 .filter(u -> u.getIdUsuario().equals(idUsuario))
                 .filter(j -> j.getIdJuego().equals(idJuego))
-                .findFirst()
-                .orElse(null);
+                .findFirst();
     }
 }

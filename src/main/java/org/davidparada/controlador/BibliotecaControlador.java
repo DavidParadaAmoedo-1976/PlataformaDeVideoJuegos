@@ -15,7 +15,6 @@ import org.davidparada.modelo.mapper.JuegoEntidadADtoMapper;
 import org.davidparada.modelo.mapper.UsuarioEntidadADtoMapper;
 import org.davidparada.repositorio.interfaces.IBibliotecaRepo;
 import org.davidparada.repositorio.interfaces.IJuegoRepo;
-import org.davidparada.repositorio.interfaces.IUsuarioRepo;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -27,19 +26,17 @@ import java.util.Comparator;
 import java.util.List;
 
 import static org.davidparada.controlador.util.ComprobarErrores.comprobarListaErrores;
+import static org.davidparada.controlador.util.ObtenerEntidadesOptional.*;
 
 public class BibliotecaControlador {
 
     private final IBibliotecaRepo bibliotecaRepo;
-    private final IUsuarioRepo usuarioRepo;
     private final IJuegoRepo juegoRepo;
 
     public BibliotecaControlador(IBibliotecaRepo bibliotecaRepo,
-                                 IUsuarioRepo usuarioRepo,
                                  IJuegoRepo juegoRepo) {
 
         this.bibliotecaRepo = bibliotecaRepo;
-        this.usuarioRepo = usuarioRepo;
         this.juegoRepo = juegoRepo;
     }
 
@@ -48,19 +45,23 @@ public class BibliotecaControlador {
     public List<BibliotecaDto> verBiblioteca(Long idUsuario, OrdenarJuegosBibliotecaEnum orden) throws ValidationException {
         List<ErrorModel> errores = new ArrayList<>();
         comprobarIdUsuario(idUsuario, errores);
-        comprobarListaErrores(errores);
 
         List<BibliotecaEntidad> juegosEntidad = bibliotecaRepo.buscarPorUsuario(idUsuario); // Guarda todos los juegos de la biblioteca del usuario en una lista.
 
         // Mapea la lista de Entidad a un DTO para poder mostrar los datos del juego
+
+        UsuarioEntidad usuario = obtenerUsuario(idUsuario, errores);
+
         List<BibliotecaDto> juegos = juegosEntidad.stream()
                 .map(b -> {
-                    JuegoEntidad juegoEntidad = juegoRepo.buscarPorId(b.getIdJuego());
-                    return new BibliotecaDto(b.getIdBiblioteca(),
+                    JuegoEntidad juego = juegoRepo.buscarPorId(b.getIdJuego()).orElseThrow();
+
+                    return new BibliotecaDto(
+                            b.getIdBiblioteca(),
                             b.getIdUsuario(),
-                            UsuarioEntidadADtoMapper.usuarioEntidadADto(usuarioRepo.buscarPorId(b.getIdUsuario())),
+                            UsuarioEntidadADtoMapper.usuarioEntidadADto(usuario),
                             b.getIdJuego(),
-                            JuegoEntidadADtoMapper.juegoEntidadADto(juegoEntidad),
+                            JuegoEntidadADtoMapper.juegoEntidadADto(juego),
                             b.getFechaAdquisicion(),
                             b.getHorasDeJuego(),
                             b.getUltimaFechaDeJuego(),
@@ -93,6 +94,8 @@ public class BibliotecaControlador {
                 case FECHA_DE_ADQUISICION -> juegos = juegos.stream()
                         .sorted(Comparator.comparing((BibliotecaDto b) -> b.fechaAdquisicion()).reversed())
                         .toList();
+
+                default -> throw new IllegalArgumentException("No se encontro el orden");
             }
         }
         return juegos;
@@ -105,11 +108,10 @@ public class BibliotecaControlador {
 
         comprobarIdUsuario(idUsuario, errores);
         comprobarIdJuego(idJuego, errores);
-        comprobarListaErrores(errores);
 
         List<BibliotecaEntidad> bibliotecasEntidad = bibliotecaRepo.buscarPorUsuario(idUsuario);
 
-        Boolean yaTieneJuego = bibliotecasEntidad.stream().anyMatch(b -> b.getIdJuego().equals(idJuego));
+        boolean yaTieneJuego = bibliotecasEntidad.stream().anyMatch(b -> b.getIdJuego().equals(idJuego));
 
         if (yaTieneJuego) {
             errores.add(new ErrorModel("juego", TipoErrorEnum.DUPLICADO));
@@ -125,8 +127,8 @@ public class BibliotecaControlador {
         );
 
         BibliotecaEntidad nuevoJuegoEntidad = bibliotecaRepo.crear(nuevoJuego);
-        UsuarioEntidad usuarioEntidad = usuarioRepo.buscarPorId(idUsuario);
-        JuegoEntidad juegoEntidad = juegoRepo.buscarPorId(idJuego);
+        UsuarioEntidad usuarioEntidad = obtenerUsuario(idUsuario, errores);
+        JuegoEntidad juegoEntidad = obtenerJuego(idJuego, errores);
 
         return BibliotecaEntidadADtoMapper.bibliotecaEntidadADto(nuevoJuegoEntidad, usuarioEntidad, juegoEntidad);
     }
@@ -138,39 +140,28 @@ public class BibliotecaControlador {
 
         comprobarIdUsuario(idUsuario, errores);
         comprobarIdJuego(idJuego, errores);
-        comprobarListaErrores(errores);
 
-        BibliotecaEntidad bibliotecaEntidad = bibliotecaRepo.buscarPorUsuarioYJuego(idUsuario, idJuego);
+        BibliotecaEntidad bibliotecaEntidad = obtenerBiblioteca(idUsuario, idJuego, errores);
 
-        if (bibliotecaEntidad == null) {
-            errores.add(new ErrorModel("juego", TipoErrorEnum.NO_ENCONTRADO));
-            throw new ValidationException(errores);
-        }
         bibliotecaRepo.eliminar(bibliotecaEntidad.getIdBiblioteca());
     }
 
     // Actualizar tiempo de juego
 
-    public void anadirTiempoDeJuego(Long idUsuario, Long idJuego, Double horas, BibliotecaForm form) throws ValidationException {
+    public void anadirTiempoDeJuego(Long idUsuario, Long idJuego, double horas, BibliotecaForm form) throws ValidationException {
         List<ErrorModel> errores = new ArrayList<>();
 
 
         comprobarIdUsuario(idUsuario, errores);
         comprobarIdJuego(idJuego, errores);
 
-        if (horas == null) {
-            errores.add(new ErrorModel("horasDeJuego", TipoErrorEnum.OBLIGATORIO));
-        }
-
         if (form == null) {
-            errores.add(new ErrorModel("formulario", TipoErrorEnum.NO_ENCONTRADO));
+            throw new ValidationException(List.of(new ErrorModel("formulario", TipoErrorEnum.NO_ENCONTRADO)
+            ));
+
         }
 
-        BibliotecaEntidad biblioteca = bibliotecaRepo.buscarPorUsuarioYJuego(idUsuario, idJuego);
-        if (biblioteca == null) {
-            errores.add(new ErrorModel("biblioteca", TipoErrorEnum.NO_ENCONTRADO));
-        }
-        comprobarListaErrores(errores);
+        BibliotecaEntidad biblioteca = obtenerBiblioteca(idUsuario, idJuego,  errores);
 
         BibliotecaForm actualizarTiempoDeJuego = new BibliotecaForm(
                 idUsuario,
@@ -191,13 +182,7 @@ public class BibliotecaControlador {
 
         comprobarIdUsuario(idUsuario, errores);
         comprobarIdJuego(idJuego, errores);
-        BibliotecaEntidad bibliotecaEntidad = bibliotecaRepo.buscarPorUsuarioYJuego(idUsuario, idJuego);
-
-        if (bibliotecaEntidad == null) {
-            errores.add(new ErrorModel("biblioteca", TipoErrorEnum.NO_ENCONTRADO));
-        }
-
-        comprobarListaErrores(errores);
+        BibliotecaEntidad bibliotecaEntidad = obtenerBiblioteca(idUsuario, idJuego, errores);
 
         if (bibliotecaEntidad.getUltimaFechaDeJuego() == null) {
             return "Nunca Jugado"; // en realidad enviaría mensaje la vista.
@@ -208,7 +193,7 @@ public class BibliotecaControlador {
         // Diferencia real
         Duration duracion = Duration.between(ultimaFechaHoraDeJuego, horaActual);
 
-        Long horasEnTotal = duracion.toHours();
+        long horasEnTotal = duracion.toHours();
 
         // Convertimos para mostrar
         ZonedDateTime fechaLocal = ultimaFechaHoraDeJuego
@@ -217,13 +202,11 @@ public class BibliotecaControlador {
         DateTimeFormatter formatter =
                 DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
 
-        String mensaje = "Hace " + horasEnTotal
+        return "Hace " + horasEnTotal
                 + " horas de la última vez que jugó, "
                 + "que fue: ( "
                 + fechaLocal.format(formatter)
                 + " ).";
-
-        return mensaje;
 
     }
     // Filtrar biblioteca
@@ -232,7 +215,7 @@ public class BibliotecaControlador {
         List<ErrorModel> errores = new ArrayList<>();
 
         comprobarIdUsuario(idUsuario, errores);
-        comprobarListaErrores(errores);
+        UsuarioEntidad usuarioEntidad = obtenerUsuario(idUsuario, errores);
         List<BibliotecaEntidad> bibliotecaEntidad = bibliotecaRepo.buscarPorUsuario(idUsuario);
 
         return bibliotecaEntidad.stream()
@@ -241,11 +224,12 @@ public class BibliotecaControlador {
                                 b.isEstadoInstalacion() == estadoInstalacion
                 )
                 .map(b -> {
+                    JuegoEntidad juego = juegoRepo.buscarPorId(b.getIdJuego()).orElseThrow();
                     return new BibliotecaDto(b.getIdBiblioteca(),
                             b.getIdUsuario(),
-                            UsuarioEntidadADtoMapper.usuarioEntidadADto(usuarioRepo.buscarPorId(b.getIdUsuario())),
+                            UsuarioEntidadADtoMapper.usuarioEntidadADto(usuarioEntidad),
                             b.getIdJuego(),
-                            JuegoEntidadADtoMapper.juegoEntidadADto(juegoRepo.buscarPorId(b.getIdJuego())),
+                            JuegoEntidadADtoMapper.juegoEntidadADto(juego),
                             b.getFechaAdquisicion(),
                             b.getHorasDeJuego(),
                             b.getUltimaFechaDeJuego(),
@@ -261,31 +245,44 @@ public class BibliotecaControlador {
     // Ver estadísticas de biblioteca
 
     public EstadisticasBibliotecaDto estadisticasBiblioteca(Long idUsuario) throws ValidationException {
+
         List<ErrorModel> errores = new ArrayList<>();
         comprobarIdUsuario(idUsuario, errores);
-        comprobarListaErrores(errores);
 
-        List<BibliotecaEntidad> bibliotecaEntidad = bibliotecaRepo.buscarPorUsuario(idUsuario);
+        List<BibliotecaEntidad> biblioteca = bibliotecaRepo.buscarPorUsuario(idUsuario);
 
-        Integer totalJuegos = bibliotecaEntidad.size();
-        Double horasTotales = bibliotecaEntidad.stream()
-                .mapToDouble(j -> j.getHorasDeJuego())
-                .sum();
-        List<String> juegosInstalados = bibliotecaEntidad.stream()
-                .filter(b -> b.isEstadoInstalacion())
-                .map(b -> juegoRepo.buscarPorId(b.getIdJuego()).getTitulo())
-                .toList();
-        String juegoMasJugado = bibliotecaEntidad.stream()
-                .max(Comparator.comparing(b -> b.getHorasDeJuego()))
-                .map(j -> juegoRepo.buscarPorId(j.getIdJuego()).getTitulo())
-                .orElse(null);
-        Double valorTotal = bibliotecaEntidad.stream()
-                .mapToDouble(b -> juegoRepo.buscarPorId(b.getIdJuego()).getPrecioBase())
-                .sum();
-        List<String> juegosNuncaJugados = bibliotecaEntidad.stream()
-                .filter(b -> b.getHorasDeJuego() == (0.0))
-                .map(b -> juegoRepo.buscarPorId(b.getIdJuego()).getTitulo())
-                .toList();
+        int totalJuegos = biblioteca.size();
+        double horasTotales = 0.0;
+        double valorTotal = 0.0;
+
+        String juegoMasJugado = null;
+        double maxHoras = -1;
+
+        List<String> juegosInstalados = new ArrayList<>();
+        List<String> juegosNuncaJugados = new ArrayList<>();
+
+        for (BibliotecaEntidad b : biblioteca) {
+
+            JuegoEntidad juego = juegoRepo.buscarPorId(b.getIdJuego()).orElse(null);
+
+            if (juego == null) continue;
+
+            horasTotales += b.getHorasDeJuego();
+            valorTotal += juego.getPrecioBase();
+
+            if (b.isEstadoInstalacion()) {
+                juegosInstalados.add(juego.getTitulo());
+            }
+
+            if (b.getHorasDeJuego() == 0.0) {
+                juegosNuncaJugados.add(juego.getTitulo());
+            }
+
+            if (b.getHorasDeJuego() > maxHoras) {
+                maxHoras = b.getHorasDeJuego();
+                juegoMasJugado = juego.getTitulo();
+            }
+        }
 
         return new EstadisticasBibliotecaDto(
                 totalJuegos,
@@ -299,33 +296,20 @@ public class BibliotecaControlador {
 
     // Comprobaciones
 
-    private UsuarioEntidad comprobarIdUsuario(Long idUsuario, List<ErrorModel> errores) {
+    private void comprobarIdUsuario(Long idUsuario, List<ErrorModel> errores) throws ValidationException {
 
         if (idUsuario == null) {
             errores.add(new ErrorModel("usuario", TipoErrorEnum.OBLIGATORIO));
-            return null;
         }
-
-        UsuarioEntidad usuario = usuarioRepo.buscarPorId(idUsuario);
-
-        if (usuario == null) {
-            errores.add(new ErrorModel("usuario", TipoErrorEnum.NO_ENCONTRADO));
-        }
-
-        return usuario;
+        comprobarListaErrores(errores);
     }
 
 
-    private void comprobarIdJuego(Long idJuego, List<ErrorModel> errores) {
+    private void comprobarIdJuego(Long idJuego, List<ErrorModel> errores) throws ValidationException {
         // Compruebo que idJuego no se nulo
         if (idJuego == null) {
             errores.add(new ErrorModel("juego", TipoErrorEnum.OBLIGATORIO));
         }
-        // Compruebo que juego exista
-        JuegoEntidad juego = juegoRepo.buscarPorId(idJuego);
-        if (juego == null) {
-            errores.add(new ErrorModel("juego", TipoErrorEnum.NO_ENCONTRADO));
-        }
+        comprobarListaErrores(errores);
     }
-
 }

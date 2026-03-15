@@ -36,7 +36,7 @@ class CompraControladorTest {
         juegoRepo = new JuegoRepo();
         compraRepo = new CompraRepo();
         bibliotecaRepo = new BibliotecaRepo();
-        bibliotecaControlador = new BibliotecaControlador(bibliotecaRepo, usuarioRepo, juegoRepo);
+        bibliotecaControlador = new BibliotecaControlador(bibliotecaRepo, juegoRepo);
 
         compraControlador = new CompraControlador(
                 compraRepo,
@@ -253,7 +253,7 @@ class CompraControladorTest {
 
         assertEquals(
                 EstadoCompraEnum.REEMBOLSADA,
-                compraRepo.buscarPorId(compra.getIdCompra()).getEstadoCompra());
+                compraRepo.buscarPorId(compra.getIdCompra()).get().getEstadoCompra());
     }
 
     // =========================

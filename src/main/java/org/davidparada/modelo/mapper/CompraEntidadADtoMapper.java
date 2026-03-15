@@ -18,7 +18,8 @@ public class CompraEntidadADtoMapper {
             return null;
         }
 
-        return new CompraDto(compraEntidad.getIdCompra(),
+        return new CompraDto(
+                compraEntidad.getIdCompra(),
                 compraEntidad.getIdUsuario(),
                 UsuarioEntidadADtoMapper.usuarioEntidadADto(usuarioEntidad),
                 compraEntidad.getIdJuego(),
@@ -30,5 +31,6 @@ public class CompraEntidadADtoMapper {
                 compraEntidad.getEstadoCompra()
         );
     }
+
 }
 

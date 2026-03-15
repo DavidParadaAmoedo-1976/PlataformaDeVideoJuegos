@@ -9,6 +9,7 @@ import org.davidparada.repositorio.interfaces.IJuegoRepo;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class JuegoRepo implements IJuegoRepo {
     private final List<JuegoEntidad> juegosEntidad = new ArrayList<>();
@@ -70,11 +71,10 @@ public class JuegoRepo implements IJuegoRepo {
 
 
     @Override
-    public JuegoEntidad buscarPorId(Long id) {
+    public Optional<JuegoEntidad> buscarPorId(Long id) {
         return juegosEntidad.stream()
                 .filter(j -> j.getIdJuego().equals(id))
-                .findFirst()
-                .orElse(null);
+                .findFirst();
     }
 
     @Override
@@ -84,7 +84,7 @@ public class JuegoRepo implements IJuegoRepo {
 
     @Override
     public JuegoEntidad actualizar(Long id, JuegoForm form) {
-        JuegoEntidad juegoEntidad = buscarPorId(id);
+        Optional<JuegoEntidad> juegoEntidad = buscarPorId(id);
         if (juegoEntidad == null) return null;
 
         JuegoEntidad nuevoJuego = JuegoFormularioAEntidadMapper.actualizarJuegoEntidad(id, form);
@@ -96,12 +96,11 @@ public class JuegoRepo implements IJuegoRepo {
 
     @Override
     public boolean eliminar(Long id) {
-        JuegoEntidad juegoEntidad = buscarPorId(id);
+        Optional<JuegoEntidad> juegoEntidad = buscarPorId(id);
         if (juegoEntidad == null) {
             return false;
         }
         return juegosEntidad.removeIf(j -> j.getIdJuego().equals(id));
     }
-
 }
 

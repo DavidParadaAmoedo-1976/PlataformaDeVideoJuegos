@@ -53,18 +53,15 @@ public class ProgramaControlador {
 
         List<CompraEntidad> comprasFiltradas = compraRepo.listarTodos().stream()
 
-                .filter(c -> { assert inicio != null;
-                    return c.getFechaCompra().isAfter(inicio);
-                })
-                .filter(c -> { assert fin != null;
-                    return c.getFechaCompra().isBefore(fin);
-                })
+                .filter(c -> c.getFechaCompra().isAfter(inicio))
+                .filter(c -> c.getFechaCompra().isBefore(fin))
+
                 .filter(c -> idJuego == null || c.getIdJuego().equals(idJuego))
-                .filter(c -> {
-                    if (desarrollador == null) return true;
-                    JuegoEntidad juego = juegoRepo.buscarPorId(c.getIdJuego());
-                    return juego != null && juego.getDesarrollador().equalsIgnoreCase(desarrollador);
-                })
+                .filter(c -> desarrollador == null ||
+                    juegoRepo.buscarPorId(c.getIdJuego())
+                            .map(j -> j.getDesarrollador().equalsIgnoreCase(desarrollador))
+                            .orElse(false)
+                )
                 .toList();
 
         int totalVentas = comprasFiltradas.size();
@@ -198,7 +195,7 @@ public class ProgramaControlador {
 
         for (Map.Entry<Long, Double> entry : listaOrdenada) {
 
-            JuegoEntidad juegoEntidad = juegoRepo.buscarPorId(entry.getKey());
+            Optional<JuegoEntidad> juegoEntidad = juegoRepo.buscarPorId(entry.getKey());
 
             if (juegoEntidad != null) {
 

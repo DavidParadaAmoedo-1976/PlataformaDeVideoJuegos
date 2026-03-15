@@ -69,7 +69,6 @@ class BibliotecaControladorTest {
 
         controlador = new BibliotecaControlador(
                 bibliotecaRepo,
-                usuarioRepo,
                 juegoRepo
         );
     }
@@ -143,10 +142,10 @@ class BibliotecaControladorTest {
         BibliotecaForm form = new BibliotecaForm(
                 idUsuario,
                 idJuego,
-                entidad.getFechaAdquisicion(),
-                entidad.getHorasDeJuego(),
-                entidad.getUltimaFechaDeJuego(),
-                entidad.isEstadoInstalacion()
+                entidad.get().getFechaAdquisicion(),
+                entidad.get().getHorasDeJuego(),
+                entidad.get().getUltimaFechaDeJuego(),
+                entidad.get().isEstadoInstalacion()
         );
 
         controlador.anadirTiempoDeJuego(idUsuario, idJuego, 5.0, form);
@@ -154,13 +153,13 @@ class BibliotecaControladorTest {
         var actualizada =
                 bibliotecaRepo.buscarPorUsuarioYJuego(idUsuario, idJuego);
 
-        assertEquals(5.0, actualizada.getHorasDeJuego());
+        assertEquals(5.0, actualizada.get().getHorasDeJuego());
     }
 
     @Test
     void anadirTiempo_horasNull() {
         assertThrows(ValidationException.class,
-                () -> controlador.anadirTiempoDeJuego(idUsuario, idJuego, null, null));
+                () -> controlador.anadirTiempoDeJuego(idUsuario, idJuego, 0, null));
     }
 
     // ======================================================
@@ -186,13 +185,13 @@ class BibliotecaControladorTest {
         BibliotecaForm form = new BibliotecaForm(
                 idUsuario,
                 idJuego,
-                entidad.getFechaAdquisicion(),
-                entidad.getHorasDeJuego(),
+                entidad.get().getFechaAdquisicion(),
+                entidad.get().getHorasDeJuego(),
                 Instant.now().minusSeconds(3600),
-                entidad.isEstadoInstalacion()
+                entidad.get().isEstadoInstalacion()
         );
 
-        bibliotecaRepo.actualizar(entidad.getIdBiblioteca(), form);
+        bibliotecaRepo.actualizar(entidad.get().getIdBiblioteca(), form);
 
         String mensaje =
                 controlador.consultarUltimaSesion(idUsuario, idJuego);
@@ -214,13 +213,13 @@ class BibliotecaControladorTest {
         BibliotecaForm form = new BibliotecaForm(
                 idUsuario,
                 idJuego,
-                entidad.getFechaAdquisicion(),
-                entidad.getHorasDeJuego(),
-                entidad.getUltimaFechaDeJuego(),
+                entidad.get().getFechaAdquisicion(),
+                entidad.get().getHorasDeJuego(),
+                entidad.get().getUltimaFechaDeJuego(),
                 true
         );
 
-        bibliotecaRepo.actualizar(entidad.getIdBiblioteca(), form);
+        bibliotecaRepo.actualizar(entidad.get().getIdBiblioteca(), form);
 
         List<BibliotecaDto> resultado =
                 controlador.buscarSegunCriterios(idUsuario, null, true);
@@ -274,13 +273,13 @@ class BibliotecaControladorTest {
         BibliotecaForm form = new BibliotecaForm(
                 idUsuario,
                 idJuego,
-                entidad.getFechaAdquisicion(),
+                entidad.get().getFechaAdquisicion(),
                 5.0,
-                entidad.getUltimaFechaDeJuego(),
+                entidad.get().getUltimaFechaDeJuego(),
                 true
         );
 
-        bibliotecaRepo.actualizar(entidad.getIdBiblioteca(), form);
+        bibliotecaRepo.actualizar(entidad.get().getIdBiblioteca(), form);
 
         var stats = controlador.estadisticasBiblioteca(idUsuario);
 
