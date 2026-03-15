@@ -53,7 +53,7 @@ public class CompraRepo implements ICompraRepo {
     @Override
     public boolean eliminar(Long idEntidad) {
         Optional<CompraEntidad> compraEntidad = buscarPorId(idEntidad);
-        if (compraEntidad.isEmpty()){
+        if (compraEntidad.isEmpty()) {
             return false;
         }
         return comprasEntidad.remove(compraEntidad.get());

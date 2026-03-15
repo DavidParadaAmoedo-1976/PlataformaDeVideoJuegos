@@ -1,24 +1,29 @@
-package org.DavidParada.controlador;
+package org.davidparada.controlador;
 
-import org.DavidParada.excepcion.ValidationException;
-import org.DavidParada.modelo.dto.JuegoDto;
-import org.DavidParada.modelo.entidad.JuegoEntidad;
-import org.DavidParada.modelo.enums.ClasificacionJuegoEnum;
-import org.DavidParada.modelo.enums.EstadoJuegoEnum;
-import org.DavidParada.modelo.enums.OrdenarJuegosEnum;
-import org.DavidParada.modelo.enums.TipoErrorEnum;
-import org.DavidParada.modelo.formulario.JuegoForm;
-import org.DavidParada.modelo.formulario.validacion.ErrorModel;
-import org.DavidParada.modelo.formulario.validacion.JuegoFormValidador;
-import org.DavidParada.modelo.mapper.JuegoEntidadADtoMapper;
-import org.DavidParada.repositorio.interfaces.IJuegoRepo;
+import org.davidparada.excepcion.ValidationException;
+import org.davidparada.modelo.dto.JuegoDto;
+import org.davidparada.modelo.entidad.JuegoEntidad;
+import org.davidparada.modelo.enums.ClasificacionJuegoEnum;
+import org.davidparada.modelo.enums.EstadoJuegoEnum;
+import org.davidparada.modelo.enums.OrdenarJuegosEnum;
+import org.davidparada.modelo.enums.TipoErrorEnum;
+import org.davidparada.modelo.formulario.JuegoForm;
+import org.davidparada.modelo.formulario.validacion.ErrorModel;
+import org.davidparada.modelo.formulario.validacion.JuegoFormValidador;
+import org.davidparada.modelo.mapper.JuegoEntidadADtoMapper;
+import org.davidparada.repositorio.interfaces.IJuegoRepo;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import static org.davidparada.controlador.util.ComprobarErrores.comprobarListaErrores;
+import static org.davidparada.controlador.util.ObtenerEntidadesOptional.*;
+
 public class JuegoControlador {
 
+    public static final int DESCUENTO_MINIMO = 0;
+    public static final int DESCUENTO_MAXIMO = 100;
     private final IJuegoRepo juegoRepo;
 
     public JuegoControlador(IJuegoRepo juegoRepo) {
@@ -26,7 +31,6 @@ public class JuegoControlador {
     }
 
     // Anadir Juego
-
     public JuegoDto crearJuego(JuegoForm form) throws ValidationException {
 
         JuegoFormValidador.validarJuego(form);
@@ -37,7 +41,6 @@ public class JuegoControlador {
     }
 
     // Buscar juegos
-
     public List<JuegoDto> buscarJuegos(
             String titulo,
             String categoria,
@@ -57,7 +60,6 @@ public class JuegoControlador {
     }
 
     // Consultar catalogo completo
-
     public List<JuegoDto> consultarCatalogo(OrdenarJuegosEnum orden) {
 
         List<JuegoEntidad> juegos = juegoRepo.listarTodos();
@@ -65,12 +67,10 @@ public class JuegoControlador {
         if (orden != null) {
 
             switch (orden) {
-
                 case ALFABETICO -> juegos.sort(Comparator.comparing(j -> j.getTitulo()));
-
                 case PRECIO -> juegos.sort(Comparator.comparing(j -> j.getPrecioBase()));
-
                 case FECHA -> juegos.sort(Comparator.comparing(j -> j.getFechaLanzamiento()));
+                default -> throw new IllegalArgumentException("No se encontro el tipo de búsqueda");
             }
         }
 
@@ -80,49 +80,38 @@ public class JuegoControlador {
     }
 
     // Consultar detalles de un juego
-
     public JuegoDto consultarDetalles(Long idJuego) throws ValidationException {
-
         List<ErrorModel> errores = new ArrayList<>();
 
         if (idJuego == null) {
             errores.add(new ErrorModel("id", TipoErrorEnum.OBLIGATORIO));
         }
         comprobarListaErrores(errores);
-        JuegoEntidad juego = juegoRepo.buscarPorId(idJuego);
-        if (juego == null) {
-            errores.add(new ErrorModel("id", TipoErrorEnum.NO_ENCONTRADO));
-        }
+        JuegoEntidad juego = obtenerJuego(idJuego, errores);
+
         comprobarListaErrores(errores);
 
         return JuegoEntidadADtoMapper.juegoEntidadADto(juego);
     }
 
     // Aplicar descuento
-
     public void aplicarDescuento(Long id, Integer descuento) throws ValidationException {
-
         List<ErrorModel> errores = new ArrayList<>();
 
         if (id == null)
             errores.add(new ErrorModel("id", TipoErrorEnum.OBLIGATORIO));
 
+        comprobarListaErrores(errores);
+
         if (descuento == null) {
             errores.add(new ErrorModel("descuento", TipoErrorEnum.OBLIGATORIO));
-        }
-        comprobarListaErrores(errores);
-
-        if (descuento < 0 || descuento > 100)
+        } else if (descuento < DESCUENTO_MINIMO || descuento > DESCUENTO_MAXIMO) {
             errores.add(new ErrorModel("descuento", TipoErrorEnum.RANGO_INVALIDO));
-
-        comprobarListaErrores(errores);
-
-        JuegoEntidad juego = juegoRepo.buscarPorId(id);
-
-        if (juego == null) {
-            errores.add(new ErrorModel("id", TipoErrorEnum.NO_ENCONTRADO));
         }
         comprobarListaErrores(errores);
+
+        JuegoEntidad juego = obtenerJuego(id, errores);
+
         juegoRepo.actualizar(juego.getIdJuego(), new JuegoForm(juego.getTitulo(), juego.getDescripcion(),
                 juego.getDesarrollador(), juego.getFechaLanzamiento(),
                 juego.getPrecioBase(), descuento,
@@ -131,7 +120,6 @@ public class JuegoControlador {
     }
 
     // Cambiar estado del juego
-
     public void cambiarEstado(Long id, EstadoJuegoEnum nuevoEstado) throws ValidationException {
         List<ErrorModel> errores = new ArrayList<>();
 
@@ -143,12 +131,7 @@ public class JuegoControlador {
 
         comprobarListaErrores(errores);
 
-        JuegoEntidad juego = juegoRepo.buscarPorId(id);
-
-        if (juego == null) {
-            errores.add(new ErrorModel("id", TipoErrorEnum.NO_ENCONTRADO));
-        }
-        comprobarListaErrores(errores);
+        JuegoEntidad juego = obtenerJuego(id, errores);
 
         juegoRepo.actualizar(juego.getIdJuego(), new JuegoForm(juego.getTitulo(), juego.getDescripcion(),
                 juego.getDesarrollador(), juego.getFechaLanzamiento(),
@@ -157,29 +140,18 @@ public class JuegoControlador {
                 juego.getIdiomas(), nuevoEstado));
     }
 
-    private void comprobarListaErrores(List<ErrorModel> errores) throws ValidationException {
-        if (!errores.isEmpty()) {
-            throw new ValidationException(errores);
-        }
-    }
-
     // Eliminar el juego
 
     // Método no aparece en la gestion de juego.
     // Se deja comentado por si hace falta en el futuro.
 
-//    public boolean eliminar(Long id) {
-//        List<ErrorModel> errores = new ArrayList<>();
-//        if (id == null){
-//            errores.add(new ErrorModel("id", TipoErrorEnum.OBLIGATORIO));
-//        } else {
-//            JuegoEntidad juego = juegoRepo.buscarPorId(id);
-//            if (juego == null) {
-//                errores.add(new ErrorModel("id", TipoErrorEnum.NO_ENCONTRADO));
-//            }
-//        }
-//        comprobarListaErrores(errores);
-//
-//        return juegoRepo.eliminar(id);
-//    }
+    public boolean eliminar(Long id) throws ValidationException {
+        List<ErrorModel> errores = new ArrayList<>();
+        if (id == null) {
+            errores.add(new ErrorModel("id", TipoErrorEnum.OBLIGATORIO));
+        }
+        obtenerJuego(id, errores);
+
+        return juegoRepo.eliminar(id);
+    }
 }

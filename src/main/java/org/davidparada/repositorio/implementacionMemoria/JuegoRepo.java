@@ -79,7 +79,7 @@ public class JuegoRepo implements IJuegoRepo {
     @Override
     public Optional<JuegoEntidad> actualizar(Long id, JuegoForm form) {
         JuegoEntidad juegoEntidad = buscarPorId(id).orElse(null);
-        if (juegoEntidad == null){
+        if (juegoEntidad == null) {
             return Optional.empty();
         }
 

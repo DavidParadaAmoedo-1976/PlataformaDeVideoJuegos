@@ -1,38 +1,37 @@
-package org.DavidParada.controlador;
+package org.davidparada.controlador;
 
-import org.DavidParada.excepcion.ValidationException;
-import org.DavidParada.modelo.dto.JuegoDto;
-import org.DavidParada.modelo.dto.ResenaDto;
-import org.DavidParada.modelo.dto.UsuarioDto;
-import org.DavidParada.modelo.entidad.JuegoEntidad;
-import org.DavidParada.modelo.entidad.ResenaEntidad;
-import org.DavidParada.modelo.entidad.UsuarioEntidad;
-import org.DavidParada.modelo.enums.EstadoPublicacionEnum;
-import org.DavidParada.modelo.enums.TipoErrorEnum;
-import org.DavidParada.modelo.formulario.ResenaForm;
-import org.DavidParada.modelo.formulario.validacion.ErrorModel;
-import org.DavidParada.modelo.formulario.validacion.ResenaFormValidador;
-import org.DavidParada.modelo.mapper.JuegoEntidadADtoMapper;
-import org.DavidParada.modelo.mapper.ResenaEntidadADtoMapper;
-import org.DavidParada.modelo.mapper.UsuarioEntidadADtoMapper;
-import org.DavidParada.repositorio.interfaces.IJuegoRepo;
-import org.DavidParada.repositorio.interfaces.IResenaRepo;
-import org.DavidParada.repositorio.interfaces.IUsuarioRepo;
+import org.davidparada.excepcion.ValidationException;
+import org.davidparada.modelo.dto.JuegoDto;
+import org.davidparada.modelo.dto.ResenaDto;
+import org.davidparada.modelo.entidad.JuegoEntidad;
+import org.davidparada.modelo.entidad.ResenaEntidad;
+import org.davidparada.modelo.entidad.UsuarioEntidad;
+import org.davidparada.modelo.enums.EstadoPublicacionEnum;
+import org.davidparada.modelo.enums.OrdenarResenaEnum;
+import org.davidparada.modelo.enums.TipoErrorEnum;
+import org.davidparada.modelo.formulario.ResenaForm;
+import org.davidparada.modelo.formulario.validacion.ErrorModel;
+import org.davidparada.modelo.formulario.validacion.ResenaFormValidador;
+import org.davidparada.modelo.mapper.JuegoEntidadADtoMapper;
+import org.davidparada.modelo.mapper.ResenaEntidadADtoMapper;
+import org.davidparada.modelo.mapper.UsuarioEntidadADtoMapper;
+import org.davidparada.repositorio.interfaces.IResenaRepo;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
+
+import static org.davidparada.controlador.util.ComprobarErrores.comprobarListaErrores;
+import static org.davidparada.controlador.util.ObtenerEntidadesOptional.*;
 
 public class ResenaControlador {
 
     private final IResenaRepo resenaRepo;
-    private final IUsuarioRepo usuarioRepo;
-    private final IJuegoRepo juegoRepo;
 
-    public ResenaControlador(IResenaRepo reseniaRepo, IUsuarioRepo usuarioRepo, IJuegoRepo juegoRepo) throws ValidationException {
+    public ResenaControlador(IResenaRepo reseniaRepo) {
         this.resenaRepo = reseniaRepo;
-        this.usuarioRepo = usuarioRepo;
-        this.juegoRepo = juegoRepo;
     }
 
     // Escribir reseña
@@ -40,16 +39,8 @@ public class ResenaControlador {
         List<ErrorModel> errores = new ArrayList<>();
 
         ResenaFormValidador.validarResena(form);
-        UsuarioEntidad usuarioEntidad = usuarioRepo.buscarPorId(form.getIdUsuario());
-        if (usuarioEntidad == null) {
-            errores.add(new ErrorModel("usuario", TipoErrorEnum.NO_ENCONTRADO));
-        }
-
-        JuegoEntidad juegoEntidad = juegoRepo.buscarPorId(form.getIdJuego());
-        if (juegoEntidad == null) {
-            errores.add(new ErrorModel("juego", TipoErrorEnum.NO_ENCONTRADO));
-        }
-        comprobarListaErrores(errores);
+        UsuarioEntidad usuarioEntidad = obtenerUsuario(form.getIdUsuario(), errores);
+        JuegoEntidad juegoEntidad = obtenerJuego(form.getIdJuego(), errores);
 
         ResenaEntidad resenaEntidad = resenaRepo.crear(form);
 
@@ -57,71 +48,99 @@ public class ResenaControlador {
     }
 
     // Eliminar reseña
-    public boolean eliminarResena(Long idResena) throws ValidationException {
+    public boolean eliminarResena(Long idResena, Long idUsuario) throws ValidationException {
         List<ErrorModel> errores = new ArrayList<>();
         if (idResena == null) {
             errores.add(new ErrorModel("idResena", TipoErrorEnum.OBLIGATORIO));
         }
-        ResenaEntidad resenaEntidad = resenaRepo.buscarPorId(idResena);
-        if (resenaEntidad == null) {
-            errores.add(new ErrorModel("reseña", TipoErrorEnum.NO_ENCONTRADO));
+        if (idUsuario == null) {
+            errores.add(new ErrorModel("idUsuario", TipoErrorEnum.OBLIGATORIO));
         }
         comprobarListaErrores(errores);
-        return resenaRepo.eliminar(idResena);
 
+        ResenaEntidad resenaEntidad = obtenerResenaPorIdYUsuario(idResena, idUsuario, errores);
+
+        return resenaRepo.eliminar(resenaEntidad.getIdResena());
     }
 
     // Ver reseñas de un juego
+    public List<ResenaDto> obtenerResenas(Long idJuego,
+                                          boolean recomendado,
+                                          OrdenarResenaEnum orden) throws ValidationException {
 
-    public List<ResenaDto> obtenerResenas(Long idJuego) throws ValidationException {
         List<ErrorModel> errores = new ArrayList<>();
+
         if (idJuego == null) {
             errores.add(new ErrorModel("idJuego", TipoErrorEnum.OBLIGATORIO));
         }
-
-        JuegoEntidad juegoEntidad = juegoRepo.buscarPorId(idJuego);
-        if (juegoEntidad == null) {
-            errores.add(new ErrorModel("juego", TipoErrorEnum.NO_ENCONTRADO));
+        if (recomendado) {
+            errores.add(new ErrorModel("recomendado", TipoErrorEnum.OBLIGATORIO));
+        }
+        if (orden == null) {
+            errores.add(new ErrorModel("orden", TipoErrorEnum.OBLIGATORIO));
         }
         comprobarListaErrores(errores);
+
+        JuegoEntidad juegoEntidad = obtenerJuego(idJuego, errores);
+        JuegoDto juegoDto = JuegoEntidadADtoMapper.juegoEntidadADto(juegoEntidad);
 
         List<ResenaEntidad> resenasEntidad = resenaRepo.buscarPorJuego(idJuego);
-        if (resenasEntidad == null) {
-            errores.add(new ErrorModel("resenas", TipoErrorEnum.NO_ENCONTRADO));
+
+        Comparator<ResenaEntidad> comparador;
+
+        if (orden == OrdenarResenaEnum.RECIENTES) {
+            comparador = (ResenaEntidad r1, ResenaEntidad r2) ->
+                    r2.getFechaPublicacion().compareTo(r1.getFechaPublicacion());
+        } else {
+            comparador = (ResenaEntidad r1, ResenaEntidad r2) -> 0;
         }
-        comprobarListaErrores(errores);
-        return resenasEntidad.stream()
-                .map(r -> {
-                    UsuarioEntidad usuarioEntidad = usuarioRepo.buscarPorId(r.getIdUsuario());
-                    return new ResenaDto(
-                            r.getIdResena(),
-                            r.getIdUsuario(),
-                            UsuarioEntidadADtoMapper.usuarioEntidadADto(usuarioEntidad),
-                            r.getIdJuego(),
-                            JuegoEntidadADtoMapper.juegoEntidadADto(juegoEntidad),
-                            r.isRecomendado(),
-                            r.getTextoResena(),
-                            r.getCantidadHorasJugadas(),
-                            r.getFechaPublicacion(),
-                            r.getFechaUltimaEdicion(),
-                            r.getEstadoPublicacion());
 
-                })
+        List<ResenaEntidad> resenasFiltradasYOrdenadas
+                = resenasEntidad.stream()
+
+                .filter(r -> r.getEstadoPublicacion() == EstadoPublicacionEnum.PUBLICADA)
+
+                .filter(r -> r.isRecomendado() == recomendado)
+
+                .sorted(comparador)
+
                 .toList();
-    }
-    // Ocultar reseña
 
-    public ResenaDto ocultarResena(Long idResena) throws ValidationException {
+        List<ResenaDto> resultado = new ArrayList<>();
+
+        for (ResenaEntidad r : resenasFiltradasYOrdenadas) {
+
+            UsuarioEntidad usuarioEntidad = obtenerUsuario(r.getIdUsuario(), errores);
+
+            resultado.add(new ResenaDto(
+                    r.getIdResena(),
+                    r.getIdUsuario(),
+                    UsuarioEntidadADtoMapper.usuarioEntidadADto(usuarioEntidad),
+                    r.getIdJuego(),
+                    juegoDto,
+                    r.isRecomendado(),
+                    r.getTextoResena(),
+                    r.getCantidadHorasJugadas(),
+                    r.getFechaPublicacion(),
+                    r.getFechaUltimaEdicion(),
+                    r.getEstadoPublicacion()
+            ));
+        }
+        return resultado;
+    }
+
+    // Ocultar reseña
+    public ResenaDto ocultarResena(Long idResena, Long idUsuario) throws ValidationException {
         List<ErrorModel> errores = new ArrayList<>();
         if (idResena == null) {
             errores.add(new ErrorModel("idResena", TipoErrorEnum.OBLIGATORIO));
         }
-        comprobarListaErrores(errores);
-        ResenaEntidad resenaEntidad = resenaRepo.buscarPorId(idResena);
-        if (resenaEntidad == null) {
-            errores.add(new ErrorModel("resena", TipoErrorEnum.NO_ENCONTRADO));
+        if (idUsuario == null) {
+            errores.add(new ErrorModel("idUsuario", TipoErrorEnum.OBLIGATORIO));
         }
         comprobarListaErrores(errores);
+
+        ResenaEntidad resenaEntidad = obtenerResenaPorIdYUsuario(idResena, idUsuario, errores);
 
         ResenaForm nuevaResena = new ResenaForm(
                 resenaEntidad.getIdUsuario(),
@@ -133,92 +152,81 @@ public class ResenaControlador {
                 Instant.now(),
                 EstadoPublicacionEnum.OCULTA);
 
-        ResenaEntidad resenaActualizada = resenaRepo.actualizar(idResena, nuevaResena);
-        UsuarioEntidad usuarioEntidad = usuarioRepo.buscarPorId(resenaActualizada.getIdUsuario());
-        JuegoEntidad juegoEntidad = juegoRepo.buscarPorId(resenaActualizada.getIdJuego());
+        Optional<ResenaEntidad> resenaActualizada = resenaRepo.actualizar(idResena, nuevaResena);
+        ResenaEntidad resenaGuardada = resenaActualizada.orElseThrow();
 
-        return ResenaEntidadADtoMapper.resenaEntidadADto(resenaActualizada, usuarioEntidad, juegoEntidad);
+        UsuarioEntidad usuarioEntidad = obtenerUsuario(idUsuario, errores);
+        JuegoEntidad juegoEntidad = obtenerJuego(resenaEntidad.getIdJuego(), errores);
+
+        return ResenaEntidadADtoMapper.resenaEntidadADto(
+                resenaGuardada,
+                usuarioEntidad,
+                juegoEntidad
+        );
     }
 
     // Consultar estadisticas de una reseña
-
     public List<ResenaDto> consultarEstadisticasResenaPorJuego(Long idJuego) throws ValidationException {
         List<ErrorModel> errores = new ArrayList<>();
         if (idJuego == null) {
             errores.add(new ErrorModel("idJuego", TipoErrorEnum.OBLIGATORIO));
         }
         comprobarListaErrores(errores);
-        JuegoEntidad juegoEntidad = juegoRepo.buscarPorId(idJuego);
-        if (juegoEntidad == null) {
-            errores.add(new ErrorModel("juego", TipoErrorEnum.NO_ENCONTRADO));
+        JuegoEntidad juegoEntidad = obtenerJuego(idJuego, errores);
+
+        List<ResenaEntidad> resenasEntidad = resenaRepo.buscarPorJuego(idJuego);
+        List<ResenaDto> resenasDto = new ArrayList<>();
+
+        for (ResenaEntidad r : resenasEntidad) {
+            UsuarioEntidad usuarioEntidad = obtenerUsuario(r.getIdUsuario(), errores);
+
+            resenasDto.add(new ResenaDto(
+                    r.getIdResena(),
+                    r.getIdUsuario(),
+                    UsuarioEntidadADtoMapper.usuarioEntidadADto(usuarioEntidad),
+                    r.getIdJuego(),
+                    JuegoEntidadADtoMapper.juegoEntidadADto(juegoEntidad),
+                    r.isRecomendado(),
+                    r.getTextoResena(),
+                    r.getCantidadHorasJugadas(),
+                    r.getFechaPublicacion(),
+                    r.getFechaUltimaEdicion(),
+                    r.getEstadoPublicacion()
+            ));
         }
-
-        comprobarListaErrores(errores);
-        List<ResenaEntidad> resenaEntidad = resenaRepo.buscarPorJuego(idJuego);
-
-        return resenaEntidad.stream()
-                .map(r -> {
-                    UsuarioDto usuarioDto = UsuarioEntidadADtoMapper.usuarioEntidadADto(usuarioRepo.buscarPorId(r.getIdUsuario()));
-                    JuegoDto juegoDto = JuegoEntidadADtoMapper.juegoEntidadADto(juegoEntidad);
-                    return new ResenaDto(
-                            r.getIdResena(),
-                            r.getIdUsuario(),
-                            usuarioDto,
-                            r.getIdJuego(),
-                            juegoDto,
-                            r.isRecomendado(),
-                            r.getTextoResena(),
-                            r.getCantidadHorasJugadas(),
-                            r.getFechaPublicacion(),
-                            r.getFechaUltimaEdicion(),
-                            r.getEstadoPublicacion()
-                    );
-                })
-                .toList();
+        return resenasDto;
     }
 
-
     // Ver reseñas de un usuario
-
     public List<ResenaDto> obtenerResenasUsuario(Long idUsuario) throws ValidationException {
         List<ErrorModel> errores = new ArrayList<>();
         if (idUsuario == null) {
             errores.add(new ErrorModel("idUsuario", TipoErrorEnum.OBLIGATORIO));
         }
         comprobarListaErrores(errores);
-        UsuarioEntidad usuarioEntidad = usuarioRepo.buscarPorId(idUsuario);
-        if (usuarioEntidad == null) {
-            errores.add(new ErrorModel("usuario", TipoErrorEnum.NO_ENCONTRADO));
+        UsuarioEntidad usuarioEntidad = obtenerUsuario(idUsuario, errores);
+
+        List<ResenaEntidad> resenasEntidad = resenaRepo.buscarPorUsuario(idUsuario);
+        List<ResenaDto> resenasDto = new ArrayList<>();
+
+        for (ResenaEntidad r : resenasEntidad) {
+            JuegoEntidad juegoEntidad = obtenerJuego(r.getIdJuego(), errores);
+            resenasDto.add(new ResenaDto(
+                    r.getIdResena(),
+                    r.getIdUsuario(),
+                    UsuarioEntidadADtoMapper.usuarioEntidadADto(usuarioEntidad),
+                    r.getIdJuego(),
+                    JuegoEntidadADtoMapper.juegoEntidadADto(juegoEntidad),
+                    r.isRecomendado(),
+                    r.getTextoResena(),
+                    r.getCantidadHorasJugadas(),
+                    r.getFechaPublicacion(),
+                    r.getFechaUltimaEdicion(),
+                    r.getEstadoPublicacion()
+            ));
         }
-        comprobarListaErrores(errores);
-
-        List<ResenaEntidad> resenaEntidad = resenaRepo.buscarPorUsuario(idUsuario);
-        return resenaEntidad.stream()
-                .map(r -> {
-                    UsuarioDto usuarioDto = UsuarioEntidadADtoMapper.usuarioEntidadADto(usuarioEntidad);
-                    JuegoDto juegoDto = JuegoEntidadADtoMapper.juegoEntidadADto(juegoRepo.buscarPorId(r.getIdJuego()));
-                    return new ResenaDto(
-                            r.getIdResena(),
-                            r.getIdUsuario(),
-                            usuarioDto,
-                            r.getIdJuego(),
-                            juegoDto,
-                            r.isRecomendado(),
-                            r.getTextoResena(),
-                            r.getCantidadHorasJugadas(),
-                            r.getFechaPublicacion(),
-                            r.getFechaUltimaEdicion(),
-                            r.getEstadoPublicacion()
-                    );
-                })
-                .toList();
-    }
-
-
-    private void comprobarListaErrores(List<ErrorModel> errores) throws ValidationException {
-        if (!errores.isEmpty()) {
-            throw new ValidationException(errores);
-        }
+        return resenasDto;
     }
 }
+
 

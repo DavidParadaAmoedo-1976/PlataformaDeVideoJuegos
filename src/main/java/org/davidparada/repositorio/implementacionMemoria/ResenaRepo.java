@@ -71,5 +71,12 @@ public class ResenaRepo implements IResenaRepo {
                 .filter(r -> r.getIdJuego().equals(idJuego))
                 .toList();
     }
+
+    @Override
+    public Optional<ResenaEntidad> buscarPorIdYUsuario(Long idResena, Long idUsuario) {
+        return reseniasEntidad.stream()
+                .filter(r -> r.getIdResena().equals(idResena) && r.getIdUsuario().equals(idUsuario))
+                .findFirst();
+    }
 }
 
