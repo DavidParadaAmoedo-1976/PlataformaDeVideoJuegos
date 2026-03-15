@@ -12,13 +12,10 @@ import java.util.Optional;
 public class CompraRepo implements ICompraRepo {
 
     private final List<CompraEntidad> comprasEntidad = new ArrayList<>();
-
+    private Long siguienteId = 1L;
 
     private Long generarId() {
-        return comprasEntidad.stream()
-                .mapToLong(compra -> compra.getIdCompra())
-                .max()
-                .orElse(0L) + 1;
+        return siguienteId++;
     }
 
     @Override
@@ -41,23 +38,25 @@ public class CompraRepo implements ICompraRepo {
     }
 
     @Override
-    public CompraEntidad actualizar(Long idEntidad, CompraForm form) {
-        Optional<CompraEntidad> compraEntidad = buscarPorId(idEntidad);
+    public Optional<CompraEntidad> actualizar(Long idEntidad, CompraForm form) {
+        CompraEntidad compraEntidad = buscarPorId(idEntidad).orElse(null);
         if (compraEntidad == null) {
-            return null;
+            return Optional.empty();
         }
         CompraEntidad nuevaCompra = CompraFormularioAEntidadMapper.actualizarCompraEntidad(idEntidad, form);
         comprasEntidad.remove(compraEntidad);
         comprasEntidad.add(nuevaCompra);
 
-        return nuevaCompra;
+        return Optional.of(nuevaCompra);
     }
 
     @Override
     public boolean eliminar(Long idEntidad) {
         Optional<CompraEntidad> compraEntidad = buscarPorId(idEntidad);
-        if (compraEntidad == null) return false;
-        return comprasEntidad.removeIf(c -> c.getIdCompra().equals(idEntidad));
+        if (compraEntidad.isEmpty()){
+            return false;
+        }
+        return comprasEntidad.remove(compraEntidad.get());
     }
 
     @Override
@@ -69,7 +68,7 @@ public class CompraRepo implements ICompraRepo {
 
     @Override
     public Optional<CompraEntidad> buscarPorCompraYUsuario(Long idCompra, Long idUsuario) {
-        if (idCompra == null || idUsuario == null) return null;
+        if (idCompra == null || idUsuario == null) return Optional.empty();
         return comprasEntidad.stream()
                 .filter(c -> c.getIdCompra().equals(idCompra) && c.getIdUsuario().equals(idUsuario))
                 .findFirst();

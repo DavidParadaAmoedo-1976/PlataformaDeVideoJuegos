@@ -13,13 +13,10 @@ import java.util.Optional;
 
 public class JuegoRepo implements IJuegoRepo {
     private final List<JuegoEntidad> juegosEntidad = new ArrayList<>();
-
+    private Long siguienteId = 1L;
 
     private Long generarId() {
-        return juegosEntidad.stream()
-                .mapToLong(j -> j.getIdJuego())
-                .max()
-                .orElse(0L) + 1;
+        return siguienteId++;
     }
 
     public List<JuegoEntidad> buscarConFiltros(
@@ -30,7 +27,6 @@ public class JuegoRepo implements IJuegoRepo {
             ClasificacionJuegoEnum clasificacion,
             EstadoJuegoEnum estado
     ) {
-
         return juegosEntidad.stream()
 
                 .filter(j -> titulo == null ||
@@ -60,7 +56,6 @@ public class JuegoRepo implements IJuegoRepo {
                 .anyMatch(j -> j.getTitulo().equalsIgnoreCase(titulo));
     }
 
-
     @Override
     public JuegoEntidad crear(JuegoForm form) {
         JuegoEntidad juegoEntidad = JuegoFormularioAEntidadMapper.crearJuegoEntidad(generarId(), form);
@@ -68,7 +63,6 @@ public class JuegoRepo implements IJuegoRepo {
 
         return juegoEntidad;
     }
-
 
     @Override
     public Optional<JuegoEntidad> buscarPorId(Long id) {
@@ -83,24 +77,26 @@ public class JuegoRepo implements IJuegoRepo {
     }
 
     @Override
-    public JuegoEntidad actualizar(Long id, JuegoForm form) {
-        Optional<JuegoEntidad> juegoEntidad = buscarPorId(id);
-        if (juegoEntidad == null) return null;
+    public Optional<JuegoEntidad> actualizar(Long id, JuegoForm form) {
+        JuegoEntidad juegoEntidad = buscarPorId(id).orElse(null);
+        if (juegoEntidad == null){
+            return Optional.empty();
+        }
 
         JuegoEntidad nuevoJuego = JuegoFormularioAEntidadMapper.actualizarJuegoEntidad(id, form);
         juegosEntidad.remove(juegoEntidad);
         juegosEntidad.add(nuevoJuego);
 
-        return nuevoJuego;
+        return Optional.of(nuevoJuego);
     }
 
     @Override
     public boolean eliminar(Long id) {
         Optional<JuegoEntidad> juegoEntidad = buscarPorId(id);
-        if (juegoEntidad == null) {
+        if (juegoEntidad.isEmpty()) {
             return false;
         }
-        return juegosEntidad.removeIf(j -> j.getIdJuego().equals(id));
+        return juegosEntidad.remove(juegoEntidad.get());
     }
 }
 

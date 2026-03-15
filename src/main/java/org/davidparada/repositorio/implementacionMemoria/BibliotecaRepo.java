@@ -11,6 +11,11 @@ import java.util.Optional;
 
 public class BibliotecaRepo implements IBibliotecaRepo {
     private final List<BibliotecaEntidad> bibliotecasEntidad = new ArrayList<>();
+    private Long siguienteId = 1L;
+
+    private Long generarId() {
+        return siguienteId++;
+    }
 
     @Override
     public BibliotecaEntidad crear(BibliotecaForm form) {
@@ -32,29 +37,28 @@ public class BibliotecaRepo implements IBibliotecaRepo {
     }
 
     @Override
-    public BibliotecaEntidad actualizar(Long id, BibliotecaForm form) {
-        Optional<BibliotecaEntidad> bibliotecaEntidad = buscarPorId(id);
-        if (bibliotecaEntidad == null) return null;
+    public Optional<BibliotecaEntidad> actualizar(Long idEntidad, BibliotecaForm form) {
 
-        BibliotecaEntidad nuevaBiblioteca = BibliotecaFormularioAEntidadMapper.actualizarBibliotecaEntidad(id, form);
+        BibliotecaEntidad bibliotecaEntidad = buscarPorId(idEntidad).orElse(null);
+
+        if (bibliotecaEntidad == null) {
+            return Optional.empty();
+        }
+
+        BibliotecaEntidad nuevaBiblioteca =
+                BibliotecaFormularioAEntidadMapper.actualizarBibliotecaEntidad(idEntidad, form);
+
         bibliotecasEntidad.remove(bibliotecaEntidad);
         bibliotecasEntidad.add(nuevaBiblioteca);
 
-        return nuevaBiblioteca;
+        return Optional.of(nuevaBiblioteca);
     }
 
     @Override
-    public boolean eliminar(Long id) {
-        Optional<BibliotecaEntidad> bibliotecaEntidad = buscarPorId(id);
-        if (bibliotecaEntidad == null) return false;
-        return bibliotecasEntidad.removeIf(b -> b.getIdBiblioteca().equals(id));
-    }
-
-    private Long generarId() {
-        return bibliotecasEntidad.stream()
-                .mapToLong(biblioteca -> biblioteca.getIdBiblioteca())
-                .max()
-                .orElse(0L) + 1;
+    public boolean eliminar(Long idEntidad) {
+        Optional<BibliotecaEntidad> bibliotecaEntidad = buscarPorId(idEntidad);
+        if (bibliotecaEntidad.isEmpty()) return false;
+        return bibliotecasEntidad.remove(bibliotecaEntidad.get());
     }
 
     @Override

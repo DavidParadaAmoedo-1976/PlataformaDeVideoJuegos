@@ -33,7 +33,7 @@ public class CompraControlador {
     private static final int FECHA_LIMITE_PARA_REEMBOLSO = 30;
     private static final int HORAS_MAXIMAS_PARA_REEMBOLSO = 5;
     public static final int CERO = 0;
-    public static final double POR_CIENTO_DOBLE = 100.0;
+    public static final double POR_CIENTO_DOUBLE = 100.0;
     private final ICompraRepo compraRepo;
     private final IUsuarioRepo usuarioRepo;
     private final IJuegoRepo juegoRepo;
@@ -409,7 +409,7 @@ public class CompraControlador {
         if (descuento == CERO) {
             return precioBase;
         } else {
-            return precioBase * (UNO - descuento / POR_CIENTO_DOBLE);
+            return precioBase * (UNO - descuento / POR_CIENTO_DOUBLE);
         }
     }
 

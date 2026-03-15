@@ -1,5 +1,7 @@
 package org.davidparada.repositorio.interfaces;
 
+import org.davidparada.modelo.entidad.BibliotecaEntidad;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -15,7 +17,7 @@ public interface ICrud<E, F, I> {
     List<E> listarTodos();
 
     // Modificar
-    E actualizar(I id, F formulario);
+    Optional<E> actualizar(I id, F formulario);
 
     // Borrar
     boolean eliminar(I id);

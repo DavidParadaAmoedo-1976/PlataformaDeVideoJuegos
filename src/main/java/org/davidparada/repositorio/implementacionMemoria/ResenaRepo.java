@@ -12,13 +12,10 @@ import java.util.Optional;
 public class ResenaRepo implements IResenaRepo {
 
     private final List<ResenaEntidad> reseniasEntidad = new ArrayList<>();
-
+    private Long siguienteId = 1L;
 
     private Long generarId() {
-        return reseniasEntidad.stream()
-                .mapToLong(resenia -> resenia.getIdResena())
-                .max()
-                .orElse(0L) + 1;
+        return siguienteId++;
     }
 
     @Override
@@ -41,24 +38,24 @@ public class ResenaRepo implements IResenaRepo {
     }
 
     @Override
-    public ResenaEntidad actualizar(Long idEntidad, ResenaForm form) {
-        Optional<ResenaEntidad> resenaEntidad = buscarPorId(idEntidad);
+    public Optional<ResenaEntidad> actualizar(Long idEntidad, ResenaForm form) {
+        ResenaEntidad resenaEntidad = buscarPorId(idEntidad).orElse(null);
         if (resenaEntidad == null) {
-            return null;
+            return Optional.empty();
         }
         ResenaEntidad nuevaResenia = ResenaFormularioAEntidadMapper.actualizarReseniaEntidad(idEntidad, form);
         reseniasEntidad.remove(resenaEntidad);
         reseniasEntidad.add(nuevaResenia);
-        return nuevaResenia;
+        return Optional.of(nuevaResenia);
     }
 
     @Override
     public boolean eliminar(Long idEntidad) {
         Optional<ResenaEntidad> resenaEntidad = buscarPorId(idEntidad);
-        if (resenaEntidad == null) {
+        if (resenaEntidad.isEmpty()) {
             return false;
         }
-        return reseniasEntidad.removeIf(r -> r.getIdResena().equals(idEntidad));
+        return reseniasEntidad.remove(resenaEntidad.get());
     }
 
     @Override

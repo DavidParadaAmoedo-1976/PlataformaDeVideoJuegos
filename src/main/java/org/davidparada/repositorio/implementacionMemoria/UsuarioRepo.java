@@ -10,14 +10,11 @@ import java.util.List;
 import java.util.Optional;
 
 public class UsuarioRepo implements IUsuarioRepo {
-
     private final List<UsuarioEntidad> usuariosEntidad = new ArrayList<>();
+    private Long siguienteId = 1L;
 
     private Long generarId() {
-        return usuariosEntidad.stream()
-                .mapToLong(u -> u.getIdUsuario())
-                .max()
-                .orElse(0L) + 1;
+        return siguienteId++;
     }
 
     @Override
@@ -41,24 +38,26 @@ public class UsuarioRepo implements IUsuarioRepo {
     }
 
     @Override
-    public UsuarioEntidad actualizar(Long idEntidad, UsuarioForm form) {
-        Optional<UsuarioEntidad> usuario = buscarPorId(idEntidad);
-        if (usuario == null) return null;
+    public Optional<UsuarioEntidad> actualizar(Long idEntidad, UsuarioForm form) {
+        UsuarioEntidad usuario = buscarPorId(idEntidad).orElse(null);
+        if (usuario == null) {
+            return Optional.empty();
+        }
 
         UsuarioEntidad nuevoUsuario = UsuarioFormularioAEntidadMapper.actualizarUsuarioEntidad(idEntidad, form);
         usuariosEntidad.remove(usuario);
         usuariosEntidad.add(nuevoUsuario);
 
-        return nuevoUsuario;
+        return Optional.of(nuevoUsuario);
     }
 
     @Override
     public boolean eliminar(Long idEntidad) {
         Optional<UsuarioEntidad> usuarioEntidad = buscarPorId(idEntidad);
-        if (usuarioEntidad == null) {
+        if (usuarioEntidad.isEmpty()) {
             return false;
         }
-        return usuariosEntidad.removeIf(u -> u.getIdUsuario().equals(idEntidad));
+        return usuariosEntidad.remove(usuarioEntidad.get());
     }
 
     @Override
