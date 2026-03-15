@@ -4,7 +4,8 @@ public enum OrdenarJuegosEnum {
 
     ALFABETICO("Alfabetico"),
     PRECIO("Precio"),
-    FECHA("Fecha"),;
+    FECHA("Fecha"),
+    ;
 
     private final String descripcion;
 

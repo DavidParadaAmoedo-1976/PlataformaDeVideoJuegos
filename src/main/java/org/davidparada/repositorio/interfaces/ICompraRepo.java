@@ -9,5 +9,5 @@ import java.util.Optional;
 public interface ICompraRepo extends ICrud<CompraEntidad, CompraForm, Long> {
     List<CompraEntidad> buscarPorUsuario(Long idUsuario);
 
-    Optional <CompraEntidad> buscarPorCompraYUsuario(Long idCompra, Long idUsuario);
+    Optional<CompraEntidad> buscarPorCompraYUsuario(Long idCompra, Long idUsuario);
 }

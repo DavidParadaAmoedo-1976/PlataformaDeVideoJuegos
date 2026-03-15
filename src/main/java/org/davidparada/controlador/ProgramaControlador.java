@@ -51,10 +51,12 @@ public class ProgramaControlador {
 
         List<CompraEntidad> comprasFiltradas = compraRepo.listarTodos().stream()
 
-                .filter(c -> { assert inicio != null;
+                .filter(c -> {
+                    assert inicio != null;
                     return c.getFechaCompra().isAfter(inicio);
                 })
-                .filter(c -> { assert fin != null;
+                .filter(c -> {
+                    assert fin != null;
                     return c.getFechaCompra().isBefore(fin);
                 })
                 .filter(c -> idJuego == null || c.getIdJuego().equals(idJuego))
@@ -107,7 +109,7 @@ public class ProgramaControlador {
         } else if (limite == null) {
             errores.add(new ErrorModel("limite", TipoErrorEnum.OBLIGATORIO));
         } else if (limite <= 0) {
-            errores.add(new ErrorModel( "limite",TipoErrorEnum.NO_PERMITIDO));
+            errores.add(new ErrorModel("limite", TipoErrorEnum.NO_PERMITIDO));
         }
         comprobarListaErrores(errores);
 
@@ -116,8 +118,9 @@ public class ProgramaControlador {
             case MAS_VENDIDOS -> resultado = juegosMasVendidos(limite);
             case MEJOR_VALORADOS -> resultado = juegosMejorValorados(limite);
             case MAS_JUGADOS -> resultado = juegosMasJugados(limite);
-            default -> resultado  = List.of();
-        };
+            default -> resultado = List.of();
+        }
+        ;
         return resultado;
     }
 

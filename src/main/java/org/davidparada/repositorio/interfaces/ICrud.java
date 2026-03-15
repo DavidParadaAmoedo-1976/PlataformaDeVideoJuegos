@@ -10,7 +10,7 @@ public interface ICrud<E, F, I> {
     E crear(F formulario);
 
     // Leer
-    Optional <E> buscarPorId(I id);
+    Optional<E> buscarPorId(I id);
 
     List<E> listarTodos();
 

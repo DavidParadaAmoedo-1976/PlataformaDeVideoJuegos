@@ -11,7 +11,7 @@ public class ResenaFormValidador {
     private ResenaFormValidador() {
     }
 
-    public static void validarResena(ResenaForm form){
+    public static void validarResena(ResenaForm form) {
         List<ErrorModel> errores = new ArrayList<>();
 
         if (form == null) {

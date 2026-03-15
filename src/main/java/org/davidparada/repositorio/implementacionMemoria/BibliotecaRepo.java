@@ -65,7 +65,7 @@ public class BibliotecaRepo implements IBibliotecaRepo {
     }
 
     @Override
-    public Optional <BibliotecaEntidad> buscarPorUsuarioYJuego(Long idUsuario, Long idJuego) {
+    public Optional<BibliotecaEntidad> buscarPorUsuarioYJuego(Long idUsuario, Long idJuego) {
         if (idUsuario == null || idJuego == null) {
             return Optional.empty();
         }

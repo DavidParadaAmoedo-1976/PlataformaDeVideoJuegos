@@ -161,7 +161,7 @@ public class BibliotecaControlador {
 
         }
 
-        BibliotecaEntidad biblioteca = obtenerBiblioteca(idUsuario, idJuego,  errores);
+        BibliotecaEntidad biblioteca = obtenerBiblioteca(idUsuario, idJuego, errores);
 
         BibliotecaForm actualizarTiempoDeJuego = new BibliotecaForm(
                 idUsuario,
@@ -265,7 +265,7 @@ public class BibliotecaControlador {
 
             JuegoEntidad juego = juegoRepo.buscarPorId(b.getIdJuego()).orElse(null);
 
-            if (juego == null){
+            if (juego == null) {
                 continue;
             }
 

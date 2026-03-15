@@ -9,5 +9,5 @@ import java.util.Optional;
 public interface IBibliotecaRepo extends ICrud<BibliotecaEntidad, BibliotecaForm, Long> {
     List<BibliotecaEntidad> buscarPorUsuario(Long idUsuario);
 
-    Optional <BibliotecaEntidad> buscarPorUsuarioYJuego(Long idUsuario, Long idJuego);
+    Optional<BibliotecaEntidad> buscarPorUsuarioYJuego(Long idUsuario, Long idJuego);
 }

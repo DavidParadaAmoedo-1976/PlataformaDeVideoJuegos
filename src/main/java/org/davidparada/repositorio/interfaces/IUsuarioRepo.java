@@ -7,9 +7,9 @@ import java.util.Optional;
 
 public interface IUsuarioRepo extends ICrud<UsuarioEntidad, UsuarioForm, Long> {
 
-    Optional <UsuarioEntidad> buscarPorEmail(String email);
+    Optional<UsuarioEntidad> buscarPorEmail(String email);
 
-    Optional <UsuarioEntidad> buscarPorNombreUsuario(String nombreUsuario);
+    Optional<UsuarioEntidad> buscarPorNombreUsuario(String nombreUsuario);
 
 }
 

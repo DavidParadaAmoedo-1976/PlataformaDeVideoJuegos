@@ -107,12 +107,12 @@ public class JuegoControlador {
         if (id == null)
             errores.add(new ErrorModel("id", TipoErrorEnum.OBLIGATORIO));
 
-        if (descuento == null){
+        if (descuento == null) {
             errores.add(new ErrorModel("descuento", TipoErrorEnum.OBLIGATORIO));
         }
         comprobarListaErrores(errores);
 
-        if(descuento < 0 || descuento > 100)
+        if (descuento < 0 || descuento > 100)
             errores.add(new ErrorModel("descuento", TipoErrorEnum.RANGO_INVALIDO));
 
         comprobarListaErrores(errores);
@@ -132,7 +132,7 @@ public class JuegoControlador {
 
     // Cambiar estado del juego
 
-    public void cambiarEstado(Long id,EstadoJuegoEnum nuevoEstado) throws ValidationException {
+    public void cambiarEstado(Long id, EstadoJuegoEnum nuevoEstado) throws ValidationException {
         List<ErrorModel> errores = new ArrayList<>();
 
         if (id == null)
