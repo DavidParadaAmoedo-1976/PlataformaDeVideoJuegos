@@ -52,10 +52,7 @@ public class ResenaRepo implements IResenaRepo {
     @Override
     public boolean eliminar(Long idEntidad) {
         Optional<ResenaEntidad> resenaEntidad = buscarPorId(idEntidad);
-        if (resenaEntidad.isEmpty()) {
-            return false;
-        }
-        return reseniasEntidad.remove(resenaEntidad.get());
+        return resenaEntidad.map(reseniasEntidad::remove).orElse(false);
     }
 
     @Override

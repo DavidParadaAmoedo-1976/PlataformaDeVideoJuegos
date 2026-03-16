@@ -1,5 +1,6 @@
 package org.davidparada.modelo.formulario.validacion;
 
+import org.davidparada.excepcion.ValidationException;
 import org.davidparada.modelo.enums.TipoErrorEnum;
 import org.davidparada.modelo.formulario.ResenaForm;
 
@@ -11,7 +12,7 @@ public class ResenaFormValidador {
     private ResenaFormValidador() {
     }
 
-    public static void validarResena(ResenaForm form) {
+    public static void validarResena(ResenaForm form) throws ValidationException {
         List<ErrorModel> errores = new ArrayList<>();
 
         if (form == null) {
@@ -41,7 +42,9 @@ public class ResenaFormValidador {
 
         // Estado
 
-
+        if (!errores.isEmpty()) {
+            throw new ValidationException(errores);
+        }
     }
 
     public static void validarMaxUnDecimal(String campo, Double valor, List<ErrorModel> errores) {

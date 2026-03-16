@@ -3,6 +3,7 @@ package org.davidparada.controlador;
 import org.davidparada.excepcion.ValidationException;
 import org.davidparada.modelo.dto.JuegoDto;
 import org.davidparada.modelo.dto.ResenaDto;
+import org.davidparada.modelo.entidad.BibliotecaEntidad;
 import org.davidparada.modelo.entidad.JuegoEntidad;
 import org.davidparada.modelo.entidad.ResenaEntidad;
 import org.davidparada.modelo.entidad.UsuarioEntidad;
@@ -35,16 +36,54 @@ public class ResenaControlador {
     }
 
     // Escribir reseña
-    public ResenaDto escribirResena(ResenaForm form) throws ValidationException {
+    public ResenaDto escribirResena(
+            Long idUsuario,
+            Long idJuego,
+            boolean recomendado,
+            String texto
+    ) throws ValidationException {
         List<ErrorModel> errores = new ArrayList<>();
 
+        if (idUsuario == null) {
+            errores.add(new ErrorModel("idUsuario", TipoErrorEnum.OBLIGATORIO));
+        }
+        if (idJuego == null) {
+            errores.add(new ErrorModel("idJuego", TipoErrorEnum.OBLIGATORIO));
+        }
+        if (texto == null || texto.isBlank()) {
+            errores.add(new ErrorModel("textoResena", TipoErrorEnum.OBLIGATORIO));
+        }
+        comprobarListaErrores(errores);
+
+        UsuarioEntidad usuario = obtenerUsuario(idUsuario, errores);
+        JuegoEntidad juego = obtenerJuego(idJuego, errores);
+        obtenerBiblioteca(idUsuario,idJuego, errores);
+
+        List<ResenaEntidad> resenasEntidad = resenaRepo.buscarPorJuego(idJuego);
+
+        boolean yaExiste = resenasEntidad.stream()
+                .anyMatch(r -> r.getIdUsuario().equals(idUsuario));
+        if (yaExiste) {
+            errores.add(new ErrorModel("resena", TipoErrorEnum.DUPLICADO));
+        }
+        comprobarListaErrores(errores);
+
+        ResenaForm form = new ResenaForm(
+                idUsuario,
+                idJuego,
+                recomendado,
+                texto,
+                0.0,
+                Instant.now(),
+                null,
+                EstadoPublicacionEnum.PUBLICADA
+        );
+
         ResenaFormValidador.validarResena(form);
-        UsuarioEntidad usuarioEntidad = obtenerUsuario(form.getIdUsuario(), errores);
-        JuegoEntidad juegoEntidad = obtenerJuego(form.getIdJuego(), errores);
 
-        ResenaEntidad resenaEntidad = resenaRepo.crear(form);
+        ResenaEntidad resena = resenaRepo.crear(form);
 
-        return ResenaEntidadADtoMapper.resenaEntidadADto(resenaEntidad, usuarioEntidad, juegoEntidad);
+        return ResenaEntidadADtoMapper.resenaEntidadADto(resena, usuario, juego);
     }
 
     // Eliminar reseña

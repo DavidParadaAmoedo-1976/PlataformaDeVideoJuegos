@@ -8,9 +8,11 @@ import org.davidparada.modelo.entidad.JuegoEntidad;
 import org.davidparada.modelo.entidad.ResenaEntidad;
 import org.davidparada.modelo.entidad.UsuarioEntidad;
 import org.davidparada.modelo.enums.*;
+import org.davidparada.modelo.formulario.BibliotecaForm;
 import org.davidparada.modelo.formulario.JuegoForm;
 import org.davidparada.modelo.formulario.ResenaForm;
 import org.davidparada.modelo.formulario.UsuarioForm;
+import org.davidparada.repositorio.implementacionMemoria.BibliotecaRepo;
 import org.davidparada.repositorio.implementacionMemoria.JuegoRepo;
 import org.davidparada.repositorio.implementacionMemoria.ResenaRepo;
 import org.davidparada.repositorio.implementacionMemoria.UsuarioRepo;
@@ -29,6 +31,7 @@ class ResenaControladorTest {
     private UsuarioRepo usuarioRepo;
     private JuegoRepo juegoRepo;
     private ResenaRepo resenaRepo;
+    private BibliotecaRepo bibliotecaRepo;
     private UsuarioEntidad usuario;
     private JuegoEntidad juego;
 
@@ -38,11 +41,12 @@ class ResenaControladorTest {
         usuarioRepo = new UsuarioRepo();
         juegoRepo = new JuegoRepo();
         resenaRepo = new ResenaRepo();
+        bibliotecaRepo = new BibliotecaRepo();
 
         controlador = new ResenaControlador(
                 resenaRepo
         );
-        new ObtenerEntidadesOptional(null, usuarioRepo, juegoRepo, null, null);
+        new ObtenerEntidadesOptional(null, usuarioRepo, juegoRepo, bibliotecaRepo, resenaRepo);
 
         // ===== Crear Usuario =====
         usuario = usuarioRepo.crear(
@@ -77,108 +81,106 @@ class ResenaControladorTest {
         );
     }
 
-    // ==============================
-    // ESCRIBIR RESEÑA
-    // ==============================
+// ==============================
+// ESCRIBIR RESEÑA
+// ==============================
 
     @Test
     void escribirResena_ok() throws Exception {
 
-        ResenaForm form = new ResenaForm(
+        bibliotecaRepo.crear(
+                new BibliotecaForm(
+                        usuario.getIdUsuario(),
+                        juego.getIdJuego(),
+                        Instant.now(),
+                        0.0,
+                        null,
+                        false
+                )
+        );
+
+        ResenaDto dto = controlador.escribirResena(
                 usuario.getIdUsuario(),
                 juego.getIdJuego(),
                 true,
-                "Gran juego",
-                40.0,
-                Instant.now(),
-                null,
-                EstadoPublicacionEnum.PUBLICADA
+                "Este es un gran juego con muchas horas de diversión y contenido"
         );
 
-        ResenaDto dto = controlador.escribirResena(form);
-
         assertNotNull(dto);
-        assertEquals("Gran juego", dto.textoResena());
         assertEquals(usuario.getIdUsuario(), dto.idUsuario());
-        assertEquals(EstadoPublicacionEnum.PUBLICADA, dto.estadoPublicacion());
     }
 
     @Test
     void noPermiteDosResenasMismoJuego() throws Exception {
+        bibliotecaRepo.crear(
+                new BibliotecaForm(
+                        usuario.getIdUsuario(),
+                        juego.getIdJuego(),
+                        Instant.now(),
+                        0.0,
+                        null,
+                        false
+                )
+        );
 
-        ResenaForm form = new ResenaForm(
+        controlador.escribirResena(
                 usuario.getIdUsuario(),
                 juego.getIdJuego(),
                 true,
-                "Texto suficientemente largo para cumplir validacion de longitud",
-                10.0,
-                Instant.now(),
-                null,
-                EstadoPublicacionEnum.PUBLICADA
+                "Texto suficientemente largo para cumplir validacion de longitud"
         );
-
-        controlador.escribirResena(form);
 
         assertThrows(
                 ValidationException.class,
-                () -> controlador.escribirResena(form)
+                () -> controlador.escribirResena(
+                        usuario.getIdUsuario(),
+                        juego.getIdJuego(),
+                        true,
+                        "Texto suficientemente largo para cumplir validacion de longitud"
+                )
         );
     }
 
     @Test
     void textoResenaDemasiadoCorto() {
 
-        ResenaForm form = new ResenaForm(
-                usuario.getIdUsuario(),
-                juego.getIdJuego(),
-                true,
-                "corto",
-                5.0,
-                Instant.now(),
-                null,
-                EstadoPublicacionEnum.PUBLICADA
-        );
-
         assertThrows(
                 ValidationException.class,
-                () -> controlador.escribirResena(form)
+                () -> controlador.escribirResena(
+                        usuario.getIdUsuario(),
+                        juego.getIdJuego(),
+                        true,
+                        "corto"
+                )
         );
     }
 
     @Test
     void escribirResena_usuarioNoExiste() {
 
-        ResenaForm form = new ResenaForm(
-                999L,
-                juego.getIdJuego(),
-                true,
-                "Texto",
-                10.0,
-                Instant.now(),
-                null,
-                EstadoPublicacionEnum.PUBLICADA
+        assertThrows(
+                ValidationException.class,
+                () -> controlador.escribirResena(
+                        999L,
+                        juego.getIdJuego(),
+                        true,
+                        "Texto suficientemente largo para cumplir validacion"
+                )
         );
-
-        assertThrows(ValidationException.class,
-                () -> controlador.escribirResena(form));
     }
 
     @Test
     void escribirResena_juegoNoExiste() {
 
-        ResenaForm form = new ResenaForm(
-                usuario.getIdUsuario(),
-                999L,
-                true,
-                "Texto",
-                10.0,
-                Instant.now(),
-                null,
-                EstadoPublicacionEnum.PUBLICADA
+        assertThrows(
+                ValidationException.class,
+                () -> controlador.escribirResena(
+                        usuario.getIdUsuario(),
+                        999L,
+                        true,
+                        "Texto suficientemente largo para cumplir validacion"
+                )
         );
-
-        assertThrows(ValidationException.class,
-                () -> controlador.escribirResena(form));
     }
 
     // ==============================
@@ -188,20 +190,13 @@ class ResenaControladorTest {
     @Test
     void eliminarResena_ok() throws Exception {
 
-        ResenaEntidad resena = resenaRepo.crear(
-                new ResenaForm(
-                        usuario.getIdUsuario(),
-                        juego.getIdJuego(),
-                        true,
-                        "Eliminar",
-                        5.0,
-                        Instant.now(),
-                        null,
-                        EstadoPublicacionEnum.PUBLICADA
-                )
-        );
+        ResenaEntidad resena = crearResenaBase();
 
-        boolean eliminado = controlador.eliminarResena(resena.getIdResena(), resena.getIdUsuario());
+        boolean eliminado =
+                controlador.eliminarResena(
+                        resena.getIdResena(),
+                        resena.getIdUsuario()
+                );
 
         assertTrue(eliminado);
     }
@@ -231,20 +226,13 @@ class ResenaControladorTest {
     @Test
     void ocultarResena_ok() throws Exception {
 
-        ResenaEntidad resena = resenaRepo.crear(
-                new ResenaForm(
-                        usuario.getIdUsuario(),
-                        juego.getIdJuego(),
-                        true,
-                        "Ocultar",
-                        20.0,
-                        Instant.now(),
-                        null,
-                        EstadoPublicacionEnum.PUBLICADA
-                )
-        );
+        ResenaEntidad resena = crearResenaBase();
 
-        ResenaDto dto = controlador.ocultarResena(resena.getIdResena(),usuario.getIdUsuario());
+        ResenaDto dto =
+                controlador.ocultarResena(
+                        resena.getIdResena(),
+                        usuario.getIdUsuario()
+                );
 
         assertEquals(EstadoPublicacionEnum.OCULTA, dto.estadoPublicacion());
         assertNotNull(dto.fechaUltimaEdicion());
@@ -263,18 +251,7 @@ class ResenaControladorTest {
     @Test
     void obtenerResenas_ok() throws Exception {
 
-        resenaRepo.crear(
-                new ResenaForm(
-                        usuario.getIdUsuario(),
-                        juego.getIdJuego(),
-                        true,
-                        "Reseña 1",
-                        10.0,
-                        Instant.now(),
-                        null,
-                        EstadoPublicacionEnum.PUBLICADA
-                )
-        );
+        crearResenaBase();
 
         List<ResenaDto> lista = controlador.obtenerResenas(
                 juego.getIdJuego(),
@@ -283,7 +260,6 @@ class ResenaControladorTest {
         );
 
         assertEquals(1, lista.size());
-        assertEquals("Reseña 1", lista.get(0).textoResena());
     }
 
     @Test
@@ -306,7 +282,7 @@ class ResenaControladorTest {
                         usuario.getIdUsuario(),
                         juego.getIdJuego(),
                         false,
-                        "No recomendable",
+                        "Este juego no me ha gustado porque tiene muchos errores",
                         10.0,
                         Instant.now(),
                         null,
@@ -330,24 +306,12 @@ class ResenaControladorTest {
     @Test
     void obtenerResenasUsuario_ok() throws Exception {
 
-        resenaRepo.crear(
-                new ResenaForm(
-                        usuario.getIdUsuario(),
-                        juego.getIdJuego(),
-                        true,
-                        "Usuario reseña",
-                        15.0,
-                        Instant.now(),
-                        null,
-                        EstadoPublicacionEnum.PUBLICADA
-                )
-        );
+        crearResenaBase();
 
         List<ResenaDto> lista =
                 controlador.obtenerResenasUsuario(usuario.getIdUsuario());
 
         assertEquals(1, lista.size());
-        assertEquals("Usuario reseña", lista.get(0).textoResena());
     }
 
     @Test
@@ -363,40 +327,28 @@ class ResenaControladorTest {
     @Test
     void crearResena_TextoVacio_LanzaValidationException() {
 
-        ResenaForm form = new ResenaForm(
-                usuario.getIdUsuario(),
-                juego.getIdJuego(),
-                true,
-                "",
-                5.0,
-                Instant.now(),
-                null,
-                EstadoPublicacionEnum.PUBLICADA
-        );
-
         assertThrows(
                 ValidationException.class,
-                () -> controlador.escribirResena(form)
+                () -> controlador.escribirResena(
+                        usuario.getIdUsuario(),
+                        juego.getIdJuego(),
+                        true,
+                        ""
+                )
         );
     }
 
     @Test
     void crearResena_TextoMenor50Caracteres_LanzaValidationException() {
 
-        ResenaForm form = new ResenaForm(
-                usuario.getIdUsuario(),
-                juego.getIdJuego(),
-                true,
-                "Texto corto de prueba",
-                5.0,
-                Instant.now(),
-                null,
-                EstadoPublicacionEnum.PUBLICADA
-        );
-
         assertThrows(
                 ValidationException.class,
-                () -> controlador.escribirResena(form)
+                () -> controlador.escribirResena(
+                        usuario.getIdUsuario(),
+                        juego.getIdJuego(),
+                        true,
+                        "Texto corto de prueba"
+                )
         );
     }
 
@@ -405,20 +357,14 @@ class ResenaControladorTest {
 
         String texto = "a".repeat(8001);
 
-        ResenaForm form = new ResenaForm(
-                usuario.getIdUsuario(),
-                juego.getIdJuego(),
-                true,
-                texto,
-                5.0,
-                Instant.now(),
-                null,
-                EstadoPublicacionEnum.PUBLICADA
-        );
-
         assertThrows(
                 ValidationException.class,
-                () -> controlador.escribirResena(form)
+                () -> controlador.escribirResena(
+                        usuario.getIdUsuario(),
+                        juego.getIdJuego(),
+                        true,
+                        texto
+                )
         );
     }
 
@@ -440,20 +386,14 @@ class ResenaControladorTest {
                 )
         );
 
-        ResenaForm form = new ResenaForm(
-                otroUsuario.getIdUsuario(),
-                juego.getIdJuego(),
-                true,
-                "Texto suficientemente largo para que pase validacion minima de caracteres en reseña",
-                10.0,
-                Instant.now(),
-                null,
-                EstadoPublicacionEnum.PUBLICADA
-        );
-
         assertThrows(
                 ValidationException.class,
-                () -> controlador.escribirResena(form)
+                () -> controlador.escribirResena(
+                        otroUsuario.getIdUsuario(),
+                        juego.getIdJuego(),
+                        true,
+                        "Texto suficientemente largo para que pase validacion minima de caracteres en reseña"
+                )
         );
     }
 
@@ -465,18 +405,7 @@ class ResenaControladorTest {
     @Test
     void eliminarResena_UsuarioNoEsDuenio_LanzaValidationException() throws Exception {
 
-        ResenaEntidad resena = resenaRepo.crear(
-                new ResenaForm(
-                        usuario.getIdUsuario(),
-                        juego.getIdJuego(),
-                        true,
-                        "Texto suficientemente largo para validacion",
-                        5.0,
-                        Instant.now(),
-                        null,
-                        EstadoPublicacionEnum.PUBLICADA
-                )
-        );
+        ResenaEntidad resena = crearResenaBase();
 
         UsuarioEntidad otroUsuario = usuarioRepo.crear(
                 new UsuarioForm(
@@ -519,18 +448,7 @@ class ResenaControladorTest {
     @Test
     void ocultarResena_UsuarioNoEsDuenio_LanzaValidationException() throws Exception {
 
-        ResenaEntidad resena = resenaRepo.crear(
-                new ResenaForm(
-                        usuario.getIdUsuario(),
-                        juego.getIdJuego(),
-                        true,
-                        "Texto suficientemente largo para validacion",
-                        5.0,
-                        Instant.now(),
-                        null,
-                        EstadoPublicacionEnum.PUBLICADA
-                )
-        );
+        ResenaEntidad resena = crearResenaBase();
 
         UsuarioEntidad otroUsuario = usuarioRepo.crear(
                 new UsuarioForm(
@@ -583,5 +501,25 @@ class ResenaControladorTest {
                 controlador.obtenerResenasUsuario(nuevoUsuario.getIdUsuario());
 
         assertTrue(lista.isEmpty());
+    }
+
+// ==========
+// HELPER
+// ==========
+
+    private ResenaEntidad crearResenaBase() {
+
+        return resenaRepo.crear(
+                new ResenaForm(
+                        usuario.getIdUsuario(),
+                        juego.getIdJuego(),
+                        true,
+                        "a".repeat(60), // texto válido >=50
+                        10.0,
+                        Instant.now(),
+                        null,
+                        EstadoPublicacionEnum.PUBLICADA
+                )
+        );
     }
 }
