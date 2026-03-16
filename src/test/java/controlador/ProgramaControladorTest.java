@@ -1,6 +1,7 @@
 package controlador;
 
 import org.davidparada.controlador.ProgramaControlador;
+import org.davidparada.controlador.util.ObtenerEntidadesOptional;
 import org.davidparada.excepcion.ValidationException;
 import org.davidparada.modelo.dto.JuegosPopularesDto;
 import org.davidparada.modelo.dto.ReporteUsuariosDto;
@@ -47,7 +48,7 @@ class ProgramaControladorTest {
                 bibliotecaRepo,
                 resenaRepo
         );
-
+        new ObtenerEntidadesOptional(compraRepo, usuarioRepo, juegoRepo, bibliotecaRepo, resenaRepo);
         cargarDatosBase();
     }
 

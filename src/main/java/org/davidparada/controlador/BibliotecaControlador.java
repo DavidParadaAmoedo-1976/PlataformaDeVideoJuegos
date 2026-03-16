@@ -148,28 +148,28 @@ public class BibliotecaControlador {
 
     // Actualizar tiempo de juego
 
-    public void anadirTiempoDeJuego(Long idUsuario, Long idJuego, double horas, BibliotecaForm form) throws ValidationException {
-        List<ErrorModel> errores = new ArrayList<>();
+    public void anadirTiempoDeJuego(Long idUsuario, Long idJuego, double horas) throws ValidationException {
 
+        List<ErrorModel> errores = new ArrayList<>();
 
         comprobarIdUsuario(idUsuario, errores);
         comprobarIdJuego(idJuego, errores);
 
-        if (form == null) {
-            throw new ValidationException(List.of(new ErrorModel("formulario", TipoErrorEnum.NO_ENCONTRADO)
-            ));
-
+        if (horas < 0) {
+            errores.add(new ErrorModel("horas", TipoErrorEnum.RANGO_INVALIDO));
         }
+
+        comprobarListaErrores(errores);
 
         BibliotecaEntidad biblioteca = obtenerBiblioteca(idUsuario, idJuego, errores);
 
         BibliotecaForm actualizarTiempoDeJuego = new BibliotecaForm(
                 idUsuario,
                 idJuego,
-                form.getFechaAdquisicion(),
+                biblioteca.getFechaAdquisicion(),
                 biblioteca.getHorasDeJuego() + horas,
-                form.getUltimaFechaDeJuego(),
-                form.isEstadoInstalacion()
+                Instant.now(), // actualizar última sesión
+                biblioteca.isEstadoInstalacion()
         );
 
         bibliotecaRepo.actualizar(biblioteca.getIdBiblioteca(), actualizarTiempoDeJuego);

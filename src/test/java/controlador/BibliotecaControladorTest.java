@@ -1,6 +1,7 @@
 package controlador;
 
 import org.davidparada.controlador.BibliotecaControlador;
+import org.davidparada.controlador.util.ObtenerEntidadesOptional;
 import org.davidparada.excepcion.ValidationException;
 import org.davidparada.modelo.dto.BibliotecaDto;
 import org.davidparada.modelo.entidad.UsuarioEntidad;
@@ -35,6 +36,9 @@ class BibliotecaControladorTest {
         bibliotecaRepo = new BibliotecaRepo();
         usuarioRepo = new UsuarioRepo();
         juegoRepo = new JuegoRepo();
+
+        new ObtenerEntidadesOptional(null, usuarioRepo, juegoRepo, bibliotecaRepo, null);
+
 
         UsuarioForm usuarioForm = new UsuarioForm(
                 "David",
@@ -74,7 +78,7 @@ class BibliotecaControladorTest {
     }
 
     // ======================================================
-    // 1️⃣ VER BIBLIOTECA
+    // VER BIBLIOTECA
     // ======================================================
 
     @Test
@@ -93,7 +97,7 @@ class BibliotecaControladorTest {
     }
 
     // ======================================================
-    // 2️⃣ AÑADIR JUEGO
+    // AÑADIR JUEGO
     // ======================================================
 
     @Test
@@ -120,7 +124,7 @@ class BibliotecaControladorTest {
     }
 
     // ======================================================
-    // 3️⃣ ELIMINAR JUEGO
+    // ELIMINAR JUEGO
     // ======================================================
 
     @Test
@@ -137,8 +141,25 @@ class BibliotecaControladorTest {
     }
 
     // ======================================================
-    // 4️⃣ AÑADIR TIEMPO DE JUEGO
+    // AÑADIR TIEMPO DE JUEGO
     // ======================================================
+
+    @Test
+    void actualizarTiempoJuego_entradaValida_tiempoActualizado() throws Exception {
+
+        controlador.anadirJuego(idUsuario, idJuego);
+
+        // añadir tiempo primera vez
+        controlador.anadirTiempoDeJuego(idUsuario, idJuego, 5.0);
+
+        // añadir tiempo segunda vez
+        controlador.anadirTiempoDeJuego(idUsuario, idJuego, 3.0);
+
+        var entidad = bibliotecaRepo.buscarPorUsuarioYJuego(idUsuario, idJuego);
+
+        assertTrue(entidad.isPresent());
+        assertEquals(8.0, entidad.get().getHorasDeJuego());
+    }
 
     @Test
     void anadirTiempoNegativo() throws Exception {
@@ -147,7 +168,7 @@ class BibliotecaControladorTest {
 
         assertThrows(
                 ValidationException.class,
-                () -> controlador.anadirTiempoDeJuego(idUsuario, idJuego, -5.0, null)
+                () -> controlador.anadirTiempoDeJuego(idUsuario, idJuego, -5.0)
         );
     }
 
@@ -168,7 +189,7 @@ class BibliotecaControladorTest {
                 entidad.get().isEstadoInstalacion()
         );
 
-        controlador.anadirTiempoDeJuego(idUsuario, idJuego, 5.0, form);
+        controlador.anadirTiempoDeJuego(idUsuario, idJuego, 5.0);
 
         var actualizada =
                 bibliotecaRepo.buscarPorUsuarioYJuego(idUsuario, idJuego);
@@ -179,11 +200,11 @@ class BibliotecaControladorTest {
     @Test
     void anadirTiempo_horasNull() {
         assertThrows(ValidationException.class,
-                () -> controlador.anadirTiempoDeJuego(idUsuario, idJuego, 0, null));
+                () -> controlador.anadirTiempoDeJuego(idUsuario, idJuego, 0));
     }
 
     // ======================================================
-    // 5️⃣ CONSULTAR ÚLTIMA SESIÓN
+    // CONSULTAR ÚLTIMA SESIÓN
     // ======================================================
 
     @Test
@@ -220,7 +241,7 @@ class BibliotecaControladorTest {
     }
 
     // ======================================================
-    // 6️⃣ BUSCAR SEGÚN CRITERIOS
+    // BUSCAR SEGÚN CRITERIOS
     // ======================================================
 
     @Test
@@ -280,7 +301,7 @@ class BibliotecaControladorTest {
 
 
     // ======================================================
-    // 7️⃣ ESTADÍSTICAS BIBLIOTECA
+    // ESTADÍSTICAS BIBLIOTECA
     // ======================================================
 
     @Test

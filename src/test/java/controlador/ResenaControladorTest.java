@@ -1,6 +1,7 @@
 package controlador;
 
 import org.davidparada.controlador.ResenaControlador;
+import org.davidparada.controlador.util.ObtenerEntidadesOptional;
 import org.davidparada.excepcion.ValidationException;
 import org.davidparada.modelo.dto.ResenaDto;
 import org.davidparada.modelo.entidad.JuegoEntidad;
@@ -41,6 +42,7 @@ class ResenaControladorTest {
         controlador = new ResenaControlador(
                 resenaRepo
         );
+        new ObtenerEntidadesOptional(null, usuarioRepo, juegoRepo, null, null);
 
         // ===== Crear Usuario =====
         usuario = usuarioRepo.crear(
@@ -352,5 +354,234 @@ class ResenaControladorTest {
     void obtenerResenasUsuario_noExiste() {
         assertThrows(ValidationException.class,
                 () -> controlador.obtenerResenasUsuario(999L));
+    }
+
+    // ==============================
+    // TEST DEL PROFESOR
+    // ==============================
+
+    @Test
+    void crearResena_TextoVacio_LanzaValidationException() {
+
+        ResenaForm form = new ResenaForm(
+                usuario.getIdUsuario(),
+                juego.getIdJuego(),
+                true,
+                "",
+                5.0,
+                Instant.now(),
+                null,
+                EstadoPublicacionEnum.PUBLICADA
+        );
+
+        assertThrows(
+                ValidationException.class,
+                () -> controlador.escribirResena(form)
+        );
+    }
+
+    @Test
+    void crearResena_TextoMenor50Caracteres_LanzaValidationException() {
+
+        ResenaForm form = new ResenaForm(
+                usuario.getIdUsuario(),
+                juego.getIdJuego(),
+                true,
+                "Texto corto de prueba",
+                5.0,
+                Instant.now(),
+                null,
+                EstadoPublicacionEnum.PUBLICADA
+        );
+
+        assertThrows(
+                ValidationException.class,
+                () -> controlador.escribirResena(form)
+        );
+    }
+
+    @Test
+    void crearResena_TextoMayor8000Caracteres_LanzaValidationException() {
+
+        String texto = "a".repeat(8001);
+
+        ResenaForm form = new ResenaForm(
+                usuario.getIdUsuario(),
+                juego.getIdJuego(),
+                true,
+                texto,
+                5.0,
+                Instant.now(),
+                null,
+                EstadoPublicacionEnum.PUBLICADA
+        );
+
+        assertThrows(
+                ValidationException.class,
+                () -> controlador.escribirResena(form)
+        );
+    }
+
+    @Test
+    void crearResena_UsuarioSinJuegoEnBiblioteca_LanzaValidationException() {
+
+        UsuarioEntidad otroUsuario = usuarioRepo.crear(
+                new UsuarioForm(
+                        "otro",
+                        "otro@email.com",
+                        "1234",
+                        "Otro Usuario",
+                        PaisEnum.ESPANA,
+                        LocalDate.of(2000,1,1),
+                        Instant.now(),
+                        null,
+                        0.0,
+                        EstadoCuentaEnum.ACTIVA
+                )
+        );
+
+        ResenaForm form = new ResenaForm(
+                otroUsuario.getIdUsuario(),
+                juego.getIdJuego(),
+                true,
+                "Texto suficientemente largo para que pase validacion minima de caracteres en reseña",
+                10.0,
+                Instant.now(),
+                null,
+                EstadoPublicacionEnum.PUBLICADA
+        );
+
+        assertThrows(
+                ValidationException.class,
+                () -> controlador.escribirResena(form)
+        );
+    }
+
+
+// ======================================================
+// ELIMINAR RESEÑA - VALIDACIONES EXTRA
+// ======================================================
+
+    @Test
+    void eliminarResena_UsuarioNoEsDuenio_LanzaValidationException() throws Exception {
+
+        ResenaEntidad resena = resenaRepo.crear(
+                new ResenaForm(
+                        usuario.getIdUsuario(),
+                        juego.getIdJuego(),
+                        true,
+                        "Texto suficientemente largo para validacion",
+                        5.0,
+                        Instant.now(),
+                        null,
+                        EstadoPublicacionEnum.PUBLICADA
+                )
+        );
+
+        UsuarioEntidad otroUsuario = usuarioRepo.crear(
+                new UsuarioForm(
+                        "otro",
+                        "otro@test.com",
+                        "1234",
+                        "Otro",
+                        PaisEnum.ESPANA,
+                        LocalDate.of(2000,1,1),
+                        Instant.now(),
+                        null,
+                        0.0,
+                        EstadoCuentaEnum.ACTIVA
+                )
+        );
+
+        assertThrows(
+                ValidationException.class,
+                () -> controlador.eliminarResena(
+                        resena.getIdResena(),
+                        otroUsuario.getIdUsuario()
+                )
+        );
+    }
+
+
+// ======================================================
+// OCULTAR RESEÑA - VALIDACIONES EXTRA
+// ======================================================
+
+    @Test
+    void ocultarResena_IdInvalido_LanzaValidationException() {
+
+        assertThrows(
+                ValidationException.class,
+                () -> controlador.ocultarResena(null, usuario.getIdUsuario())
+        );
+    }
+
+    @Test
+    void ocultarResena_UsuarioNoEsDuenio_LanzaValidationException() throws Exception {
+
+        ResenaEntidad resena = resenaRepo.crear(
+                new ResenaForm(
+                        usuario.getIdUsuario(),
+                        juego.getIdJuego(),
+                        true,
+                        "Texto suficientemente largo para validacion",
+                        5.0,
+                        Instant.now(),
+                        null,
+                        EstadoPublicacionEnum.PUBLICADA
+                )
+        );
+
+        UsuarioEntidad otroUsuario = usuarioRepo.crear(
+                new UsuarioForm(
+                        "otro2",
+                        "otro2@test.com",
+                        "1234",
+                        "Otro",
+                        PaisEnum.ESPANA,
+                        LocalDate.of(2000,1,1),
+                        Instant.now(),
+                        null,
+                        0.0,
+                        EstadoCuentaEnum.ACTIVA
+                )
+        );
+
+        assertThrows(
+                ValidationException.class,
+                () -> controlador.ocultarResena(
+                        resena.getIdResena(),
+                        otroUsuario.getIdUsuario()
+                )
+        );
+    }
+
+
+// ======================================================
+// LISTAR RESEÑAS USUARIO - CASOS FALTANTES
+// ======================================================
+
+    @Test
+    void listarResenasPorUsuario_UsuarioSinResenas_RetornaListaVacia() throws Exception {
+
+        UsuarioEntidad nuevoUsuario = usuarioRepo.crear(
+                new UsuarioForm(
+                        "nuevo",
+                        "nuevo@test.com",
+                        "1234",
+                        "Nuevo Usuario",
+                        PaisEnum.ESPANA,
+                        LocalDate.of(2000,1,1),
+                        Instant.now(),
+                        null,
+                        0.0,
+                        EstadoCuentaEnum.ACTIVA
+                )
+        );
+
+        List<ResenaDto> lista =
+                controlador.obtenerResenasUsuario(nuevoUsuario.getIdUsuario());
+
+        assertTrue(lista.isEmpty());
     }
 }
