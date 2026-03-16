@@ -6,6 +6,8 @@ import org.davidparada.excepcion.ValidationException;
 import org.davidparada.modelo.dto.CompraDto;
 import org.davidparada.modelo.dto.DetallesCompraDto;
 import org.davidparada.modelo.dto.FacturaDto;
+import org.davidparada.modelo.entidad.JuegoEntidad;
+import org.davidparada.modelo.entidad.UsuarioEntidad;
 import org.davidparada.modelo.enums.*;
 import org.davidparada.modelo.formulario.CompraForm;
 import org.davidparada.modelo.formulario.JuegoForm;
@@ -80,6 +82,64 @@ class CompraControladorTest {
 
         assertNotNull(dto);
         assertEquals(usuario.getIdUsuario(), dto.idUsuario());
+    }
+
+    @Test
+    void usuarioSuspendidoNoPuedeComprar() throws Exception {
+
+        var usuario = usuarioRepo.crear(new UsuarioForm(
+                "user",
+                "email@test.com",
+                "Password1",
+                "Nombre",
+                PaisEnum.ESPANA,
+                LocalDate.now().minusYears(20),
+                Instant.now(),
+                null,
+                100.0,
+                EstadoCuentaEnum.SUSPENDIDA
+        ));
+
+        var juego = crearJuego();
+
+        CompraForm form = new CompraForm(
+                usuario.getIdUsuario(),
+                juego.getIdJuego(),
+                Instant.now(),
+                MetodoPagoEnum.PAYPAL,
+                50.0,
+                50.0,
+                EstadoCompraEnum.PENDIENTE
+        );
+
+        assertThrows(
+                ValidationException.class,
+                () -> compraControlador.realizarCompra(form)
+        );
+    }
+
+    @Test
+    void noPermiteComprarJuegoDosVeces() throws Exception {
+
+        var usuario = crearUsuario();
+        var juego = crearJuego();
+
+        CompraForm form = new CompraForm(
+                usuario.getIdUsuario(),
+                juego.getIdJuego(),
+                Instant.now(),
+                MetodoPagoEnum.PAYPAL,
+                50.0,
+                50.0,
+                EstadoCompraEnum.PENDIENTE
+        );
+
+        compraControlador.realizarCompra(form);
+
+        assertThrows(
+                ValidationException.class,
+                () -> compraControlador.realizarCompra(form)
+        );
     }
 
     @Test
@@ -166,6 +226,15 @@ class CompraControladorTest {
                 MetodoPagoEnum.TARJETA);
 
         assertTrue(resultado);
+    }
+
+    @Test
+    void procesarPagoCompraNoExiste() {
+
+        assertThrows(
+                ValidationException.class,
+                () -> compraControlador.procesarPago(999L, MetodoPagoEnum.PAYPAL)
+        );
     }
 
     // =========================
@@ -286,5 +355,41 @@ class CompraControladorTest {
 
         assertNotNull(factura);
         assertEquals(compra.getIdCompra(), factura.idCompra());
+    }
+
+    private UsuarioEntidad crearUsuario() {
+
+        return usuarioRepo.crear(
+                new UsuarioForm(
+                        "user" + System.nanoTime(),
+                        "email" + System.nanoTime() + "@test.com",
+                        "Password1",
+                        "Nombre",
+                        PaisEnum.ESPANA,
+                        LocalDate.now().minusYears(20),
+                        Instant.now(),
+                        "avatar",
+                        100.0,
+                        EstadoCuentaEnum.ACTIVA
+                )
+        );
+    }
+
+    private JuegoEntidad crearJuego() {
+
+        return juegoRepo.crear(
+                new JuegoForm(
+                        "Juego" + System.nanoTime(),
+                        "Descripcion",
+                        "Dev",
+                        LocalDate.now(),
+                        50.0,
+                        0,
+                        "Accion",
+                        ClasificacionJuegoEnum.PEGI_18,
+                        new String[]{"ES"},
+                        EstadoJuegoEnum.DISPONIBLE
+                )
+        );
     }
 }

@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.davidparada.controlador.util.ComprobarErrores.comprobarListaErrores;
+import static org.davidparada.controlador.util.ObtenerEntidadesOptional.*;
 
 public class UsuarioControlador {
 
@@ -26,13 +27,19 @@ public class UsuarioControlador {
 
     //Registrar nuevo usuario
 
-    public UsuarioDto registrarUsuario(UsuarioForm form)
-            throws ValidationException {
-
+    public UsuarioDto registrarUsuario(UsuarioForm form) throws ValidationException {
+        List<ErrorModel> errores = new ArrayList<>();
         UsuarioFormValidador.validarUsuario(form);
 
-        UsuarioEntidad usuario = usuarioRepo.crear(form);
+        if (usuarioRepo.buscarPorEmail(form.getEmail()).isPresent()) {
+            errores.add(new ErrorModel("email", TipoErrorEnum.DUPLICADO));
+        }
+        if (usuarioRepo.buscarPorNombreUsuario(form.getNombreUsuario()).isPresent()) {
+            errores.add(new ErrorModel("nombre", TipoErrorEnum.DUPLICADO));
+        }
+        comprobarListaErrores(errores);
 
+        UsuarioEntidad usuario = usuarioRepo.crear(form);
         return UsuarioEntidadADtoMapper.usuarioEntidadADto(usuario);
     }
 
@@ -45,13 +52,20 @@ public class UsuarioControlador {
             errores.add(new ErrorModel("id", TipoErrorEnum.OBLIGATORIO));
         }
         comprobarListaErrores(errores);
-        UsuarioEntidad usuario = usuarioRepo.buscarPorId(id);
+        UsuarioEntidad usuario = obtenerUsuario(id, errores);
 
-        if (usuario == null) {
-            errores.add(new ErrorModel("id", TipoErrorEnum.NO_ENCONTRADO));
-        }
-        comprobarListaErrores(errores);
         return UsuarioEntidadADtoMapper.usuarioEntidadADto(usuario);
+    }
+
+    public UsuarioDto consultarPerfil(String nombreUsuario) {
+
+        if (nombreUsuario == null || nombreUsuario.isBlank()) {
+            return null;
+        }
+
+        return usuarioRepo.buscarPorNombreUsuario(nombreUsuario)
+                .map(UsuarioEntidadADtoMapper::usuarioEntidadADto)
+                .orElse(null);
     }
 
     // Anadir saldo a cartera
@@ -72,12 +86,10 @@ public class UsuarioControlador {
                 errores.add(new ErrorModel("saldo", TipoErrorEnum.RANGO_INVALIDO));
         }
         comprobarListaErrores(errores);
-        UsuarioEntidad usuario = usuarioRepo.buscarPorId(id);
+        java.util.Objects.requireNonNull(cantidad);
 
-        if (usuario == null) {
-            errores.add(new ErrorModel("id", TipoErrorEnum.NO_ENCONTRADO));
-        }
-        comprobarListaErrores(errores);
+        UsuarioEntidad usuario = obtenerUsuario(id,  errores);
+
         if (usuario.getEstadoCuenta() != EstadoCuentaEnum.ACTIVA)
             errores.add(new ErrorModel("estadoCuenta", TipoErrorEnum.ESTADO_INCORRECTO));
         comprobarListaErrores(errores);
@@ -103,12 +115,7 @@ public class UsuarioControlador {
             errores.add(new ErrorModel("id", TipoErrorEnum.OBLIGATORIO));
         }
         comprobarListaErrores(errores);
-        UsuarioEntidad usuario = usuarioRepo.buscarPorId(id);
-
-        if (usuario == null) {
-            errores.add(new ErrorModel("id", TipoErrorEnum.NO_ENCONTRADO));
-        }
-        comprobarListaErrores(errores);
+        UsuarioEntidad usuario = obtenerUsuario(id, errores);
         return usuario.getSaldo();
     }
 
@@ -130,11 +137,7 @@ public class UsuarioControlador {
 //        if (!errores.isEmpty())
 //            throw new ValidationException(errores);
 //
-//        UsuarioEntidad usuario = usuarioRepo.buscarPorId(id);
-//
-//        if (usuario == null)
-//            throw new ValidationException(List.of(
-//                    new ErrorModel("id", TipoErrorEnum.NO_ENCONTRADO)));
+//        UsuarioEntidad usuario = obtenerUsuario(id, errores);
 //
 //        usuarioRepo.actualizar(usuario.getIdUsuario(), new UsuarioForm(
 //                usuario.getNombreUsuario(),

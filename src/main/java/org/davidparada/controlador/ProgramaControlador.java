@@ -1,19 +1,19 @@
-package org.DavidParada.controlador;
+package org.davidparada.controlador;
 
-import org.DavidParada.excepcion.ValidationException;
-import org.DavidParada.modelo.dto.*;
-import org.DavidParada.modelo.entidad.*;
-import org.DavidParada.modelo.enums.CriterioPopularidadEnum;
-import org.DavidParada.modelo.enums.TipoErrorEnum;
-import org.DavidParada.modelo.formulario.validacion.ErrorModel;
-import org.DavidParada.modelo.mapper.JuegoEntidadADtoMapper;
-import org.DavidParada.repositorio.interfaces.*;
+import org.davidparada.excepcion.ValidationException;
+import org.davidparada.modelo.dto.*;
+import org.davidparada.modelo.entidad.*;
+import org.davidparada.modelo.enums.CriterioPopularidadEnum;
+import org.davidparada.modelo.enums.TipoErrorEnum;
+import org.davidparada.modelo.formulario.validacion.ErrorModel;
+import org.davidparada.modelo.mapper.JuegoEntidadADtoMapper;
+import org.davidparada.repositorio.interfaces.*;
 
 import java.time.Instant;
-import java.time.chrono.ChronoLocalDate;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
+
+import static org.davidparada.controlador.util.ComprobarErrores.comprobarListaErrores;
+import static org.davidparada.controlador.util.ObtenerEntidadesOptional.*;
 
 public class ProgramaControlador {
 
@@ -39,7 +39,11 @@ public class ProgramaControlador {
 
     // Generar reportes de ventas
 
-    public ReporteVentasDto generarReporteVentas(Instant inicio, Instant fin, Long idJuego, String desarrollador) throws ValidationException {
+    public ReporteVentasDto generarReporteVentas(Instant inicio,
+                                                 Instant fin,
+                                                 Long idJuego,
+                                                 String desarrollador) throws ValidationException {
+
         List<ErrorModel> errores = new ArrayList<>();
 
         if (inicio == null || fin == null) {
@@ -49,22 +53,28 @@ public class ProgramaControlador {
         }
         comprobarListaErrores(errores);
 
+        Instant inicioSeguro = java.util.Objects.requireNonNull(inicio);
+        Instant finSeguro = java.util.Objects.requireNonNull(fin);
+
         List<CompraEntidad> comprasFiltradas = compraRepo.listarTodos().stream()
 
-                .filter(c -> {
-                    assert inicio != null;
-                    return c.getFechaCompra().isAfter(inicio);
-                })
-                .filter(c -> {
-                    assert fin != null;
-                    return c.getFechaCompra().isBefore(fin);
-                })
+                .filter(c -> c.getFechaCompra().isAfter(inicioSeguro))
+                .filter(c -> c.getFechaCompra().isBefore(finSeguro))
+
                 .filter(c -> idJuego == null || c.getIdJuego().equals(idJuego))
+
                 .filter(c -> {
-                    if (desarrollador == null) return true;
-                    JuegoEntidad juego = juegoRepo.buscarPorId(c.getIdJuego());
-                    return juego != null && juego.getDesarrollador().equalsIgnoreCase(desarrollador);
+                    if (desarrollador == null) {
+                        return true;
+                    }
+
+                    Optional<JuegoEntidad> juego = juegoRepo.buscarPorId(c.getIdJuego());
+
+                    return juego
+                            .map(j -> j.getDesarrollador().equalsIgnoreCase(desarrollador))
+                            .orElse(false);
                 })
+
                 .toList();
 
         int totalVentas = comprasFiltradas.size();
@@ -86,9 +96,13 @@ public class ProgramaControlador {
             errores.add(new ErrorModel("fechas", TipoErrorEnum.RANGO_INVALIDO));
         }
         comprobarListaErrores(errores);
+
+        Instant inicioSeguro = java.util.Objects.requireNonNull(inicio);
+        Instant finSeguro = java.util.Objects.requireNonNull(fin);
+
         int nuevosUsuarios = (int) usuarioRepo.listarTodos().stream()
-                .filter(u -> u.getFechaRegistro().isAfter(inicio))
-                .filter(u -> u.getFechaRegistro().isBefore(fin))
+                .filter(u -> u.getFechaRegistro().isAfter(inicioSeguro))
+                .filter(u -> u.getFechaRegistro().isBefore(finSeguro))
                 .count();
 
         int usuariosActivos = (int) compraRepo.listarTodos().stream()
@@ -112,6 +126,7 @@ public class ProgramaControlador {
             errores.add(new ErrorModel("limite", TipoErrorEnum.NO_PERMITIDO));
         }
         comprobarListaErrores(errores);
+        Objects.requireNonNull(criterio);
 
         switch (criterio) {
 
@@ -120,11 +135,10 @@ public class ProgramaControlador {
             case MAS_JUGADOS -> resultado = juegosMasJugados(limite);
             default -> resultado = List.of();
         }
-        ;
         return resultado;
     }
 
-    private List<JuegosPopularesDto> juegosMasVendidos(Integer limite) {
+    private List<JuegosPopularesDto> juegosMasVendidos(Integer limite) throws ValidationException {
 
         Map<Long, Double> ranking = new HashMap<>();
 
@@ -139,14 +153,14 @@ public class ProgramaControlador {
         return resultadoConsulta(ranking, limite);
     }
 
-    private List<JuegosPopularesDto> juegosMejorValorados(Integer limite) {
+    private List<JuegosPopularesDto> juegosMejorValorados(Integer limite) throws ValidationException {
 
         Map<Long, List<ResenaEntidad>> agrupadas = new HashMap<>();
 
         for (ResenaEntidad resenia : resenaRepo.listarTodos()) {
 
             agrupadas
-                    .computeIfAbsent(resenia.getIdJuego(), k -> new ArrayList<>())
+                    .computeIfAbsent(resenia.getIdJuego(), ignored -> new ArrayList<>())
                     .add(resenia);
         }
 
@@ -165,7 +179,7 @@ public class ProgramaControlador {
         return resultadoConsulta(ranking, limite);
     }
 
-    private List<JuegosPopularesDto> juegosMasJugados(Integer limite) {
+    private List<JuegosPopularesDto> juegosMasJugados(Integer limite) throws ValidationException {
 
         Map<Long, Double> ranking = new HashMap<>();
 
@@ -184,7 +198,8 @@ public class ProgramaControlador {
     private List<JuegosPopularesDto> resultadoConsulta(
             Map<Long, Double> ranking,
             Integer limite
-    ) {
+    ) throws ValidationException {
+        List<ErrorModel> errores = new ArrayList<>();
 
         List<Map.Entry<Long, Double>> listaOrdenada = ranking.entrySet().stream()
                 .sorted((e1, e2) -> Double.compare(e2.getValue(), e1.getValue()))
@@ -197,27 +212,18 @@ public class ProgramaControlador {
 
         for (Map.Entry<Long, Double> entry : listaOrdenada) {
 
-            JuegoEntidad juegoEntidad = juegoRepo.buscarPorId(entry.getKey());
+            JuegoEntidad juegoEntidad = obtenerJuego(entry.getKey(), errores);
 
-            if (juegoEntidad != null) {
+            JuegosPopularesDto dto = new JuegosPopularesDto(
+                    posicion,
+                    JuegoEntidadADtoMapper.juegoEntidadADto(juegoEntidad),
+                    entry.getValue()
+            );
+            resultado.add(dto);
+            posicion++;
 
-                JuegosPopularesDto dto = new JuegosPopularesDto(
-                        posicion,
-                        JuegoEntidadADtoMapper.juegoEntidadADto(juegoEntidad),
-                        entry.getValue()
-                );
-
-                resultado.add(dto);
-                posicion++;
-            }
         }
 
         return resultado;
-    }
-
-    private void comprobarListaErrores(List<ErrorModel> errores) throws ValidationException {
-        if (!errores.isEmpty()) {
-            throw new ValidationException(errores);
-        }
     }
 }

@@ -91,7 +91,6 @@ public class UsuarioFormValidador {
         if (pais == null) {
             errores.add(new ErrorModel("pais", TipoErrorEnum.OBLIGATORIO));
         }
-
     }
 
     private static void validarNombreUsuario(String nombre, List<ErrorModel> errores) {

@@ -32,8 +32,14 @@ public class JuegoControlador {
 
     // Anadir Juego
     public JuegoDto crearJuego(JuegoForm form) throws ValidationException {
+        List<ErrorModel> errores = new ArrayList<>();
 
         JuegoFormValidador.validarJuego(form);
+
+        if (juegoRepo.existeTitulo(form.getTitulo())) {
+            errores.add(new ErrorModel("titulo", TipoErrorEnum.DUPLICADO));
+        }
+        comprobarListaErrores(errores);
 
         JuegoEntidad juegoEntidad = juegoRepo.crear(form);
 

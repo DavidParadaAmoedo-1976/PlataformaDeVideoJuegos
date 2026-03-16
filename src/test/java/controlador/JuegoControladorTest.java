@@ -1,6 +1,7 @@
 package controlador;
 
 import org.davidparada.controlador.JuegoControlador;
+import org.davidparada.controlador.util.ObtenerEntidadesOptional;
 import org.davidparada.excepcion.ValidationException;
 import org.davidparada.modelo.dto.JuegoDto;
 import org.davidparada.modelo.enums.ClasificacionJuegoEnum;
@@ -26,6 +27,9 @@ class JuegoControladorTest {
         JuegoRepo juegoRepo = new JuegoRepo();
         JuegoFormValidador.setJuegoRepo(juegoRepo);
         juegoControlador = new JuegoControlador(juegoRepo);
+
+        new ObtenerEntidadesOptional(null, null, juegoRepo, null, null);
+
     }
 
     @Test
@@ -50,7 +54,39 @@ class JuegoControladorTest {
         assertEquals("Juego Test", juego.titulo());
     }
 
+    @Test
+    void noPermiteTituloDuplicado() throws ValidationException {
+
+        JuegoDto juego = crearJuegoBase();
+
+        JuegoForm duplicado = new JuegoForm(
+                juego.titulo(),   // mismo título
+                "desc",
+                "dev",
+                LocalDate.now(),
+                50.0,
+                0,
+                "accion",
+                ClasificacionJuegoEnum.PEGI_18,
+                new String[]{"ES"},
+                EstadoJuegoEnum.DISPONIBLE
+        );
+
+        assertThrows(
+                ValidationException.class,
+                () -> juegoControlador.crearJuego(duplicado)
+        );
+    }
+
+
     // Consultar catálogo
+    @Test
+    void catalogoVacio() throws ValidationException {
+
+        List<JuegoDto> lista = juegoControlador.consultarCatalogo(null);
+
+        assertTrue(lista.isEmpty());
+    }
 
     @Test
     void consultarCatalogoOrdenadoAlfabeticamente() throws ValidationException {
@@ -94,15 +130,13 @@ class JuegoControladorTest {
     @Test
     void consultarCatalogoSinOrdenDevuelveLista() throws ValidationException {
 
-        crearJuegoBase();
-        crearJuegoBase();
+        crearJuego("Juego A", 50.0, LocalDate.of(2020,1,1));
+        crearJuego("Juego B", 40.0, LocalDate.of(2021,1,1));
 
         List<JuegoDto> lista = juegoControlador.consultarCatalogo(null);
 
         assertEquals(2, lista.size());
     }
-
-
 
     // Consultar detalles
 
@@ -197,8 +231,8 @@ class JuegoControladorTest {
 
         JuegoDto actualizado = juegoControlador.consultarDetalles(juego.idJuego());
 
-        assertEquals("Juego Base", actualizado.titulo());
-        assertEquals(100.0, actualizado.precioBase());
+        assertEquals(juego.titulo(), actualizado.titulo());
+        assertEquals(juego.precioBase(), actualizado.precioBase());
         assertEquals(30, actualizado.descuento());
     }
 
@@ -245,8 +279,8 @@ class JuegoControladorTest {
 
         JuegoDto actualizado = juegoControlador.consultarDetalles(juego.idJuego());
 
-        assertEquals("Juego Base", actualizado.titulo());
-        assertEquals(100.0, actualizado.precioBase());
+        assertEquals(juego.titulo(), actualizado.titulo());
+        assertEquals(juego.precioBase(), actualizado.precioBase());
     }
 
     @Test
@@ -260,14 +294,319 @@ class JuegoControladorTest {
         });
     }
 
-    private JuegoDto crearJuegoBase() throws ValidationException {
+    @Test
+    void crearJuegoFallaSiFormularioEsNull() {
+
+        assertThrows(
+                ValidationException.class,
+                () -> juegoControlador.crearJuego(null)
+        );
+    }
+
+    @Test
+    void consultarDetallesFallaSiIdEsNull() {
+
+        assertThrows(
+                ValidationException.class,
+                () -> juegoControlador.consultarDetalles(null)
+        );
+    }
+
+    // Fallos test del profesor
+
+// ===============================
+// VALIDACIONES FORMULARIO JUEGO
+// ===============================
+
+    @Test
+    void crearJuego_fallaSiTituloNull() {
 
         JuegoForm form = new JuegoForm(
-                "Juego Base",
-                "Descripcion Base",
+                null,
+                "Descripcion valida",
+                "Dev Studio",
+                LocalDate.of(2020,1,1),
+                50.0,
+                0,
+                "Accion",
+                ClasificacionJuegoEnum.PEGI_18,
+                new String[]{"Espanol"},
+                EstadoJuegoEnum.DISPONIBLE
+        );
+
+        assertThrows(ValidationException.class,
+                () -> juegoControlador.crearJuego(form));
+    }
+
+    @Test
+    void crearJuego_fallaSiTituloMayor100() {
+
+        JuegoForm form = new JuegoForm(
+                "A".repeat(101),
+                "Descripcion valida",
+                "Dev Studio",
+                LocalDate.of(2020,1,1),
+                50.0,
+                0,
+                "Accion",
+                ClasificacionJuegoEnum.PEGI_18,
+                new String[]{"Espanol"},
+                EstadoJuegoEnum.DISPONIBLE
+        );
+
+        assertThrows(ValidationException.class,
+                () -> juegoControlador.crearJuego(form));
+    }
+
+    @Test
+    void crearJuego_fallaSiTituloDuplicado() throws ValidationException {
+
+        JuegoForm form = crearFormularioValido();
+        juegoControlador.crearJuego(form);
+
+        JuegoForm duplicado = crearFormularioValido();
+
+        assertThrows(ValidationException.class,
+                () -> juegoControlador.crearJuego(duplicado));
+    }
+
+    @Test
+    void crearJuego_fallaSiDescripcionMayor2000() {
+
+        JuegoForm form = new JuegoForm(
+                "Juego Test",
+                "A".repeat(2001),
+                "Dev Studio",
+                LocalDate.of(2020,1,1),
+                50.0,
+                0,
+                "Accion",
+                ClasificacionJuegoEnum.PEGI_18,
+                new String[]{"Espanol"},
+                EstadoJuegoEnum.DISPONIBLE
+        );
+
+        assertThrows(ValidationException.class,
+                () -> juegoControlador.crearJuego(form));
+    }
+
+    @Test
+    void crearJuego_fallaSiDesarrolladorNull() {
+
+        JuegoForm form = new JuegoForm(
+                "Juego Test",
+                "Descripcion valida",
+                null,
+                LocalDate.of(2020,1,1),
+                50.0,
+                0,
+                "Accion",
+                ClasificacionJuegoEnum.PEGI_18,
+                new String[]{"Espanol"},
+                EstadoJuegoEnum.DISPONIBLE
+        );
+
+        assertThrows(ValidationException.class,
+                () -> juegoControlador.crearJuego(form));
+    }
+
+    @Test
+    void crearJuego_fallaSiDesarrolladorMuyCorto() {
+
+        JuegoForm form = new JuegoForm(
+                "Juego Test",
+                "Descripcion valida",
+                "A",
+                LocalDate.of(2020,1,1),
+                50.0,
+                0,
+                "Accion",
+                ClasificacionJuegoEnum.PEGI_18,
+                new String[]{"Espanol"},
+                EstadoJuegoEnum.DISPONIBLE
+        );
+
+        assertThrows(ValidationException.class,
+                () -> juegoControlador.crearJuego(form));
+    }
+
+    @Test
+    void crearJuego_fallaSiDesarrolladorMuyLargo() {
+
+        JuegoForm form = new JuegoForm(
+                "Juego Test",
+                "Descripcion valida",
+                "A".repeat(101),
+                LocalDate.of(2020,1,1),
+                50.0,
+                0,
+                "Accion",
+                ClasificacionJuegoEnum.PEGI_18,
+                new String[]{"Espanol"},
+                EstadoJuegoEnum.DISPONIBLE
+        );
+
+        assertThrows(ValidationException.class,
+                () -> juegoControlador.crearJuego(form));
+    }
+
+    @Test
+    void crearJuego_fallaSiFechaNull() {
+
+        JuegoForm form = new JuegoForm(
+                "Juego Test",
+                "Descripcion valida",
+                "Dev Studio",
+                null,
+                50.0,
+                0,
+                "Accion",
+                ClasificacionJuegoEnum.PEGI_18,
+                new String[]{"Espanol"},
+                EstadoJuegoEnum.DISPONIBLE
+        );
+
+        assertThrows(ValidationException.class,
+                () -> juegoControlador.crearJuego(form));
+    }
+
+    @Test
+    void crearJuego_fallaSiPrecioNegativo() {
+
+        JuegoForm form = new JuegoForm(
+                "Juego Test",
+                "Descripcion valida",
+                "Dev Studio",
+                LocalDate.of(2020,1,1),
+                -10.0,
+                0,
+                "Accion",
+                ClasificacionJuegoEnum.PEGI_18,
+                new String[]{"Espanol"},
+                EstadoJuegoEnum.DISPONIBLE
+        );
+
+        assertThrows(ValidationException.class,
+                () -> juegoControlador.crearJuego(form));
+    }
+
+    @Test
+    void crearJuego_fallaSiPrecioMayorMaximo() {
+
+        JuegoForm form = new JuegoForm(
+                "Juego Test",
+                "Descripcion valida",
+                "Dev Studio",
+                LocalDate.of(2020,1,1),
+                1000.0,
+                0,
+                "Accion",
+                ClasificacionJuegoEnum.PEGI_18,
+                new String[]{"Espanol"},
+                EstadoJuegoEnum.DISPONIBLE
+        );
+
+        assertThrows(ValidationException.class,
+                () -> juegoControlador.crearJuego(form));
+    }
+
+    @Test
+    void crearJuego_fallaSiDescuentoNegativo() {
+
+        JuegoForm form = new JuegoForm(
+                "Juego Test",
+                "Descripcion valida",
+                "Dev Studio",
+                LocalDate.of(2020,1,1),
+                50.0,
+                -5,
+                "Accion",
+                ClasificacionJuegoEnum.PEGI_18,
+                new String[]{"Espanol"},
+                EstadoJuegoEnum.DISPONIBLE
+        );
+
+        assertThrows(ValidationException.class,
+                () -> juegoControlador.crearJuego(form));
+    }
+
+    @Test
+    void crearJuego_fallaSiDescuentoMayor100() {
+
+        JuegoForm form = new JuegoForm(
+                "Juego Test",
+                "Descripcion valida",
+                "Dev Studio",
+                LocalDate.of(2020,1,1),
+                50.0,
+                150,
+                "Accion",
+                ClasificacionJuegoEnum.PEGI_18,
+                new String[]{"Espanol"},
+                EstadoJuegoEnum.DISPONIBLE
+        );
+
+        assertThrows(ValidationException.class,
+                () -> juegoControlador.crearJuego(form));
+    }
+
+    @Test
+    void crearJuego_fallaSiClasificacionNull() {
+
+        JuegoForm form = new JuegoForm(
+                "Juego Test",
+                "Descripcion valida",
+                "Dev Studio",
+                LocalDate.of(2020,1,1),
+                50.0,
+                0,
+                "Accion",
+                null,
+                new String[]{"Espanol"},
+                EstadoJuegoEnum.DISPONIBLE
+        );
+
+        assertThrows(ValidationException.class,
+                () -> juegoControlador.crearJuego(form));
+    }
+
+    @Test
+    void crearJuego_fallaSiIdiomasVacio() {
+
+        JuegoForm form = new JuegoForm(
+                "Juego Test",
+                "Descripcion valida",
+                "Dev Studio",
+                LocalDate.of(2020,1,1),
+                50.0,
+                0,
+                "Accion",
+                ClasificacionJuegoEnum.PEGI_18,
+                new String[]{},
+                EstadoJuegoEnum.DISPONIBLE
+        );
+
+        assertThrows(ValidationException.class,
+                () -> juegoControlador.crearJuego(form));
+    }
+
+
+// ===============================
+// HELPER
+// ===============================
+
+    private static int contadorJuegos = 0;
+
+    private JuegoDto crearJuegoBase() throws ValidationException {
+
+        contadorJuegos++;
+
+        JuegoForm form = new JuegoForm(
+                "Juego Base_" + contadorJuegos,
+                "Descripcion Base " + contadorJuegos,
                 "Dev Studio",
                 LocalDate.of(2020, 1, 1),
-                100.0,
+                100.0 + contadorJuegos,
                 0,
                 "Accion",
                 ClasificacionJuegoEnum.PEGI_18,
@@ -294,6 +633,21 @@ class JuegoControladorTest {
         );
 
         juegoControlador.crearJuego(form);
+    }
+
+    private JuegoForm crearFormularioValido() {
+        return new JuegoForm(
+                "Juego Test",
+                "Descripcion correcta",
+                "Dev Studio",
+                LocalDate.of(2020,1,1),
+                50.0,
+                0,
+                "Accion",
+                ClasificacionJuegoEnum.PEGI_18,
+                new String[]{"Espanol"},
+                EstadoJuegoEnum.DISPONIBLE
+        );
     }
 
 }

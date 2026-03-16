@@ -97,6 +97,15 @@ class BibliotecaControladorTest {
     // ======================================================
 
     @Test
+    void anadirJuego_usuarioNoExiste() {
+
+        assertThrows(
+                ValidationException.class,
+                () -> controlador.anadirJuego(999L, idJuego)
+        );
+    }
+
+    @Test
     void anadirJuego_correcto() throws Exception {
         var dto = controlador.anadirJuego(idUsuario, idJuego);
         assertEquals(idUsuario, dto.idUsuario());
@@ -130,6 +139,17 @@ class BibliotecaControladorTest {
     // ======================================================
     // 4️⃣ AÑADIR TIEMPO DE JUEGO
     // ======================================================
+
+    @Test
+    void anadirTiempoNegativo() throws Exception {
+
+        controlador.anadirJuego(idUsuario, idJuego);
+
+        assertThrows(
+                ValidationException.class,
+                () -> controlador.anadirTiempoDeJuego(idUsuario, idJuego, -5.0, null)
+        );
+    }
 
     @Test
     void anadirTiempo_correcto() throws Exception {

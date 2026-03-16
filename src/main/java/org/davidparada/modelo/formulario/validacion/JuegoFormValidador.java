@@ -29,7 +29,6 @@ public class JuegoFormValidador {
         ValidacionesComunes.obligatorio("titulo", form.getTitulo(), errores);
         ValidacionesComunes.longitudMinima("titulo", form.getTitulo(), 1, errores);
         ValidacionesComunes.longitudMaxima("titulo", form.getTitulo(), 100, errores);
-        validarTituloUnico(form.getTitulo(), errores);
 
         // Descripcion
         ValidacionesComunes.longitudMaxima("descripcion", form.getDescripcion(), 2000, errores);
@@ -56,6 +55,10 @@ public class JuegoFormValidador {
 
         // Idioma
         validarIdioma(form.getIdiomas(), errores);
+
+        if (!errores.isEmpty()) {
+            throw new ValidationException(errores);
+        }
     }
 
 
@@ -89,16 +92,6 @@ public class JuegoFormValidador {
             errores.add(new ErrorModel("fechaLanzamiento", TipoErrorEnum.OBLIGATORIO));
         }
     }
-
-    private static void validarTituloUnico(String titulo, List<ErrorModel> errores) {
-
-        if (titulo == null || juegoRepo == null) return;
-
-        if (juegoRepo.existeTitulo(titulo)) {
-            errores.add(new ErrorModel("titulo", TipoErrorEnum.DUPLICADO));
-        }
-    }
-
 
     public static void setJuegoRepo(IJuegoRepo repo) {
         juegoRepo = repo;

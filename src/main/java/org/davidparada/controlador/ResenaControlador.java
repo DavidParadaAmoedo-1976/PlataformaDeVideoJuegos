@@ -73,9 +73,6 @@ public class ResenaControlador {
         if (idJuego == null) {
             errores.add(new ErrorModel("idJuego", TipoErrorEnum.OBLIGATORIO));
         }
-        if (recomendado) {
-            errores.add(new ErrorModel("recomendado", TipoErrorEnum.OBLIGATORIO));
-        }
         if (orden == null) {
             errores.add(new ErrorModel("orden", TipoErrorEnum.OBLIGATORIO));
         }
