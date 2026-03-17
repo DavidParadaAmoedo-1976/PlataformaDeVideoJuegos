@@ -54,52 +54,79 @@ public class CompraControlador {
     }
 
     // Realizar compra
-    public CompraDto realizarCompra(CompraForm form) throws ValidationException {
+    public CompraDto realizarCompra(
+            Long idUsuario,
+            Long idJuego,
+            MetodoPagoEnum metodoPago
+    ) throws ValidationException {
+
         List<ErrorModel> errores = new ArrayList<>();
 
-        // Validación básica
-        CompraFormValidador.validarCompra(form);
+        if (idUsuario == null)
+            errores.add(new ErrorModel("idUsuario", TipoErrorEnum.OBLIGATORIO));
 
-        // Buscamos el usuario
-        UsuarioEntidad usuarioEntidad = obtenerUsuario(form.getIdUsuario(), errores);
-        if (!usuarioEntidad.getEstadoCuenta().equals(EstadoCuentaEnum.ACTIVA)) {
+        if (idJuego == null)
+            errores.add(new ErrorModel("idJuego", TipoErrorEnum.OBLIGATORIO));
+
+        if (metodoPago == null)
+            errores.add(new ErrorModel("metodoPago", TipoErrorEnum.OBLIGATORIO));
+
+        comprobarListaErrores(errores);
+
+        UsuarioEntidad usuario = obtenerUsuario(idUsuario, errores);
+        JuegoEntidad juego = obtenerJuego(idJuego, errores);
+
+        if (juego.getEstado() == EstadoJuegoEnum.NO_DISPONIBLE) {
+            errores.add(new ErrorModel("juego", TipoErrorEnum.NO_DISPONIBLE));
+        }
+        comprobarListaErrores(errores);
+
+// Comprueba el estado de la cuenta
+        if (usuario.getEstadoCuenta() == EstadoCuentaEnum.SUSPENDIDA) {
             errores.add(new ErrorModel("usuario", TipoErrorEnum.NO_PERMITIDO));
         }
+        comprobarListaErrores(errores);
 
-        // Buscamos el juego
-        JuegoEntidad juegoEntidad = obtenerJuego(form.getIdJuego(), errores);
-        if (estadoJuegoValido(juegoEntidad.getEstado())) {
-            errores.add(new ErrorModel("juego", TipoErrorEnum.NO_PERMITIDO));
+// Comprueba si ya está en biblioteca
+        boolean enBiblioteca =
+                bibliotecaRepo.buscarPorUsuario(idUsuario)
+                        .stream()
+                        .anyMatch(b -> b.getIdJuego().equals(idJuego));
+
+        if (enBiblioteca) {
+            errores.add(new ErrorModel("juego", TipoErrorEnum.DUPLICADO));
         }
 
-        // Comprobamos que el juego no este ya en la biblioteca
-        if (bibliotecaRepo.buscarPorUsuarioYJuego(form.getIdUsuario(), form.getIdJuego()).isPresent()) {
+// comprueba compras previas
+        boolean compraActiva =
+                compraRepo.buscarPorUsuario(idUsuario)
+                        .stream()
+                        .anyMatch(c ->
+                                c.getIdJuego().equals(idJuego)
+                                        && c.getEstadoCompra() != EstadoCompraEnum.REEMBOLSADA
+                        );
+
+        if (compraActiva) {
             errores.add(new ErrorModel("juego", TipoErrorEnum.DUPLICADO));
         }
         comprobarListaErrores(errores);
 
-        // Crear compra
-        CompraForm compraForm = new CompraForm(
-                form.getIdUsuario(),
-                form.getIdJuego(),
+        double precioFinal =
+                juego.getPrecioBase() * (1 - juego.getDescuento() / 100.0);
+
+        CompraForm form = new CompraForm(
+                idUsuario,
+                idJuego,
                 Instant.now(),
-                form.getMetodoPago(),
-                juegoEntidad.getPrecioBase(),
-                precioFinal(juegoEntidad.getPrecioBase(), juegoEntidad.getDescuento()),
+                metodoPago,
+                juego.getPrecioBase(),
+                precioFinal,
                 EstadoCompraEnum.PENDIENTE
         );
-        CompraEntidad compraEntidad = compraRepo.crear(compraForm);
 
-        // Si paga con cartera
-        if (form.getMetodoPago() == MetodoPagoEnum.CARTERA_STEAM) {
-            pagoConCarteraSteam(compraEntidad.getIdCompra());
-        }
+        CompraEntidad compra = compraRepo.crear(form);
 
-        return CompraEntidadADtoMapper.compraEntidadADto(
-                compraEntidad,
-                usuarioEntidad,
-                juegoEntidad
-        );
+        return CompraEntidadADtoMapper.compraEntidadADto(compra,usuario,juego);
     }
 
     // Procesar pago
@@ -265,6 +292,35 @@ public class CompraControlador {
                     );
                 })
                 .toList();
+    }
+
+    // Consultar compra
+
+    public CompraDto consultarCompra(Long idCompra, Long idUsuario) throws ValidationException {
+
+        List<ErrorModel> errores = new ArrayList<>();
+
+        if (idCompra == null) {
+            errores.add(new ErrorModel("idCompra", TipoErrorEnum.OBLIGATORIO));
+        }
+
+        if (idUsuario == null) {
+            errores.add(new ErrorModel("idUsuario", TipoErrorEnum.OBLIGATORIO));
+        }
+
+        comprobarListaErrores(errores);
+
+        CompraEntidad compra = obtenerCompra(idCompra, errores);
+        UsuarioEntidad usuario = obtenerUsuario(idUsuario, errores);
+        JuegoEntidad juego = obtenerJuego(compra.getIdJuego(), errores);
+
+        if (!compra.getIdUsuario().equals(idUsuario)) {
+            errores.add(new ErrorModel("usuario", TipoErrorEnum.NO_PERMITIDO));
+        }
+
+        comprobarListaErrores(errores);
+
+        return CompraEntidadADtoMapper.compraEntidadADto(compra,usuario,juego);
     }
 
     // Consultar detalles de una compra
