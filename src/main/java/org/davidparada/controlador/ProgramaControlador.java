@@ -17,6 +17,9 @@ import static org.davidparada.controlador.util.ObtenerEntidadesOptional.*;
 
 public class ProgramaControlador {
 
+    public static final double POR_CIENTO_DOUBLE = 100.0;
+    public static final double VALOR_POR_DEFECTO = 0.0;
+    public static final int POSICION_INICIAL = 1;
     private final ICompraRepo compraRepo;
     private final IJuegoRepo juegoRepo;
     private final IUsuarioRepo usuarioRepo;
@@ -80,7 +83,7 @@ public class ProgramaControlador {
         int totalVentas = comprasFiltradas.size();
 
         double ingresosTotales = comprasFiltradas.stream()
-                .mapToDouble(c -> c.getPrecioBase() * (1 - c.getDescuento() / 100.0))
+                .mapToDouble(c -> c.getPrecioBase() * (1 - c.getDescuento() / POR_CIENTO_DOUBLE))
                 .sum();
 
         return new ReporteVentasDto(inicio, fin, totalVentas, ingresosTotales);
@@ -147,7 +150,7 @@ public class ProgramaControlador {
             Long idJuego = compra.getIdJuego();
 
             ranking.put(idJuego,
-                    ranking.getOrDefault(idJuego, 0.0) + 1);
+                    ranking.getOrDefault(idJuego, VALOR_POR_DEFECTO) + 1);
         }
 
         return resultadoConsulta(ranking, limite);
@@ -188,7 +191,7 @@ public class ProgramaControlador {
             Long idJuego = biblioteca.getIdJuego();
 
             ranking.put(idJuego,
-                    ranking.getOrDefault(idJuego, 0.0)
+                    ranking.getOrDefault(idJuego, VALOR_POR_DEFECTO)
                             + biblioteca.getHorasDeJuego());
         }
 
@@ -208,7 +211,7 @@ public class ProgramaControlador {
 
         List<JuegosPopularesDto> resultado = new ArrayList<>();
 
-        int posicion = 1;
+        int posicion = POSICION_INICIAL;
 
         for (Map.Entry<Long, Double> entry : listaOrdenada) {
 

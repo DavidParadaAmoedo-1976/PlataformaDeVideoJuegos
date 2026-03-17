@@ -112,7 +112,7 @@ public class CompraControlador {
         comprobarListaErrores(errores);
 
         double precioFinal =
-                juego.getPrecioBase() * (1 - juego.getDescuento() / 100.0);
+                juego.getPrecioBase() * (1 - juego.getDescuento() / POR_CIENTO_DOUBLE);
 
         CompraForm form = new CompraForm(
                 idUsuario,
@@ -126,7 +126,7 @@ public class CompraControlador {
 
         CompraEntidad compra = compraRepo.crear(form);
 
-        return CompraEntidadADtoMapper.compraEntidadADto(compra,usuario,juego);
+        return CompraEntidadADtoMapper.compraEntidadADto(compra, usuario, juego);
     }
 
     // Procesar pago
@@ -320,7 +320,7 @@ public class CompraControlador {
 
         comprobarListaErrores(errores);
 
-        return CompraEntidadADtoMapper.compraEntidadADto(compra,usuario,juego);
+        return CompraEntidadADtoMapper.compraEntidadADto(compra, usuario, juego);
     }
 
     // Consultar detalles de una compra

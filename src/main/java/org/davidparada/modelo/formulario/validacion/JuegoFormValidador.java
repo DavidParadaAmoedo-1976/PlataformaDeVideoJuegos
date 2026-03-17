@@ -11,6 +11,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JuegoFormValidador {
+    public static final int LONGITUD_MIN_TITULO = 1;
+    public static final int LONGITUD_MAX_TITULO = 100;
+    public static final int LONGITUD_MAX_DESCRIPCION = 2000;
+    public static final int LONGITUD_MIN_NOMBRE_DESARROLLADOR = 2;
+    public static final int LONGITUD_MAX_NOMBRE_DESARROLLADOR = 100;
+    public static final double VALOR_MIN_PRECIO = 0.0;
+    public static final double VALOR_MAX_PRECIO = 999.99;
+    public static final double DESCUENTO_MIN = 0d;
+    public static final double DESCUENTO_MAX = 100d;
+    public static final int LONGITUD_MIN_IDIOMA = 0;
+    public static final int LONGITUD_MAX_IDIOMA = 200;
     private static IJuegoRepo juegoRepo;
 
     private JuegoFormValidador() {
@@ -27,28 +38,29 @@ public class JuegoFormValidador {
 
         // Titulo
         ValidacionesComunes.obligatorio("titulo", form.getTitulo(), errores);
-        ValidacionesComunes.longitudMinima("titulo", form.getTitulo(), 1, errores);
-        ValidacionesComunes.longitudMaxima("titulo", form.getTitulo(), 100, errores);
+        ValidacionesComunes.longitudMinima("titulo", form.getTitulo(), LONGITUD_MIN_TITULO, errores);
+        ValidacionesComunes.longitudMaxima("titulo", form.getTitulo(), LONGITUD_MAX_TITULO, errores);
 
         // Descripcion
-        ValidacionesComunes.longitudMaxima("descripcion", form.getDescripcion(), 2000, errores);
+        ValidacionesComunes.longitudMaxima("descripcion", form.getDescripcion(), LONGITUD_MAX_DESCRIPCION, errores);
 
         // Desarrollador
         ValidacionesComunes.obligatorio("desarrollador", form.getDesarrollador(), errores);
-        ValidacionesComunes.longitudMinima("desarrollador", form.getDesarrollador(), 2, errores);
-        ValidacionesComunes.longitudMaxima("desarrollador", form.getDesarrollador(), 100, errores);
+        ValidacionesComunes.longitudMinima("desarrollador", form.getDesarrollador(), LONGITUD_MIN_NOMBRE_DESARROLLADOR, errores);
+        ValidacionesComunes.longitudMaxima("desarrollador", form.getDesarrollador(), LONGITUD_MAX_NOMBRE_DESARROLLADOR, errores);
 
         // Fecha de Lanzamiento
         validarFechaLanzamiento(form.getFechaLanzamiento(), errores);
 
+
         // Precio base
         validarPrecioBase(form.getPrecioBase(), errores);
         ValidacionesComunes.valorNoNegativo("precioBase", form.getPrecioBase(), errores);
-        ValidacionesComunes.valorFueraDeRango("precioBase", form.getPrecioBase(), 0.0, 999.99, errores);
+        ValidacionesComunes.valorFueraDeRango("precioBase", form.getPrecioBase(), VALOR_MIN_PRECIO, VALOR_MAX_PRECIO, errores);
         ValidacionesComunes.maxDosDecimales("precioBase", form.getPrecioBase(), errores);
 
         // Descuento
-        ValidacionesComunes.valorFueraDeRango("descuento", form.getDescuento(), 0d, 100d, errores);
+        ValidacionesComunes.valorFueraDeRango("descuento", form.getDescuento(), DESCUENTO_MIN, DESCUENTO_MAX, errores);
 
         // Clasificación por edad
         validarClasificacionPorEdad(form.getClasificacionPorEdad(), errores);
@@ -64,11 +76,11 @@ public class JuegoFormValidador {
 
     private static void validarIdioma(String[] idiomas, List<ErrorModel> errores) {
         if (idiomas != null) {
-            if (idiomas.length == 0) {
+            if (idiomas.length == LONGITUD_MIN_IDIOMA) {
                 errores.add(new ErrorModel("idiomas", TipoErrorEnum.RANGO_INVALIDO));
             }
             for (String idioma : idiomas) {
-                if (idioma.length() > 200) {
+                if (idioma.length() > LONGITUD_MAX_IDIOMA) {
                     errores.add(new ErrorModel("idiomas", TipoErrorEnum.LONGITUD_EXCEDIDA));
                 }
             }

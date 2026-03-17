@@ -138,7 +138,7 @@ class CompraControladorTest {
     void usuarioSuspendidoNoPuedeComprar() throws Exception {
 
         var usuario = usuarioRepo.crear(new UsuarioForm(
-                "user","email@test.com","Password1","Nombre",
+                "user", "email@test.com", "Password1", "Nombre",
                 PaisEnum.ESPANA,
                 LocalDate.now().minusYears(20),
                 Instant.now(),
@@ -146,7 +146,7 @@ class CompraControladorTest {
                 100.0,
                 EstadoCuentaEnum.ACTIVA
         ));
-                usuarioRepo.actualizar(usuario.getIdUsuario(), new UsuarioForm(
+        usuarioRepo.actualizar(usuario.getIdUsuario(), new UsuarioForm(
                 usuario.getNombreUsuario(),
                 usuario.getEmail(),
                 usuario.getPassword(),

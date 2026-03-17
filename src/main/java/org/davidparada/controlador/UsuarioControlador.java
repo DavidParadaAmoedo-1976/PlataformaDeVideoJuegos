@@ -88,7 +88,7 @@ public class UsuarioControlador {
         comprobarListaErrores(errores);
         java.util.Objects.requireNonNull(cantidad);
 
-        UsuarioEntidad usuario = obtenerUsuario(id,  errores);
+        UsuarioEntidad usuario = obtenerUsuario(id, errores);
 
         if (usuario.getEstadoCuenta() != EstadoCuentaEnum.ACTIVA)
             errores.add(new ErrorModel("estadoCuenta", TipoErrorEnum.ESTADO_INCORRECTO));

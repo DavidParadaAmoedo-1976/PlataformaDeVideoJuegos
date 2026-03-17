@@ -39,7 +39,7 @@ class JuegoControladorTest {
                 "Juego Test",
                 "Descripcion",
                 "Dev Studio",
-                LocalDate.of(2020,1,1),
+                LocalDate.of(2020, 1, 1),
                 49.99,
                 0,
                 "Accion",
@@ -91,9 +91,9 @@ class JuegoControladorTest {
     @Test
     void consultarCatalogoOrdenadoAlfabeticamente() throws ValidationException {
 
-        crearJuego("Zelda", 50.0, LocalDate.of(2020,1,1));
-        crearJuego("Mario", 40.0, LocalDate.of(2019,1,1));
-        crearJuego("Among Us", 10.0, LocalDate.of(2021,1,1));
+        crearJuego("Zelda", 50.0, LocalDate.of(2020, 1, 1));
+        crearJuego("Mario", 40.0, LocalDate.of(2019, 1, 1));
+        crearJuego("Among Us", 10.0, LocalDate.of(2021, 1, 1));
 
         List<JuegoDto> lista = juegoControlador.consultarCatalogo(OrdenarJuegosEnum.ALFABETICO);
 
@@ -101,12 +101,13 @@ class JuegoControladorTest {
         assertEquals("Mario", lista.get(1).titulo());
         assertEquals("Zelda", lista.get(2).titulo());
     }
+
     @Test
     void consultarCatalogoOrdenadoPorPrecio() throws ValidationException {
 
-        crearJuego("Juego A", 50.0, LocalDate.of(2020,1,1));
-        crearJuego("Juego B", 10.0, LocalDate.of(2020,1,1));
-        crearJuego("Juego C", 30.0, LocalDate.of(2020,1,1));
+        crearJuego("Juego A", 50.0, LocalDate.of(2020, 1, 1));
+        crearJuego("Juego B", 10.0, LocalDate.of(2020, 1, 1));
+        crearJuego("Juego C", 30.0, LocalDate.of(2020, 1, 1));
 
         List<JuegoDto> lista = juegoControlador.consultarCatalogo(OrdenarJuegosEnum.PRECIO);
 
@@ -114,24 +115,26 @@ class JuegoControladorTest {
         assertEquals(30.0, lista.get(1).precioBase());
         assertEquals(50.0, lista.get(2).precioBase());
     }
+
     @Test
     void consultarCatalogoOrdenadoPorFecha() throws ValidationException {
 
-        crearJuego("Juego A", 50.0, LocalDate.of(2022,1,1));
-        crearJuego("Juego B", 50.0, LocalDate.of(2018,1,1));
-        crearJuego("Juego C", 50.0, LocalDate.of(2020,1,1));
+        crearJuego("Juego A", 50.0, LocalDate.of(2022, 1, 1));
+        crearJuego("Juego B", 50.0, LocalDate.of(2018, 1, 1));
+        crearJuego("Juego C", 50.0, LocalDate.of(2020, 1, 1));
 
         List<JuegoDto> lista = juegoControlador.consultarCatalogo(OrdenarJuegosEnum.FECHA);
 
-        assertEquals(LocalDate.of(2018,1,1), lista.get(0).fechaLanzamiento());
-        assertEquals(LocalDate.of(2020,1,1), lista.get(1).fechaLanzamiento());
-        assertEquals(LocalDate.of(2022,1,1), lista.get(2).fechaLanzamiento());
+        assertEquals(LocalDate.of(2018, 1, 1), lista.get(0).fechaLanzamiento());
+        assertEquals(LocalDate.of(2020, 1, 1), lista.get(1).fechaLanzamiento());
+        assertEquals(LocalDate.of(2022, 1, 1), lista.get(2).fechaLanzamiento());
     }
+
     @Test
     void consultarCatalogoSinOrdenDevuelveLista() throws ValidationException {
 
-        crearJuego("Juego A", 50.0, LocalDate.of(2020,1,1));
-        crearJuego("Juego B", 40.0, LocalDate.of(2021,1,1));
+        crearJuego("Juego A", 50.0, LocalDate.of(2020, 1, 1));
+        crearJuego("Juego B", 40.0, LocalDate.of(2021, 1, 1));
 
         List<JuegoDto> lista = juegoControlador.consultarCatalogo(null);
 
@@ -166,7 +169,7 @@ class JuegoControladorTest {
                 "Juego Descuento",
                 "Descripcion",
                 "Dev Studio",
-                LocalDate.of(2020,1,1),
+                LocalDate.of(2020, 1, 1),
                 100.0,
                 0,
                 "Accion",
@@ -325,7 +328,7 @@ class JuegoControladorTest {
                 null,
                 "Descripcion valida",
                 "Dev Studio",
-                LocalDate.of(2020,1,1),
+                LocalDate.of(2020, 1, 1),
                 50.0,
                 0,
                 "Accion",
@@ -345,7 +348,7 @@ class JuegoControladorTest {
                 "A".repeat(101),
                 "Descripcion valida",
                 "Dev Studio",
-                LocalDate.of(2020,1,1),
+                LocalDate.of(2020, 1, 1),
                 50.0,
                 0,
                 "Accion",
@@ -377,7 +380,7 @@ class JuegoControladorTest {
                 "Juego Test",
                 "A".repeat(2001),
                 "Dev Studio",
-                LocalDate.of(2020,1,1),
+                LocalDate.of(2020, 1, 1),
                 50.0,
                 0,
                 "Accion",
@@ -397,7 +400,7 @@ class JuegoControladorTest {
                 "Juego Test",
                 "Descripcion valida",
                 null,
-                LocalDate.of(2020,1,1),
+                LocalDate.of(2020, 1, 1),
                 50.0,
                 0,
                 "Accion",
@@ -417,7 +420,7 @@ class JuegoControladorTest {
                 "Juego Test",
                 "Descripcion valida",
                 "A",
-                LocalDate.of(2020,1,1),
+                LocalDate.of(2020, 1, 1),
                 50.0,
                 0,
                 "Accion",
@@ -437,7 +440,7 @@ class JuegoControladorTest {
                 "Juego Test",
                 "Descripcion valida",
                 "A".repeat(101),
-                LocalDate.of(2020,1,1),
+                LocalDate.of(2020, 1, 1),
                 50.0,
                 0,
                 "Accion",
@@ -477,7 +480,7 @@ class JuegoControladorTest {
                 "Juego Test",
                 "Descripcion valida",
                 "Dev Studio",
-                LocalDate.of(2020,1,1),
+                LocalDate.of(2020, 1, 1),
                 -10.0,
                 0,
                 "Accion",
@@ -497,7 +500,7 @@ class JuegoControladorTest {
                 "Juego Test",
                 "Descripcion valida",
                 "Dev Studio",
-                LocalDate.of(2020,1,1),
+                LocalDate.of(2020, 1, 1),
                 1000.0,
                 0,
                 "Accion",
@@ -517,7 +520,7 @@ class JuegoControladorTest {
                 "Juego Test",
                 "Descripcion valida",
                 "Dev Studio",
-                LocalDate.of(2020,1,1),
+                LocalDate.of(2020, 1, 1),
                 50.0,
                 -5,
                 "Accion",
@@ -537,7 +540,7 @@ class JuegoControladorTest {
                 "Juego Test",
                 "Descripcion valida",
                 "Dev Studio",
-                LocalDate.of(2020,1,1),
+                LocalDate.of(2020, 1, 1),
                 50.0,
                 150,
                 "Accion",
@@ -557,7 +560,7 @@ class JuegoControladorTest {
                 "Juego Test",
                 "Descripcion valida",
                 "Dev Studio",
-                LocalDate.of(2020,1,1),
+                LocalDate.of(2020, 1, 1),
                 50.0,
                 0,
                 "Accion",
@@ -577,7 +580,7 @@ class JuegoControladorTest {
                 "Juego Test",
                 "Descripcion valida",
                 "Dev Studio",
-                LocalDate.of(2020,1,1),
+                LocalDate.of(2020, 1, 1),
                 50.0,
                 0,
                 "Accion",
@@ -640,7 +643,7 @@ class JuegoControladorTest {
                 "Juego Test",
                 "Descripcion correcta",
                 "Dev Studio",
-                LocalDate.of(2020,1,1),
+                LocalDate.of(2020, 1, 1),
                 50.0,
                 0,
                 "Accion",

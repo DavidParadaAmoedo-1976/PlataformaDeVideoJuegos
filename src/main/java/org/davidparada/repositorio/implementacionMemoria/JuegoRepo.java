@@ -12,8 +12,9 @@ import java.util.List;
 import java.util.Optional;
 
 public class JuegoRepo implements IJuegoRepo {
+    public static final long INICIALIZAR_CONTADOR_ID = 1L;
     private final List<JuegoEntidad> juegosEntidad = new ArrayList<>();
-    private Long siguienteId = 1L;
+    private Long siguienteId = INICIALIZAR_CONTADOR_ID;
 
     private Long generarId() {
         return siguienteId++;

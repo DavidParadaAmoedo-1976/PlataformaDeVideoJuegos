@@ -29,6 +29,7 @@ import static org.davidparada.controlador.util.ObtenerEntidadesOptional.*;
 
 public class ResenaControlador {
 
+    public static final double CANTIDAD_HORAS_JUGADAS_POR_DEFECTO = 0.0;
     private final IResenaRepo resenaRepo;
 
     public ResenaControlador(IResenaRepo reseniaRepo) {
@@ -57,7 +58,7 @@ public class ResenaControlador {
 
         UsuarioEntidad usuario = obtenerUsuario(idUsuario, errores);
         JuegoEntidad juego = obtenerJuego(idJuego, errores);
-        obtenerBiblioteca(idUsuario,idJuego, errores);
+        obtenerBiblioteca(idUsuario, idJuego, errores);
 
         List<ResenaEntidad> resenasEntidad = resenaRepo.buscarPorJuego(idJuego);
 
@@ -73,7 +74,7 @@ public class ResenaControlador {
                 idJuego,
                 recomendado,
                 texto,
-                0.0,
+                CANTIDAD_HORAS_JUGADAS_POR_DEFECTO,
                 Instant.now(),
                 null,
                 EstadoPublicacionEnum.PUBLICADA

@@ -57,7 +57,7 @@ class UsuarioControladorTest {
                 "Password1",
                 "Nombre",
                 PaisEnum.ESPANA,
-                LocalDate.of(2000,1,1),
+                LocalDate.of(2000, 1, 1),
                 Instant.now(),
                 "avatar",
                 0.0,
@@ -82,7 +82,7 @@ class UsuarioControladorTest {
                 "Password1",
                 "Nombre Real",
                 PaisEnum.ESPANA,
-                LocalDate.of(2000,1,1),
+                LocalDate.of(2000, 1, 1),
                 Instant.now(),
                 null,
                 0.0,
@@ -104,7 +104,7 @@ class UsuarioControladorTest {
                 "Password1",
                 "Nombre Real",
                 null, // pais null
-                LocalDate.of(2000,1,1),
+                LocalDate.of(2000, 1, 1),
                 Instant.now(),
                 null,
                 0.0,
@@ -126,7 +126,7 @@ class UsuarioControladorTest {
                 "Password1",
                 "Nombre",
                 PaisEnum.ESPANA,
-                LocalDate.of(2000,1,1),
+                LocalDate.of(2000, 1, 1),
                 Instant.now(),
                 null,
                 0.0,
@@ -141,7 +141,7 @@ class UsuarioControladorTest {
                 "Password1",
                 "Nombre",
                 PaisEnum.ESPANA,
-                LocalDate.of(2000,1,1),
+                LocalDate.of(2000, 1, 1),
                 Instant.now(),
                 null,
                 0.0,
@@ -166,7 +166,7 @@ class UsuarioControladorTest {
                 "Password1",
                 "Nombre Real",
                 PaisEnum.ESPANA,
-                LocalDate.of(2000,1,1),
+                LocalDate.of(2000, 1, 1),
                 Instant.now(),
                 null,
                 0.0,
@@ -256,7 +256,7 @@ class UsuarioControladorTest {
 
         assertThrows(
                 ValidationException.class,
-                () -> usuarioControlador.consultarPerfil((Long)null)
+                () -> usuarioControlador.consultarPerfil((Long) null)
         );
     }
 
@@ -306,7 +306,7 @@ class UsuarioControladorTest {
                 "Password1",
                 "Nombre Real",
                 PaisEnum.ESPANA,
-                LocalDate.of(2000,1,1),
+                LocalDate.of(2000, 1, 1),
                 null, // fecha null
                 null,
                 0.0,
@@ -419,7 +419,7 @@ class UsuarioControladorTest {
                 "Password1",
                 "Nombre Real",
                 PaisEnum.ESPANA,
-                LocalDate.of(2000,1,1),
+                LocalDate.of(2000, 1, 1),
                 Instant.now(),
                 "avatar.png",
                 0.0,
@@ -435,7 +435,7 @@ class UsuarioControladorTest {
                 "Password1",                      // válido (mayúscula + minúscula + número)
                 "Nombre Real",
                 PaisEnum.ESPANA,                  // enum, no String
-                LocalDate.of(2000,1,1),
+                LocalDate.of(2000, 1, 1),
                 Instant.now(),
                 "avatar.png",
                 0.0,

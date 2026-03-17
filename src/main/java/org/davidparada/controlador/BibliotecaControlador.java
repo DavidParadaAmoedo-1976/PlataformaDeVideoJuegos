@@ -30,6 +30,9 @@ import static org.davidparada.controlador.util.ObtenerEntidadesOptional.*;
 
 public class BibliotecaControlador {
 
+    public static final double HORAS_DE_JUEGO_POR_DEFECTO = 0.0;
+    public static final double INICIO_VARIABLE_DOUBLE = 0.0;
+    public static final int INICIO_VARIABLE_NEG = -1;
     private final IBibliotecaRepo bibliotecaRepo;
     private final IJuegoRepo juegoRepo;
 
@@ -121,7 +124,7 @@ public class BibliotecaControlador {
                 idUsuario,
                 idJuego,
                 Instant.now(),
-                0.0,
+                HORAS_DE_JUEGO_POR_DEFECTO,
                 null,
                 false
         );
@@ -252,11 +255,11 @@ public class BibliotecaControlador {
         List<BibliotecaEntidad> biblioteca = bibliotecaRepo.buscarPorUsuario(idUsuario);
 
         int totalJuegos = biblioteca.size();
-        double horasTotales = 0.0;
-        double valorTotal = 0.0;
+        double horasTotales = INICIO_VARIABLE_DOUBLE;
+        double valorTotal = INICIO_VARIABLE_DOUBLE;
 
         String juegoMasJugado = null;
-        double maxHoras = -1;
+        double maxHoras = INICIO_VARIABLE_NEG;
 
         List<String> juegosInstalados = new ArrayList<>();
         List<String> juegosNuncaJugados = new ArrayList<>();
@@ -276,7 +279,7 @@ public class BibliotecaControlador {
                 juegosInstalados.add(juego.getTitulo());
             }
 
-            if (b.getHorasDeJuego() == 0.0) {
+            if (b.getHorasDeJuego() == HORAS_DE_JUEGO_POR_DEFECTO) {
                 juegosNuncaJugados.add(juego.getTitulo());
             }
 

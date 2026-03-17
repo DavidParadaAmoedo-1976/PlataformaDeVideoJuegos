@@ -7,6 +7,8 @@ import java.util.List;
 
 public class ValidacionesComunes {
 
+    public static final int MAX_DECIMALES_DOS = 2;
+
     private ValidacionesComunes() {
     }
 
@@ -59,7 +61,7 @@ public class ValidacionesComunes {
     public static void maxDosDecimales(String campo, Double valor, List<ErrorModel> errores) {
         if (valor == null) return;
 
-        if (BigDecimal.valueOf(valor).scale() > 2) {
+        if (BigDecimal.valueOf(valor).scale() > MAX_DECIMALES_DOS) {
             errores.add(new ErrorModel(campo, TipoErrorEnum.FORMATO_INVALIDO));
         }
     }

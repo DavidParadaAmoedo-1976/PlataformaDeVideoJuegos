@@ -6,6 +6,8 @@ import org.davidparada.modelo.formulario.JuegoForm;
 
 public class JuegoFormularioAEntidadMapper {
 
+    public static final int DESCUENTO_POR_DEFECTO = 0;
+
     private JuegoFormularioAEntidadMapper() {
     }
 
@@ -17,7 +19,7 @@ public class JuegoFormularioAEntidadMapper {
                 form.getDesarrollador(),
                 form.getFechaLanzamiento(),
                 form.getPrecioBase(),
-                0,
+                DESCUENTO_POR_DEFECTO,
                 form.getCategoria(),
                 form.getClasificacionPorEdad(),
                 form.getIdiomas(),

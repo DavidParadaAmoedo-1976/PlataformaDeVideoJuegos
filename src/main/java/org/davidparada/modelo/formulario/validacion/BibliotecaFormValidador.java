@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BibliotecaFormValidador {
+    public static final int MAXIMO_DE_DECIMALES_UNO = 1;
     private static IBibliotecaRepo bibliotecaRepo;
 
     private BibliotecaFormValidador() {
@@ -43,7 +44,7 @@ public class BibliotecaFormValidador {
     private static void validarUnSoloDecimal(String campo, Double valor, List<ErrorModel> errores) {
         if (valor == null) return;
 
-        if (BigDecimal.valueOf(valor).scale() > 1) {
+        if (BigDecimal.valueOf(valor).scale() > MAXIMO_DE_DECIMALES_UNO) {
             errores.add(new ErrorModel(campo, TipoErrorEnum.FORMATO_INVALIDO));
         }
     }

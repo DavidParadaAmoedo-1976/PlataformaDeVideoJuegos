@@ -43,7 +43,7 @@ class UsuarioRepoTest {
                         "Password1",
                         "Nombre",
                         PaisEnum.ESPANA,
-                        LocalDate.of(2000,1,1),
+                        LocalDate.of(2000, 1, 1),
                         Instant.now(),
                         null,
                         0.0,

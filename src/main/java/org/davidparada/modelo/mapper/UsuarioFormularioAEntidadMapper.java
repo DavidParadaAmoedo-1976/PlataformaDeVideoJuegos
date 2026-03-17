@@ -8,6 +8,8 @@ import java.time.Instant;
 
 public class UsuarioFormularioAEntidadMapper {
 
+    public static final double SALDO_POR_DEFECTO = 0.0;
+
     private UsuarioFormularioAEntidadMapper() {
     }
 
@@ -22,7 +24,7 @@ public class UsuarioFormularioAEntidadMapper {
                 form.getFechaNacimiento(),
                 Instant.now(),
                 form.getAvatar(),
-                0.0,
+                SALDO_POR_DEFECTO,
                 EstadoCuentaEnum.ACTIVA
         );
     }

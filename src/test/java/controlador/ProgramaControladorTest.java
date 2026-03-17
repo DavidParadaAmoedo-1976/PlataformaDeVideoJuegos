@@ -30,6 +30,7 @@ class ProgramaControladorTest {
     private ResenaRepo resenaRepo;
 
     private Instant ahora;
+
     @BeforeEach
     void setUp() {
 
@@ -65,7 +66,7 @@ class ProgramaControladorTest {
                 "123",
                 "User One",
                 PaisEnum.ESPANA,
-                LocalDate.of(2000,1,1),
+                LocalDate.of(2000, 1, 1),
                 ahora.minus(10, ChronoUnit.DAYS),
                 "avatar",
                 100.0,
@@ -78,7 +79,7 @@ class ProgramaControladorTest {
                 "123",
                 "User Two",
                 PaisEnum.ESPANA,
-                LocalDate.of(2000,1,1),
+                LocalDate.of(2000, 1, 1),
                 ahora.minus(2, ChronoUnit.DAYS),
                 "avatar",
                 100.0,
@@ -92,7 +93,7 @@ class ProgramaControladorTest {
                 "123",
                 "User One",
                 PaisEnum.ESPANA,
-                LocalDate.of(2000,1,1),
+                LocalDate.of(2000, 1, 1),
                 ahora.minus(10, ChronoUnit.DAYS),
                 "avatar",
                 100.0,
@@ -105,7 +106,7 @@ class ProgramaControladorTest {
                 "123",
                 "User Two",
                 PaisEnum.ESPANA,
-                LocalDate.of(2000,1,1),
+                LocalDate.of(2000, 1, 1),
                 ahora.minus(2, ChronoUnit.DAYS),
                 "avatar",
                 100.0,
@@ -218,14 +219,14 @@ class ProgramaControladorTest {
         // BIBLIOTECA
         // =========================
 
-        bibliotecaRepo.crear(new BibliotecaForm(1L,1L,ahora,0.0,null,false));
-        bibliotecaRepo.crear(new BibliotecaForm(2L,2L,ahora,0.0,null,false));
+        bibliotecaRepo.crear(new BibliotecaForm(1L, 1L, ahora, 0.0, null, false));
+        bibliotecaRepo.crear(new BibliotecaForm(2L, 2L, ahora, 0.0, null, false));
 
         bibliotecaRepo.actualizar(1L,
-                new BibliotecaForm(1L,1L,ahora,20.0,ahora,true));
+                new BibliotecaForm(1L, 1L, ahora, 20.0, ahora, true));
 
         bibliotecaRepo.actualizar(2L,
-                new BibliotecaForm(2L,2L,ahora,50.0,ahora,true));
+                new BibliotecaForm(2L, 2L, ahora, 50.0, ahora, true));
 
         // =========================
         // RESEÑAS

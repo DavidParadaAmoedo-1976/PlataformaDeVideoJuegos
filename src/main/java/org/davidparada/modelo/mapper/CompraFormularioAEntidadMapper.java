@@ -8,6 +8,8 @@ import java.time.Instant;
 
 public class CompraFormularioAEntidadMapper {
 
+    public static final int DESCUENTO_POR_DEFECTO = 0;
+
     private CompraFormularioAEntidadMapper() {
     }
 
@@ -20,7 +22,7 @@ public class CompraFormularioAEntidadMapper {
                 Instant.now(),
                 form.getMetodoPago(),
                 redondear(form.getPrecioBase()),
-                0,
+                DESCUENTO_POR_DEFECTO,
                 EstadoCompraEnum.PENDIENTE
         );
     }

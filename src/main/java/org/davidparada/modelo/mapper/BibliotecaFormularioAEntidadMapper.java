@@ -7,6 +7,8 @@ import java.time.Instant;
 
 public class BibliotecaFormularioAEntidadMapper {
 
+    public static final double HORAS_DE_JUEGO_POR_DEFECTO = 0.0;
+
     private BibliotecaFormularioAEntidadMapper() {
     }
 
@@ -17,7 +19,7 @@ public class BibliotecaFormularioAEntidadMapper {
                 form.getIdUsuario(),
                 form.getIdJuego(),
                 Instant.now(),     // FechaAdquisicion automática
-                0.0,                 // HorasDeJuego inicial
+                HORAS_DE_JUEGO_POR_DEFECTO,                 // HorasDeJuego inicial
                 null,                // "ultimaFechaDeJuego" -> aún no ha jugado
                 false                // No instalado por defecto
         );
