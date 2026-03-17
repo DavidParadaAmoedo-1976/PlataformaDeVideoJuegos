@@ -159,7 +159,7 @@ class ProgramaControladorTest {
                 ahora.minus(5, ChronoUnit.DAYS),
                 MetodoPagoEnum.TARJETA,
                 50.0,
-                50.0,
+                0,
                 EstadoCompraEnum.PENDIENTE
         ));
 
@@ -169,7 +169,7 @@ class ProgramaControladorTest {
                 ahora.minus(3, ChronoUnit.DAYS),
                 MetodoPagoEnum.TARJETA,
                 50.0,
-                50.0,
+                0,
                 EstadoCompraEnum.PENDIENTE
         ));
 
@@ -179,7 +179,7 @@ class ProgramaControladorTest {
                 ahora.minus(1, ChronoUnit.DAYS),
                 MetodoPagoEnum.TARJETA,
                 40.0,
-                36.0,
+                5,
                 EstadoCompraEnum.PENDIENTE
         ));
 
@@ -191,7 +191,7 @@ class ProgramaControladorTest {
                 ahora.minus(5, ChronoUnit.DAYS),
                 MetodoPagoEnum.TARJETA,
                 50.0,
-                50.0,
+                0,
                 EstadoCompraEnum.COMPLETADA
         ));
 
@@ -201,7 +201,7 @@ class ProgramaControladorTest {
                 ahora.minus(3, ChronoUnit.DAYS),
                 MetodoPagoEnum.TARJETA,
                 50.0,
-                50.0,
+                0,
                 EstadoCompraEnum.COMPLETADA
         ));
 
@@ -211,7 +211,7 @@ class ProgramaControladorTest {
                 ahora.minus(1, ChronoUnit.DAYS),
                 MetodoPagoEnum.TARJETA,
                 40.0,
-                36.0,
+                5,
                 EstadoCompraEnum.COMPLETADA
         ));
 

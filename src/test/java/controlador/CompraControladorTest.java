@@ -254,7 +254,7 @@ class CompraControladorTest {
                         Instant.now(),
                         MetodoPagoEnum.TARJETA,
                         50.0,
-                        50.0,
+                        0,
                         EstadoCompraEnum.PENDIENTE
                 )
         );
@@ -331,7 +331,7 @@ class CompraControladorTest {
                         Instant.now(),
                         MetodoPagoEnum.PAYPAL,
                         50.0,
-                        50.0,
+                        0,
                         EstadoCompraEnum.COMPLETADA
                 )
         );
@@ -419,7 +419,7 @@ class CompraControladorTest {
                         Instant.now(),
                         MetodoPagoEnum.PAYPAL,
                         50.0,
-                        50.0,
+                        0,
                         EstadoCompraEnum.COMPLETADA
                 )
         );
@@ -457,7 +457,7 @@ class CompraControladorTest {
                         Instant.now(),
                         MetodoPagoEnum.PAYPAL,
                         50.0,
-                        50.0,
+                        0,
                         EstadoCompraEnum.COMPLETADA
                 )
         );
@@ -503,7 +503,7 @@ class CompraControladorTest {
                         Instant.now(),
                         MetodoPagoEnum.PAYPAL,
                         50.0,
-                        50.0,
+                        0,
                         EstadoCompraEnum.COMPLETADA
                 )
         );
@@ -535,7 +535,7 @@ class CompraControladorTest {
                         Instant.now(),
                         MetodoPagoEnum.PAYPAL,
                         50.0,
-                        50.0,
+                        0,
                         EstadoCompraEnum.PENDIENTE
                 )
         );
@@ -566,7 +566,7 @@ class CompraControladorTest {
                         Instant.now(),
                         MetodoPagoEnum.PAYPAL,
                         50.0,
-                        50.0,
+                        0,
                         EstadoCompraEnum.COMPLETADA
                 )
         );
@@ -599,7 +599,7 @@ class CompraControladorTest {
                         Instant.now(),
                         MetodoPagoEnum.PAYPAL,
                         50.0,
-                        50.0,
+                        0,
                         EstadoCompraEnum.COMPLETADA
                 )
         );
@@ -660,7 +660,7 @@ class CompraControladorTest {
                         Instant.now(),
                         MetodoPagoEnum.PAYPAL,
                         50.0,
-                        50.0,
+                        0,
                         estado
                 )
         );

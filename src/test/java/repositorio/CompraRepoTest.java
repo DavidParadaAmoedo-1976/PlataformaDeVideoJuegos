@@ -41,7 +41,7 @@ class CompraRepoTest {
                         Instant.now(),
                         MetodoPagoEnum.PAYPAL,
                         50.0,
-                        50.0,
+                        0,
                         EstadoCompraEnum.PENDIENTE
                 )
         );

@@ -111,16 +111,13 @@ public class CompraControlador {
         }
         comprobarListaErrores(errores);
 
-        double precioFinal =
-                juego.getPrecioBase() * (1 - juego.getDescuento() / POR_CIENTO_DOUBLE);
-
         CompraForm form = new CompraForm(
                 idUsuario,
                 idJuego,
                 Instant.now(),
                 metodoPago,
                 juego.getPrecioBase(),
-                precioFinal,
+                juego.getDescuento(),
                 EstadoCompraEnum.PENDIENTE
         );
 
@@ -169,7 +166,7 @@ public class CompraControlador {
                 Instant.now(),
                 compraEntidad.getMetodoPago(),
                 compraEntidad.getPrecioBase(),
-                precioFinal(compraEntidad.getPrecioBase(), compraEntidad.getDescuento()),
+                compraEntidad.getDescuento(),
                 EstadoCompraEnum.CANCELADA
         );
 
@@ -409,7 +406,7 @@ public class CompraControlador {
                 compraEntidad.getFechaCompra(),
                 compraEntidad.getMetodoPago(),
                 compraEntidad.getPrecioBase(),
-                precioFinal(compraEntidad.getPrecioBase(), compraEntidad.getDescuento()),
+                compraEntidad.getDescuento(),
                 EstadoCompraEnum.REEMBOLSADA
         );
         compraRepo.actualizar(idCompra, nuevaCompra);
@@ -449,7 +446,7 @@ public class CompraControlador {
                 Instant.now(),
                 compraEntidad.getMetodoPago(),
                 compraEntidad.getPrecioBase(),
-                precioFinal(juegoEntidad.getPrecioBase(), compraEntidad.getDescuento()),
+                compraEntidad.getDescuento(),
                 EstadoCompraEnum.COMPLETADA
         );
         compraRepo.actualizar(compraEntidad.getIdCompra(), nuevaCompra);

@@ -11,7 +11,7 @@ public class CompraForm {
     private final Instant fechaCompra;
     private final MetodoPagoEnum metodoPago;
     private final Double precioBase;
-    private final Double precioFinal;
+    private final int descuento;
     private final EstadoCompraEnum estadoCompra;
 
     public CompraForm(Long idUsuario,
@@ -19,7 +19,7 @@ public class CompraForm {
                       Instant fechaCompra,
                       MetodoPagoEnum metodoPago,
                       Double precioBase,
-                      Double precioFinal,
+                      int descuento,
                       EstadoCompraEnum estadoCompra) {
 
         this.idUsuario = idUsuario;
@@ -27,7 +27,7 @@ public class CompraForm {
         this.fechaCompra = fechaCompra;
         this.metodoPago = metodoPago;
         this.precioBase = precioBase;
-        this.precioFinal = precioFinal;
+        this.descuento = descuento;
         this.estadoCompra = estadoCompra;
     }
 
@@ -51,8 +51,8 @@ public class CompraForm {
         return precioBase;
     }
 
-    public Double getPrecioFinal() {
-        return precioFinal;
+    public int getDescuento() {
+        return descuento;
     }
 
     public EstadoCompraEnum getEstadoCompra() {

@@ -30,9 +30,6 @@ public class CompraFormularioAEntidadMapper {
     public static CompraEntidad actualizarCompraEntidad(Long idCompra, CompraForm form) {
 
         double precioBase = redondear(form.getPrecioBase());
-        double precioFinal = redondear(form.getPrecioFinal());
-
-        int descuento = calcularDescuento(precioBase, precioFinal);
 
         return new CompraEntidad(
                 idCompra,
@@ -41,7 +38,7 @@ public class CompraFormularioAEntidadMapper {
                 form.getFechaCompra(),
                 form.getMetodoPago(),
                 precioBase,
-                descuento,
+                form.getDescuento(),
                 form.getEstadoCompra()
         );
     }
