@@ -17,7 +17,6 @@ public class ValidacionesComunes {
             errores.add(new ErrorModel(campo, TipoErrorEnum.OBLIGATORIO));
             return;
         }
-
         if (valor instanceof String string && string.isBlank()) {
             errores.add(new ErrorModel(campo, TipoErrorEnum.OBLIGATORIO));
         }
@@ -37,7 +36,6 @@ public class ValidacionesComunes {
     }
 
     public static void valorNoNegativo(String campo, Number valor, List<ErrorModel> errores) {
-
         if (valor == null) {
             return; // la obligatoriedad se valida aparte
         }

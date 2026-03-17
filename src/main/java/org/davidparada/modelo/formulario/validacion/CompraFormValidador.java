@@ -45,13 +45,7 @@ public class CompraFormValidador {
 
         // Descuento
 
-        ValidacionesComunes.valorFueraDeRango("descuento", descuento(form.getPrecioBase(), form.getPrecioFinal()), 0d, 100d, errores);
-
-        // Precio final
-
-        ValidacionesComunes.obligatorio("precioFinal", form.getPrecioFinal(), errores);
-        ValidacionesComunes.valorNoNegativo("precioFinal", form.getPrecioFinal(), errores);
-        ValidacionesComunes.maxDosDecimales("precioFinal", form.getPrecioFinal(), errores);
+        ValidacionesComunes.valorFueraDeRango("descuento",form.getPrecioBase(), 0d, 100d, errores);
 
         // Estado
 
@@ -74,8 +68,4 @@ public class CompraFormValidador {
 
     }
 
-    public static double descuento(double precioBase, double precioFinal) {
-        double descuento = 100d * (1 - precioFinal / precioBase);
-        return descuento;
-    }
 }

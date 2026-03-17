@@ -11,6 +11,7 @@ import org.davidparada.modelo.formulario.CompraForm;
 import org.davidparada.modelo.formulario.UsuarioForm;
 import org.davidparada.modelo.formulario.validacion.CompraFormValidador;
 import org.davidparada.modelo.formulario.validacion.ErrorModel;
+import org.davidparada.modelo.formulario.validacion.JuegoFormValidador;
 import org.davidparada.modelo.mapper.CompraEntidadADtoMapper;
 import org.davidparada.modelo.mapper.JuegoEntidadADtoMapper;
 import org.davidparada.modelo.mapper.UsuarioEntidadADtoMapper;
@@ -33,7 +34,11 @@ public class CompraControlador {
     private static final int FECHA_LIMITE_PARA_REEMBOLSO = 30;
     private static final int HORAS_MAXIMAS_PARA_REEMBOLSO = 5;
     public static final int CERO = 0;
+    public static final int DESCUENTO_MIN = 0;
+    public static final int DESCUENTO_MAX = 100;
     public static final double POR_CIENTO_DOUBLE = 100.0;
+    public static final double PRECIO_MIN = 0d;
+    public static final double PRECIO_MAX = 999.9;
     private final ICompraRepo compraRepo;
     private final IUsuarioRepo usuarioRepo;
     private final IJuegoRepo juegoRepo;
@@ -87,6 +92,18 @@ public class CompraControlador {
         }
         comprobarListaErrores(errores);
 
+// Compruebo precioBase
+        if (juego.getPrecioBase() < PRECIO_MIN || juego.getPrecioBase() > PRECIO_MAX) {
+            errores.add(new ErrorModel("descuento",TipoErrorEnum.RANGO_INVALIDO));
+        }
+        comprobarListaErrores(errores);
+
+// Compruebo descuento válido
+        if (juego.getDescuento() < DESCUENTO_MIN || juego.getDescuento() > DESCUENTO_MAX) {
+            errores.add(new ErrorModel("descuento",TipoErrorEnum.RANGO_INVALIDO));
+        }
+        comprobarListaErrores(errores);
+
 // Comprueba si ya está en biblioteca
         boolean enBiblioteca =
                 bibliotecaRepo.buscarPorUsuario(idUsuario)
@@ -136,6 +153,11 @@ public class CompraControlador {
 
         // Compruebo que exista el juego y esté apto para comprar.
         CompraEntidad compraEntidad = obtenerCompra(idCompra, errores);
+        if(compraEntidad.getEstadoCompra() == EstadoCompraEnum.COMPLETADA) {
+            errores.add(new ErrorModel("compra", TipoErrorEnum.ESTADO_INCORRECTO));
+        }
+        comprobarListaErrores(errores);
+
         JuegoEntidad juegoEntidad = obtenerJuego(compraEntidad.getIdJuego(), errores);
         if (estadoJuegoValido(juegoEntidad.getEstado())) {
             errores.add(new ErrorModel("juego", TipoErrorEnum.NO_PERMITIDO));

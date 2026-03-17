@@ -2,6 +2,7 @@ package controlador;
 
 import org.davidparada.controlador.BibliotecaControlador;
 import org.davidparada.controlador.CompraControlador;
+import org.davidparada.controlador.JuegoControlador;
 import org.davidparada.controlador.util.ObtenerEntidadesOptional;
 import org.davidparada.excepcion.ValidationException;
 import org.davidparada.modelo.dto.CompraDto;
@@ -14,6 +15,7 @@ import org.davidparada.modelo.enums.*;
 import org.davidparada.modelo.formulario.CompraForm;
 import org.davidparada.modelo.formulario.JuegoForm;
 import org.davidparada.modelo.formulario.UsuarioForm;
+import org.davidparada.modelo.formulario.validacion.ErrorModel;
 import org.davidparada.repositorio.implementacionMemoria.*;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -21,6 +23,7 @@ import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -33,6 +36,7 @@ class CompraControladorTest {
     private CompraRepo compraRepo;
     private BibliotecaRepo bibliotecaRepo;
     private BibliotecaControlador bibliotecaControlador;
+    private JuegoControlador juegoControlador;
 
     @BeforeEach
     void setup() {
@@ -76,17 +80,17 @@ class CompraControladorTest {
 
     @Test
     void realizarCompra_DescuentoNegativo_LanzaValidationException() throws Exception {
-
+        List<ErrorModel> errores = new ArrayList<>();
         var usuario = crearUsuario();
-
-        var juego = juegoRepo.crear(
+        var juegoBase = crearJuego();
+        var juego = juegoRepo.actualizar(juegoBase.getIdJuego(),
                 new JuegoForm(
                         "Juego",
                         "Desc",
                         "Dev",
                         LocalDate.now(),
                         50.0,
-                        -10,
+                        -10, // estado inválido forzado
                         "Accion",
                         ClasificacionJuegoEnum.PEGI_18,
                         new String[]{"ES"},
@@ -98,7 +102,7 @@ class CompraControladorTest {
                 ValidationException.class,
                 () -> compraControlador.realizarCompra(
                         usuario.getIdUsuario(),
-                        juego.getIdJuego(),
+                        juego.get().getIdJuego(),
                         MetodoPagoEnum.PAYPAL
                 )
         );
@@ -108,8 +112,8 @@ class CompraControladorTest {
     void realizarCompra_DescuentoMayor100_LanzaValidationException() throws Exception {
 
         var usuario = crearUsuario();
-
-        var juego = juegoRepo.crear(
+        var juegoBase = crearJuego();
+        var juego = juegoRepo.actualizar(juegoBase.getIdJuego(),
                 new JuegoForm(
                         "Juego",
                         "Desc",
@@ -128,7 +132,7 @@ class CompraControladorTest {
                 ValidationException.class,
                 () -> compraControlador.realizarCompra(
                         usuario.getIdUsuario(),
-                        juego.getIdJuego(),
+                        juego.get().getIdJuego(),
                         MetodoPagoEnum.PAYPAL
                 )
         );
@@ -324,7 +328,19 @@ class CompraControladorTest {
         var usuario = crearUsuario();
         var juego = crearJuego();
 
-        var compra = compraRepo.crear(
+        var compraBase = compraRepo.crear(
+                new CompraForm(
+                        usuario.getIdUsuario(),
+                        juego.getIdJuego(),
+                        Instant.now(),
+                        MetodoPagoEnum.PAYPAL,
+                        50.0,
+                        0,
+                        EstadoCompraEnum.COMPLETADA
+                )
+        );
+
+        var compra = compraRepo.actualizar(compraBase.getIdCompra(),
                 new CompraForm(
                         usuario.getIdUsuario(),
                         juego.getIdJuego(),
@@ -339,7 +355,7 @@ class CompraControladorTest {
         assertThrows(
                 ValidationException.class,
                 () -> compraControlador.procesarPago(
-                        compra.getIdCompra(),
+                        compra.get().getIdCompra(),
                         MetodoPagoEnum.PAYPAL
                 )
         );
@@ -571,14 +587,16 @@ class CompraControladorTest {
                 )
         );
 
-        compraControlador.solicitarReembolso(compra.getIdCompra());
+        compraControlador.procesarPago(
+                compra.getIdCompra(),
+                MetodoPagoEnum.PAYPAL
+        );
 
-        var actualizada =
-                compraRepo.buscarPorId(compra.getIdCompra()).get();
+        compraControlador.solicitarReembolso(compra.getIdCompra());
 
         assertEquals(
                 EstadoCompraEnum.REEMBOLSADA,
-                actualizada.getEstadoCompra()
+                compraRepo.buscarPorId(compra.getIdCompra()).get().getEstadoCompra()
         );
     }
 
