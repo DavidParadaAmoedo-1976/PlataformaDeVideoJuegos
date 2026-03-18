@@ -4,7 +4,7 @@ import org.davidparada.modelo.entidad.JuegoEntidad;
 import org.davidparada.modelo.enums.ClasificacionJuegoEnum;
 import org.davidparada.modelo.enums.EstadoJuegoEnum;
 import org.davidparada.modelo.formulario.JuegoForm;
-import org.davidparada.repositorio.implementacionMemoria.JuegoRepo;
+import org.davidparada.repositorio.implementacionMemoria.JuegoRepoMemoria;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -13,20 +13,20 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class JuegoRepoTest {
+class JuegoRepoMemoriaTest {
 
-    private JuegoRepo juegoRepo;
+    private JuegoRepoMemoria juegoRepoMemoria;
 
     @BeforeEach
     void setUp() {
-        juegoRepo = new JuegoRepo();
+        juegoRepoMemoria = new JuegoRepoMemoria();
     }
 
     @Test
     void buscarPorId_vacio() {
 
         Optional<JuegoEntidad> resultado =
-                juegoRepo.buscarPorId(999L);
+                juegoRepoMemoria.buscarPorId(999L);
 
         assertTrue(resultado.isEmpty());
     }
@@ -34,7 +34,7 @@ class JuegoRepoTest {
     @Test
     void buscarPorId_encontrado() {
 
-        JuegoEntidad juego = juegoRepo.crear(
+        JuegoEntidad juego = juegoRepoMemoria.crear(
                 new JuegoForm(
                         "Zelda",
                         "desc",
@@ -50,7 +50,7 @@ class JuegoRepoTest {
         );
 
         Optional<JuegoEntidad> resultado =
-                juegoRepo.buscarPorId(juego.getIdJuego());
+                juegoRepoMemoria.buscarPorId(juego.getIdJuego());
 
         assertTrue(resultado.isPresent());
     }

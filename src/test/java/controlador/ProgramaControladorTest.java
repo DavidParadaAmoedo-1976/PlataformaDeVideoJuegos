@@ -23,11 +23,11 @@ class ProgramaControladorTest {
 
     private ProgramaControlador controlador;
 
-    private UsuarioRepo usuarioRepo;
-    private JuegoRepo juegoRepo;
-    private CompraRepo compraRepo;
-    private BibliotecaRepo bibliotecaRepo;
-    private ResenaRepo resenaRepo;
+    private UsuarioRepoMemoria usuarioRepoMemoria;
+    private JuegoRepoMemoria juegoRepoMemoria;
+    private CompraRepoMemoria compraRepoMemoria;
+    private BibliotecaRepoMemoria bibliotecaRepoMemoria;
+    private ResenaRepoMemoria resenaRepoMemoria;
 
     private Instant ahora;
 
@@ -36,20 +36,20 @@ class ProgramaControladorTest {
 
         ahora = Instant.now();   // ← AÑADE ESTO
 
-        usuarioRepo = new UsuarioRepo();
-        juegoRepo = new JuegoRepo();
-        compraRepo = new CompraRepo();
-        bibliotecaRepo = new BibliotecaRepo();
-        resenaRepo = new ResenaRepo();
+        usuarioRepoMemoria = new UsuarioRepoMemoria();
+        juegoRepoMemoria = new JuegoRepoMemoria();
+        compraRepoMemoria = new CompraRepoMemoria();
+        bibliotecaRepoMemoria = new BibliotecaRepoMemoria();
+        resenaRepoMemoria = new ResenaRepoMemoria();
 
         controlador = new ProgramaControlador(
-                compraRepo,
-                juegoRepo,
-                usuarioRepo,
-                bibliotecaRepo,
-                resenaRepo
+                compraRepoMemoria,
+                juegoRepoMemoria,
+                usuarioRepoMemoria,
+                bibliotecaRepoMemoria,
+                resenaRepoMemoria
         );
-        new ObtenerEntidadesOptional(compraRepo, usuarioRepo, juegoRepo, bibliotecaRepo, resenaRepo);
+        new ObtenerEntidadesOptional(compraRepoMemoria, usuarioRepoMemoria, juegoRepoMemoria, bibliotecaRepoMemoria, resenaRepoMemoria);
         cargarDatosBase();
     }
 
@@ -60,7 +60,7 @@ class ProgramaControladorTest {
         // USUARIOS
         // =========================
 
-        usuarioRepo.crear(new UsuarioForm(
+        usuarioRepoMemoria.crear(new UsuarioForm(
                 "user1",
                 "u1@test.com",
                 "123",
@@ -73,7 +73,7 @@ class ProgramaControladorTest {
                 EstadoCuentaEnum.ACTIVA
         ));
 
-        usuarioRepo.crear(new UsuarioForm(
+        usuarioRepoMemoria.crear(new UsuarioForm(
                 "user2",
                 "u2@test.com",
                 "123",
@@ -87,7 +87,7 @@ class ProgramaControladorTest {
         ));
 
         // Ajustar fechas para el test
-        usuarioRepo.actualizar(1L, new UsuarioForm(
+        usuarioRepoMemoria.actualizar(1L, new UsuarioForm(
                 "user1",
                 "u1@test.com",
                 "123",
@@ -100,7 +100,7 @@ class ProgramaControladorTest {
                 EstadoCuentaEnum.ACTIVA
         ));
 
-        usuarioRepo.actualizar(2L, new UsuarioForm(
+        usuarioRepoMemoria.actualizar(2L, new UsuarioForm(
                 "user2",
                 "u2@test.com",
                 "123",
@@ -117,7 +117,7 @@ class ProgramaControladorTest {
         // JUEGOS
         // =========================
 
-        juegoRepo.crear(new JuegoForm(
+        juegoRepoMemoria.crear(new JuegoForm(
                 "Juego A",
                 "desc",
                 "Dev1",
@@ -130,7 +130,7 @@ class ProgramaControladorTest {
                 EstadoJuegoEnum.DISPONIBLE
         ));
 
-        juegoRepo.crear(new JuegoForm(
+        juegoRepoMemoria.crear(new JuegoForm(
                 "Juego B",
                 "desc",
                 "Dev2",
@@ -153,7 +153,7 @@ class ProgramaControladorTest {
 
 // Crear compras (descuento = 0 inicialmente)
 
-        compraRepo.crear(new CompraForm(
+        compraRepoMemoria.crear(new CompraForm(
                 1L,
                 1L,
                 ahora.minus(5, ChronoUnit.DAYS),
@@ -163,7 +163,7 @@ class ProgramaControladorTest {
                 EstadoCompraEnum.PENDIENTE
         ));
 
-        compraRepo.crear(new CompraForm(
+        compraRepoMemoria.crear(new CompraForm(
                 2L,
                 1L,
                 ahora.minus(3, ChronoUnit.DAYS),
@@ -173,7 +173,7 @@ class ProgramaControladorTest {
                 EstadoCompraEnum.PENDIENTE
         ));
 
-        compraRepo.crear(new CompraForm(
+        compraRepoMemoria.crear(new CompraForm(
                 1L,
                 2L,
                 ahora.minus(1, ChronoUnit.DAYS),
@@ -185,7 +185,7 @@ class ProgramaControladorTest {
 
 // Ahora actualizar para calcular descuento real
 
-        compraRepo.actualizar(1L, new CompraForm(
+        compraRepoMemoria.actualizar(1L, new CompraForm(
                 1L,
                 1L,
                 ahora.minus(5, ChronoUnit.DAYS),
@@ -195,7 +195,7 @@ class ProgramaControladorTest {
                 EstadoCompraEnum.COMPLETADA
         ));
 
-        compraRepo.actualizar(2L, new CompraForm(
+        compraRepoMemoria.actualizar(2L, new CompraForm(
                 2L,
                 1L,
                 ahora.minus(3, ChronoUnit.DAYS),
@@ -205,7 +205,7 @@ class ProgramaControladorTest {
                 EstadoCompraEnum.COMPLETADA
         ));
 
-        compraRepo.actualizar(3L, new CompraForm(
+        compraRepoMemoria.actualizar(3L, new CompraForm(
                 1L,
                 2L,
                 ahora.minus(1, ChronoUnit.DAYS),
@@ -219,20 +219,20 @@ class ProgramaControladorTest {
         // BIBLIOTECA
         // =========================
 
-        bibliotecaRepo.crear(new BibliotecaForm(1L, 1L, ahora, 0.0, null, false));
-        bibliotecaRepo.crear(new BibliotecaForm(2L, 2L, ahora, 0.0, null, false));
+        bibliotecaRepoMemoria.crear(new BibliotecaForm(1L, 1L, ahora, 0.0, null, false));
+        bibliotecaRepoMemoria.crear(new BibliotecaForm(2L, 2L, ahora, 0.0, null, false));
 
-        bibliotecaRepo.actualizar(1L,
+        bibliotecaRepoMemoria.actualizar(1L,
                 new BibliotecaForm(1L, 1L, ahora, 20.0, ahora, true));
 
-        bibliotecaRepo.actualizar(2L,
+        bibliotecaRepoMemoria.actualizar(2L,
                 new BibliotecaForm(2L, 2L, ahora, 50.0, ahora, true));
 
         // =========================
         // RESEÑAS
         // =========================
 
-        resenaRepo.crear(new ResenaForm(
+        resenaRepoMemoria.crear(new ResenaForm(
                 1L,
                 1L,
                 true,
@@ -243,7 +243,7 @@ class ProgramaControladorTest {
                 EstadoPublicacionEnum.PUBLICADA
         ));
 
-        resenaRepo.crear(new ResenaForm(
+        resenaRepoMemoria.crear(new ResenaForm(
                 2L,
                 1L,
                 false,

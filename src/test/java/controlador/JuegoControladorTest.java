@@ -11,7 +11,7 @@ import org.davidparada.modelo.formulario.JuegoForm;
 import org.davidparada.modelo.formulario.validacion.JuegoFormValidador;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.davidparada.repositorio.implementacionMemoria.JuegoRepo;
+import org.davidparada.repositorio.implementacionMemoria.JuegoRepoMemoria;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -24,11 +24,11 @@ class JuegoControladorTest {
 
     @BeforeEach
     void setUp() {
-        JuegoRepo juegoRepo = new JuegoRepo();
-        JuegoFormValidador.setJuegoRepo(juegoRepo);
-        juegoControlador = new JuegoControlador(juegoRepo);
+        JuegoRepoMemoria juegoRepoMemoria = new JuegoRepoMemoria();
+        JuegoFormValidador.setJuegoRepo(juegoRepoMemoria);
+        juegoControlador = new JuegoControlador(juegoRepoMemoria);
 
-        new ObtenerEntidadesOptional(null, null, juegoRepo, null, null);
+        new ObtenerEntidadesOptional(null, null, juegoRepoMemoria, null, null);
 
     }
 

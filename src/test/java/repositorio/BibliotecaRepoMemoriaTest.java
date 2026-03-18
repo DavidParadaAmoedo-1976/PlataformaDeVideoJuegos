@@ -2,7 +2,7 @@ package repositorio;
 
 import org.davidparada.modelo.entidad.BibliotecaEntidad;
 import org.davidparada.modelo.formulario.BibliotecaForm;
-import org.davidparada.repositorio.implementacionMemoria.BibliotecaRepo;
+import org.davidparada.repositorio.implementacionMemoria.BibliotecaRepoMemoria;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -12,13 +12,13 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class BibliotecaRepoTest {
+class BibliotecaRepoMemoriaTest {
 
-    private BibliotecaRepo repo;
+    private BibliotecaRepoMemoria repo;
 
     @BeforeEach
     void setUp() {
-        repo = new BibliotecaRepo();
+        repo = new BibliotecaRepoMemoria();
     }
 
     @Test

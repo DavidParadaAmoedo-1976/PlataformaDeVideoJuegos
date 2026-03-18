@@ -4,7 +4,7 @@ import org.davidparada.modelo.entidad.CompraEntidad;
 import org.davidparada.modelo.enums.EstadoCompraEnum;
 import org.davidparada.modelo.enums.MetodoPagoEnum;
 import org.davidparada.modelo.formulario.CompraForm;
-import org.davidparada.repositorio.implementacionMemoria.CompraRepo;
+import org.davidparada.repositorio.implementacionMemoria.CompraRepoMemoria;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -13,13 +13,13 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class CompraRepoTest {
+class CompraRepoMemoriaTest {
 
-    private CompraRepo repo;
+    private CompraRepoMemoria repo;
 
     @BeforeEach
     void setUp() {
-        repo = new CompraRepo();
+        repo = new CompraRepoMemoria();
     }
 
     @Test

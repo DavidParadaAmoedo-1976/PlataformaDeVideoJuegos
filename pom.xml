@@ -10,7 +10,7 @@
     <packaging>jar</packaging>
 
     <name>PlataformaDeVideoJuegos</name>
-    <url>http://maven.apache.org</url>
+    <url>https://maven.apache.org</url>
 
     <properties>
         <!-- Usa una versión real del JDK -->

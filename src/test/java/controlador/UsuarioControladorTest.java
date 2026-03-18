@@ -7,7 +7,7 @@ import org.davidparada.modelo.dto.UsuarioDto;
 import org.davidparada.modelo.enums.EstadoCuentaEnum;
 import org.davidparada.modelo.enums.PaisEnum;
 import org.davidparada.modelo.formulario.UsuarioForm;
-import org.davidparada.repositorio.implementacionMemoria.UsuarioRepo;
+import org.davidparada.repositorio.implementacionMemoria.UsuarioRepoMemoria;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,15 +20,15 @@ import static org.junit.jupiter.api.Assertions.*;
 class UsuarioControladorTest {
 
     private UsuarioControlador usuarioControlador;
-    private UsuarioRepo usuarioRepo;
+    private UsuarioRepoMemoria usuarioRepoMemoria;
 
     @BeforeEach
     void setUp() {
 
-        usuarioRepo = new UsuarioRepo();
-        usuarioControlador = new UsuarioControlador(usuarioRepo);
+        usuarioRepoMemoria = new UsuarioRepoMemoria();
+        usuarioControlador = new UsuarioControlador(usuarioRepoMemoria);
 
-        new ObtenerEntidadesOptional(null, usuarioRepo, null, null, null);
+        new ObtenerEntidadesOptional(null, usuarioRepoMemoria, null, null, null);
     }
 
     // ==========================

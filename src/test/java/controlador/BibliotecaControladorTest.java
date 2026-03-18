@@ -9,9 +9,9 @@ import org.davidparada.modelo.enums.*;
 import org.davidparada.modelo.formulario.BibliotecaForm;
 import org.davidparada.modelo.formulario.JuegoForm;
 import org.davidparada.modelo.formulario.UsuarioForm;
-import org.davidparada.repositorio.implementacionMemoria.BibliotecaRepo;
-import org.davidparada.repositorio.implementacionMemoria.JuegoRepo;
-import org.davidparada.repositorio.implementacionMemoria.UsuarioRepo;
+import org.davidparada.repositorio.implementacionMemoria.BibliotecaRepoMemoria;
+import org.davidparada.repositorio.implementacionMemoria.JuegoRepoMemoria;
+import org.davidparada.repositorio.implementacionMemoria.UsuarioRepoMemoria;
 import org.junit.jupiter.api.*;
 
 import java.time.Instant;
@@ -23,9 +23,9 @@ import static org.junit.jupiter.api.Assertions.*;
 class BibliotecaControladorTest {
 
     private BibliotecaControlador controlador;
-    private BibliotecaRepo bibliotecaRepo;
-    private UsuarioRepo usuarioRepo;
-    private JuegoRepo juegoRepo;
+    private BibliotecaRepoMemoria bibliotecaRepoMemoria;
+    private UsuarioRepoMemoria usuarioRepoMemoria;
+    private JuegoRepoMemoria juegoRepoMemoria;
 
     private Long idUsuario;
     private Long idJuego;
@@ -33,11 +33,11 @@ class BibliotecaControladorTest {
     @BeforeEach
     void setUp() {
 
-        bibliotecaRepo = new BibliotecaRepo();
-        usuarioRepo = new UsuarioRepo();
-        juegoRepo = new JuegoRepo();
+        bibliotecaRepoMemoria = new BibliotecaRepoMemoria();
+        usuarioRepoMemoria = new UsuarioRepoMemoria();
+        juegoRepoMemoria = new JuegoRepoMemoria();
 
-        new ObtenerEntidadesOptional(null, usuarioRepo, juegoRepo, bibliotecaRepo, null);
+        new ObtenerEntidadesOptional(null, usuarioRepoMemoria, juegoRepoMemoria, bibliotecaRepoMemoria, null);
 
 
         UsuarioForm usuarioForm = new UsuarioForm(
@@ -53,7 +53,7 @@ class BibliotecaControladorTest {
                 EstadoCuentaEnum.ACTIVA
         );
 
-        UsuarioEntidad usuario = usuarioRepo.crear(usuarioForm);
+        UsuarioEntidad usuario = usuarioRepoMemoria.crear(usuarioForm);
         idUsuario = usuario.getIdUsuario();
 
         JuegoForm juegoForm = new JuegoForm(
@@ -69,11 +69,11 @@ class BibliotecaControladorTest {
                 EstadoJuegoEnum.DISPONIBLE
         );
 
-        idJuego = juegoRepo.crear(juegoForm).getIdJuego();
+        idJuego = juegoRepoMemoria.crear(juegoForm).getIdJuego();
 
         controlador = new BibliotecaControlador(
-                bibliotecaRepo,
-                juegoRepo
+                bibliotecaRepoMemoria,
+                juegoRepoMemoria
         );
     }
 
@@ -155,7 +155,7 @@ class BibliotecaControladorTest {
         // añadir tiempo segunda vez
         controlador.anadirTiempoDeJuego(idUsuario, idJuego, 3.0);
 
-        var entidad = bibliotecaRepo.buscarPorUsuarioYJuego(idUsuario, idJuego);
+        var entidad = bibliotecaRepoMemoria.buscarPorUsuarioYJuego(idUsuario, idJuego);
 
         assertTrue(entidad.isPresent());
         assertEquals(8.0, entidad.get().getHorasDeJuego());
@@ -178,7 +178,7 @@ class BibliotecaControladorTest {
         controlador.anadirJuego(idUsuario, idJuego);
 
         var entidad =
-                bibliotecaRepo.buscarPorUsuarioYJuego(idUsuario, idJuego);
+                bibliotecaRepoMemoria.buscarPorUsuarioYJuego(idUsuario, idJuego);
 
         BibliotecaForm form = new BibliotecaForm(
                 idUsuario,
@@ -192,7 +192,7 @@ class BibliotecaControladorTest {
         controlador.anadirTiempoDeJuego(idUsuario, idJuego, 5.0);
 
         var actualizada =
-                bibliotecaRepo.buscarPorUsuarioYJuego(idUsuario, idJuego);
+                bibliotecaRepoMemoria.buscarPorUsuarioYJuego(idUsuario, idJuego);
 
         assertEquals(5.0, actualizada.get().getHorasDeJuego());
     }
@@ -221,7 +221,7 @@ class BibliotecaControladorTest {
         controlador.anadirJuego(idUsuario, idJuego);
 
         var entidad =
-                bibliotecaRepo.buscarPorUsuarioYJuego(idUsuario, idJuego);
+                bibliotecaRepoMemoria.buscarPorUsuarioYJuego(idUsuario, idJuego);
 
         BibliotecaForm form = new BibliotecaForm(
                 idUsuario,
@@ -232,7 +232,7 @@ class BibliotecaControladorTest {
                 entidad.get().isEstadoInstalacion()
         );
 
-        bibliotecaRepo.actualizar(entidad.get().getIdBiblioteca(), form);
+        bibliotecaRepoMemoria.actualizar(entidad.get().getIdBiblioteca(), form);
 
         String mensaje =
                 controlador.consultarUltimaSesion(idUsuario, idJuego);
@@ -249,7 +249,7 @@ class BibliotecaControladorTest {
 
         controlador.anadirJuego(idUsuario, idJuego);
 
-        var entidad = bibliotecaRepo.buscarPorUsuarioYJuego(idUsuario, idJuego);
+        var entidad = bibliotecaRepoMemoria.buscarPorUsuarioYJuego(idUsuario, idJuego);
 
         BibliotecaForm form = new BibliotecaForm(
                 idUsuario,
@@ -260,7 +260,7 @@ class BibliotecaControladorTest {
                 true
         );
 
-        bibliotecaRepo.actualizar(entidad.get().getIdBiblioteca(), form);
+        bibliotecaRepoMemoria.actualizar(entidad.get().getIdBiblioteca(), form);
 
         List<BibliotecaDto> resultado =
                 controlador.buscarSegunCriterios(idUsuario, null, true);
@@ -309,7 +309,7 @@ class BibliotecaControladorTest {
 
         controlador.anadirJuego(idUsuario, idJuego);
 
-        var entidad = bibliotecaRepo.buscarPorUsuarioYJuego(idUsuario, idJuego);
+        var entidad = bibliotecaRepoMemoria.buscarPorUsuarioYJuego(idUsuario, idJuego);
 
         BibliotecaForm form = new BibliotecaForm(
                 idUsuario,
@@ -320,7 +320,7 @@ class BibliotecaControladorTest {
                 true
         );
 
-        bibliotecaRepo.actualizar(entidad.get().getIdBiblioteca(), form);
+        bibliotecaRepoMemoria.actualizar(entidad.get().getIdBiblioteca(), form);
 
         var stats = controlador.estadisticasBiblioteca(idUsuario);
 

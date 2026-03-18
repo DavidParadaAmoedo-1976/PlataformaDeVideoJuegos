@@ -3,7 +3,7 @@ package repositorio;
 import org.davidparada.modelo.entidad.ResenaEntidad;
 import org.davidparada.modelo.enums.EstadoPublicacionEnum;
 import org.davidparada.modelo.formulario.ResenaForm;
-import org.davidparada.repositorio.implementacionMemoria.ResenaRepo;
+import org.davidparada.repositorio.implementacionMemoria.ResenaRepoMemoria;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -12,13 +12,13 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class ResenaRepoTest {
+class ResenaRepoMemoriaTest {
 
-    private ResenaRepo repo;
+    private ResenaRepoMemoria repo;
 
     @BeforeEach
     void setUp() {
-        repo = new ResenaRepo();
+        repo = new ResenaRepoMemoria();
     }
 
     @Test

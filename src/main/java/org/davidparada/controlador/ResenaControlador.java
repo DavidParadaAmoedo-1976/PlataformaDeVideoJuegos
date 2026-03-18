@@ -3,7 +3,6 @@ package org.davidparada.controlador;
 import org.davidparada.excepcion.ValidationException;
 import org.davidparada.modelo.dto.JuegoDto;
 import org.davidparada.modelo.dto.ResenaDto;
-import org.davidparada.modelo.entidad.BibliotecaEntidad;
 import org.davidparada.modelo.entidad.JuegoEntidad;
 import org.davidparada.modelo.entidad.ResenaEntidad;
 import org.davidparada.modelo.entidad.UsuarioEntidad;
@@ -265,5 +264,3 @@ public class ResenaControlador {
         return resenasDto;
     }
 }
-
-

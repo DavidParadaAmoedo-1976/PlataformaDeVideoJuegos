@@ -31,30 +31,30 @@ import static org.junit.jupiter.api.Assertions.*;
 class CompraControladorTest {
 
     private CompraControlador compraControlador;
-    private UsuarioRepo usuarioRepo;
-    private JuegoRepo juegoRepo;
-    private CompraRepo compraRepo;
-    private BibliotecaRepo bibliotecaRepo;
+    private UsuarioRepoMemoria usuarioRepoMemoria;
+    private JuegoRepoMemoria juegoRepoMemoria;
+    private CompraRepoMemoria compraRepoMemoria;
+    private BibliotecaRepoMemoria bibliotecaRepoMemoria;
     private BibliotecaControlador bibliotecaControlador;
     private JuegoControlador juegoControlador;
 
     @BeforeEach
     void setup() {
-        usuarioRepo = new UsuarioRepo();
-        juegoRepo = new JuegoRepo();
-        compraRepo = new CompraRepo();
-        bibliotecaRepo = new BibliotecaRepo();
-        bibliotecaControlador = new BibliotecaControlador(bibliotecaRepo, juegoRepo);
+        usuarioRepoMemoria = new UsuarioRepoMemoria();
+        juegoRepoMemoria = new JuegoRepoMemoria();
+        compraRepoMemoria = new CompraRepoMemoria();
+        bibliotecaRepoMemoria = new BibliotecaRepoMemoria();
+        bibliotecaControlador = new BibliotecaControlador(bibliotecaRepoMemoria, juegoRepoMemoria);
 
         compraControlador = new CompraControlador(
-                compraRepo,
-                usuarioRepo,
-                juegoRepo,
-                bibliotecaRepo,
+                compraRepoMemoria,
+                usuarioRepoMemoria,
+                juegoRepoMemoria,
+                bibliotecaRepoMemoria,
                 bibliotecaControlador
         );
 
-        new ObtenerEntidadesOptional(compraRepo, usuarioRepo, juegoRepo, bibliotecaRepo, null);
+        new ObtenerEntidadesOptional(compraRepoMemoria, usuarioRepoMemoria, juegoRepoMemoria, bibliotecaRepoMemoria, null);
     }
 
 // =========================
@@ -83,7 +83,7 @@ class CompraControladorTest {
         List<ErrorModel> errores = new ArrayList<>();
         var usuario = crearUsuario();
         var juegoBase = crearJuego();
-        var juego = juegoRepo.actualizar(juegoBase.getIdJuego(),
+        var juego = juegoRepoMemoria.actualizar(juegoBase.getIdJuego(),
                 new JuegoForm(
                         "Juego",
                         "Desc",
@@ -113,7 +113,7 @@ class CompraControladorTest {
 
         var usuario = crearUsuario();
         var juegoBase = crearJuego();
-        var juego = juegoRepo.actualizar(juegoBase.getIdJuego(),
+        var juego = juegoRepoMemoria.actualizar(juegoBase.getIdJuego(),
                 new JuegoForm(
                         "Juego",
                         "Desc",
@@ -141,7 +141,7 @@ class CompraControladorTest {
     @Test
     void usuarioSuspendidoNoPuedeComprar() throws Exception {
 
-        var usuario = usuarioRepo.crear(new UsuarioForm(
+        var usuario = usuarioRepoMemoria.crear(new UsuarioForm(
                 "user", "email@test.com", "Password1", "Nombre",
                 PaisEnum.ESPANA,
                 LocalDate.now().minusYears(20),
@@ -150,7 +150,7 @@ class CompraControladorTest {
                 100.0,
                 EstadoCuentaEnum.ACTIVA
         ));
-        usuarioRepo.actualizar(usuario.getIdUsuario(), new UsuarioForm(
+        usuarioRepoMemoria.actualizar(usuario.getIdUsuario(), new UsuarioForm(
                 usuario.getNombreUsuario(),
                 usuario.getEmail(),
                 usuario.getPassword(),
@@ -215,7 +215,7 @@ class CompraControladorTest {
         var usuario = crearUsuario();
         var juego = crearJuego();
 
-        juegoRepo.actualizar(
+        juegoRepoMemoria.actualizar(
                 juego.getIdJuego(),
                 new JuegoForm(
                         juego.getTitulo(),
@@ -251,7 +251,7 @@ class CompraControladorTest {
         var usuario = crearUsuario();
         var juego = crearJuego();
 
-        var compra = compraRepo.crear(
+        var compra = compraRepoMemoria.crear(
                 new CompraForm(
                         usuario.getIdUsuario(),
                         juego.getIdJuego(),
@@ -268,7 +268,7 @@ class CompraControladorTest {
                 MetodoPagoEnum.TARJETA
         );
 
-        var actualizada = compraRepo.buscarPorId(compra.getIdCompra()).get();
+        var actualizada = compraRepoMemoria.buscarPorId(compra.getIdCompra()).get();
 
         assertEquals(
                 EstadoCompraEnum.COMPLETADA,
@@ -297,7 +297,7 @@ class CompraControladorTest {
 
         var usuario = crearUsuario();
 
-        var juego = juegoRepo.crear(
+        var juego = juegoRepoMemoria.crear(
                 new JuegoForm(
                         "Juego",
                         "Desc",
@@ -328,7 +328,7 @@ class CompraControladorTest {
         var usuario = crearUsuario();
         var juego = crearJuego();
 
-        var compraBase = compraRepo.crear(
+        var compraBase = compraRepoMemoria.crear(
                 new CompraForm(
                         usuario.getIdUsuario(),
                         juego.getIdJuego(),
@@ -340,7 +340,7 @@ class CompraControladorTest {
                 )
         );
 
-        var compra = compraRepo.actualizar(compraBase.getIdCompra(),
+        var compra = compraRepoMemoria.actualizar(compraBase.getIdCompra(),
                 new CompraForm(
                         usuario.getIdUsuario(),
                         juego.getIdJuego(),
@@ -428,7 +428,7 @@ class CompraControladorTest {
         var usuario = crearUsuario();
         var juego = crearJuego();
 
-        var compra = compraRepo.crear(
+        var compra = compraRepoMemoria.crear(
                 new CompraForm(
                         usuario.getIdUsuario(),
                         juego.getIdJuego(),
@@ -466,7 +466,7 @@ class CompraControladorTest {
         var usuario2 = crearUsuario();
         var juego = crearJuego();
 
-        var compra = compraRepo.crear(
+        var compra = compraRepoMemoria.crear(
                 new CompraForm(
                         usuario1.getIdUsuario(),
                         juego.getIdJuego(),
@@ -512,7 +512,7 @@ class CompraControladorTest {
         var usuario = crearUsuario();
         var juego = crearJuego();
 
-        var compra = compraRepo.crear(
+        var compra = compraRepoMemoria.crear(
                 new CompraForm(
                         usuario.getIdUsuario(),
                         juego.getIdJuego(),
@@ -544,7 +544,7 @@ class CompraControladorTest {
         var usuario = crearUsuario();
         var juego = crearJuego();
 
-        var compra = compraRepo.crear(
+        var compra = compraRepoMemoria.crear(
                 new CompraForm(
                         usuario.getIdUsuario(),
                         juego.getIdJuego(),
@@ -565,7 +565,7 @@ class CompraControladorTest {
 
         assertEquals(
                 EstadoCompraEnum.REEMBOLSADA,
-                compraRepo.buscarPorId(compra.getIdCompra()).get().getEstadoCompra()
+                compraRepoMemoria.buscarPorId(compra.getIdCompra()).get().getEstadoCompra()
         );
     }
 
@@ -575,7 +575,7 @@ class CompraControladorTest {
         var usuario = crearUsuario();
         var juego = crearJuego();
 
-        var compra = compraRepo.crear(
+        var compra = compraRepoMemoria.crear(
                 new CompraForm(
                         usuario.getIdUsuario(),
                         juego.getIdJuego(),
@@ -596,7 +596,7 @@ class CompraControladorTest {
 
         assertEquals(
                 EstadoCompraEnum.REEMBOLSADA,
-                compraRepo.buscarPorId(compra.getIdCompra()).get().getEstadoCompra()
+                compraRepoMemoria.buscarPorId(compra.getIdCompra()).get().getEstadoCompra()
         );
     }
 
@@ -610,7 +610,7 @@ class CompraControladorTest {
         var usuario = crearUsuario();
         var juego = crearJuego();
 
-        var compra = compraRepo.crear(
+        var compra = compraRepoMemoria.crear(
                 new CompraForm(
                         usuario.getIdUsuario(),
                         juego.getIdJuego(),
@@ -635,7 +635,7 @@ class CompraControladorTest {
 
     private UsuarioEntidad crearUsuario() {
 
-        return usuarioRepo.crear(
+        return usuarioRepoMemoria.crear(
                 new UsuarioForm(
                         "user" + System.nanoTime(),
                         "email" + System.nanoTime() + "@test.com",
@@ -653,7 +653,7 @@ class CompraControladorTest {
 
     private JuegoEntidad crearJuego() {
 
-        return juegoRepo.crear(
+        return juegoRepoMemoria.crear(
                 new JuegoForm(
                         "Juego" + System.nanoTime(),
                         "Descripcion",
@@ -671,7 +671,7 @@ class CompraControladorTest {
 
     private CompraEntidad crearCompra(Long idUsuario, Long idJuego, EstadoCompraEnum estado) {
 
-        return compraRepo.crear(
+        return compraRepoMemoria.crear(
                 new CompraForm(
                         idUsuario,
                         idJuego,

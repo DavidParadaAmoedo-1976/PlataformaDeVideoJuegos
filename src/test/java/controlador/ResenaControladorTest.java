@@ -12,10 +12,10 @@ import org.davidparada.modelo.formulario.BibliotecaForm;
 import org.davidparada.modelo.formulario.JuegoForm;
 import org.davidparada.modelo.formulario.ResenaForm;
 import org.davidparada.modelo.formulario.UsuarioForm;
-import org.davidparada.repositorio.implementacionMemoria.BibliotecaRepo;
-import org.davidparada.repositorio.implementacionMemoria.JuegoRepo;
-import org.davidparada.repositorio.implementacionMemoria.ResenaRepo;
-import org.davidparada.repositorio.implementacionMemoria.UsuarioRepo;
+import org.davidparada.repositorio.implementacionMemoria.BibliotecaRepoMemoria;
+import org.davidparada.repositorio.implementacionMemoria.JuegoRepoMemoria;
+import org.davidparada.repositorio.implementacionMemoria.ResenaRepoMemoria;
+import org.davidparada.repositorio.implementacionMemoria.UsuarioRepoMemoria;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -28,28 +28,28 @@ import static org.junit.jupiter.api.Assertions.*;
 class ResenaControladorTest {
 
     private ResenaControlador controlador;
-    private UsuarioRepo usuarioRepo;
-    private JuegoRepo juegoRepo;
-    private ResenaRepo resenaRepo;
-    private BibliotecaRepo bibliotecaRepo;
+    private UsuarioRepoMemoria usuarioRepoMemoria;
+    private JuegoRepoMemoria juegoRepoMemoria;
+    private ResenaRepoMemoria resenaRepoMemoria;
+    private BibliotecaRepoMemoria bibliotecaRepoMemoria;
     private UsuarioEntidad usuario;
     private JuegoEntidad juego;
 
     @BeforeEach
     void setUp() throws ValidationException {
 
-        usuarioRepo = new UsuarioRepo();
-        juegoRepo = new JuegoRepo();
-        resenaRepo = new ResenaRepo();
-        bibliotecaRepo = new BibliotecaRepo();
+        usuarioRepoMemoria = new UsuarioRepoMemoria();
+        juegoRepoMemoria = new JuegoRepoMemoria();
+        resenaRepoMemoria = new ResenaRepoMemoria();
+        bibliotecaRepoMemoria = new BibliotecaRepoMemoria();
 
         controlador = new ResenaControlador(
-                resenaRepo
+                resenaRepoMemoria
         );
-        new ObtenerEntidadesOptional(null, usuarioRepo, juegoRepo, bibliotecaRepo, resenaRepo);
+        new ObtenerEntidadesOptional(null, usuarioRepoMemoria, juegoRepoMemoria, bibliotecaRepoMemoria, resenaRepoMemoria);
 
         // ===== Crear Usuario =====
-        usuario = usuarioRepo.crear(
+        usuario = usuarioRepoMemoria.crear(
                 new UsuarioForm(
                         "david",
                         "david@email.com",
@@ -65,7 +65,7 @@ class ResenaControladorTest {
         );
 
         // ===== Crear Juego =====
-        juego = juegoRepo.crear(
+        juego = juegoRepoMemoria.crear(
                 new JuegoForm(
                         "Elden Ring",
                         "Juego RPG",
@@ -88,7 +88,7 @@ class ResenaControladorTest {
     @Test
     void escribirResena_ok() throws Exception {
 
-        bibliotecaRepo.crear(
+        bibliotecaRepoMemoria.crear(
                 new BibliotecaForm(
                         usuario.getIdUsuario(),
                         juego.getIdJuego(),
@@ -112,7 +112,7 @@ class ResenaControladorTest {
 
     @Test
     void noPermiteDosResenasMismoJuego() throws Exception {
-        bibliotecaRepo.crear(
+        bibliotecaRepoMemoria.crear(
                 new BibliotecaForm(
                         usuario.getIdUsuario(),
                         juego.getIdJuego(),
@@ -277,7 +277,7 @@ class ResenaControladorTest {
     @Test
     void obtenerResenas_filtraNoRecomendadas() throws Exception {
 
-        resenaRepo.crear(
+        resenaRepoMemoria.crear(
                 new ResenaForm(
                         usuario.getIdUsuario(),
                         juego.getIdJuego(),
@@ -371,7 +371,7 @@ class ResenaControladorTest {
     @Test
     void crearResena_UsuarioSinJuegoEnBiblioteca_LanzaValidationException() {
 
-        UsuarioEntidad otroUsuario = usuarioRepo.crear(
+        UsuarioEntidad otroUsuario = usuarioRepoMemoria.crear(
                 new UsuarioForm(
                         "otro",
                         "otro@email.com",
@@ -407,7 +407,7 @@ class ResenaControladorTest {
 
         ResenaEntidad resena = crearResenaBase();
 
-        UsuarioEntidad otroUsuario = usuarioRepo.crear(
+        UsuarioEntidad otroUsuario = usuarioRepoMemoria.crear(
                 new UsuarioForm(
                         "otro",
                         "otro@test.com",
@@ -450,7 +450,7 @@ class ResenaControladorTest {
 
         ResenaEntidad resena = crearResenaBase();
 
-        UsuarioEntidad otroUsuario = usuarioRepo.crear(
+        UsuarioEntidad otroUsuario = usuarioRepoMemoria.crear(
                 new UsuarioForm(
                         "otro2",
                         "otro2@test.com",
@@ -482,7 +482,7 @@ class ResenaControladorTest {
     @Test
     void listarResenasPorUsuario_UsuarioSinResenas_RetornaListaVacia() throws Exception {
 
-        UsuarioEntidad nuevoUsuario = usuarioRepo.crear(
+        UsuarioEntidad nuevoUsuario = usuarioRepoMemoria.crear(
                 new UsuarioForm(
                         "nuevo",
                         "nuevo@test.com",
@@ -509,7 +509,7 @@ class ResenaControladorTest {
 
     private ResenaEntidad crearResenaBase() {
 
-        return resenaRepo.crear(
+        return resenaRepoMemoria.crear(
                 new ResenaForm(
                         usuario.getIdUsuario(),
                         juego.getIdJuego(),

@@ -4,7 +4,7 @@ import org.davidparada.modelo.entidad.UsuarioEntidad;
 import org.davidparada.modelo.enums.EstadoCuentaEnum;
 import org.davidparada.modelo.enums.PaisEnum;
 import org.davidparada.modelo.formulario.UsuarioForm;
-import org.davidparada.repositorio.implementacionMemoria.UsuarioRepo;
+import org.davidparada.repositorio.implementacionMemoria.UsuarioRepoMemoria;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -15,20 +15,20 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class UsuarioRepoTest {
+class UsuarioRepoMemoriaTest {
 
-    private UsuarioRepo usuarioRepo;
+    private UsuarioRepoMemoria usuarioRepoMemoria;
 
     @BeforeEach
     void setUp() {
-        usuarioRepo = new UsuarioRepo();
+        usuarioRepoMemoria = new UsuarioRepoMemoria();
     }
 
     @Test
     void buscarPorId_devuelveOptionalVacio() {
 
         Optional<UsuarioEntidad> resultado =
-                usuarioRepo.buscarPorId(999L);
+                usuarioRepoMemoria.buscarPorId(999L);
 
         assertTrue(resultado.isEmpty());
     }
@@ -36,7 +36,7 @@ class UsuarioRepoTest {
     @Test
     void buscarPorId_devuelveOptionalConUsuario() {
 
-        UsuarioEntidad usuario = usuarioRepo.crear(
+        UsuarioEntidad usuario = usuarioRepoMemoria.crear(
                 new UsuarioForm(
                         "user",
                         "email@test.com",
@@ -52,7 +52,7 @@ class UsuarioRepoTest {
         );
 
         Optional<UsuarioEntidad> resultado =
-                usuarioRepo.buscarPorId(usuario.getIdUsuario());
+                usuarioRepoMemoria.buscarPorId(usuario.getIdUsuario());
 
         assertTrue(resultado.isPresent());
         assertEquals("user", resultado.get().getNombreUsuario());
