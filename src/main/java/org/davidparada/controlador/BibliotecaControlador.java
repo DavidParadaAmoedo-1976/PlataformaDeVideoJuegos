@@ -1,5 +1,6 @@
 package org.davidparada.controlador;
 
+import org.davidparada.controlador.interfaceControlador.IBibliotecaControlador;
 import org.davidparada.excepcion.ValidationException;
 import org.davidparada.modelo.dto.BibliotecaDto;
 import org.davidparada.modelo.dto.EstadisticasBibliotecaDto;
@@ -13,8 +14,8 @@ import org.davidparada.modelo.formulario.validacion.ErrorModel;
 import org.davidparada.modelo.mapper.BibliotecaEntidadADtoMapper;
 import org.davidparada.modelo.mapper.JuegoEntidadADtoMapper;
 import org.davidparada.modelo.mapper.UsuarioEntidadADtoMapper;
-import org.davidparada.repositorio.interfaces.IBibliotecaRepo;
-import org.davidparada.repositorio.interfaces.IJuegoRepo;
+import org.davidparada.repositorio.interfaceRepositorio.IBibliotecaRepo;
+import org.davidparada.repositorio.interfaceRepositorio.IJuegoRepo;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -28,7 +29,7 @@ import java.util.List;
 import static org.davidparada.controlador.util.ComprobarErrores.comprobarListaErrores;
 import static org.davidparada.controlador.util.ObtenerEntidadesOptional.*;
 
-public class BibliotecaControlador {
+public class BibliotecaControlador implements IBibliotecaControlador {
 
     public static final double HORAS_DE_JUEGO_POR_DEFECTO = 0.0;
     public static final double INICIO_VARIABLE_DOUBLE = 0.0;
@@ -45,6 +46,7 @@ public class BibliotecaControlador {
 
     // Ver Biblioteca personal
 
+    @Override
     public List<BibliotecaDto> verBiblioteca(Long idUsuario, OrdenarJuegosBibliotecaEnum orden) throws ValidationException {
         List<ErrorModel> errores = new ArrayList<>();
         comprobarIdUsuario(idUsuario, errores);
@@ -106,6 +108,7 @@ public class BibliotecaControlador {
 
     // Añadir juego a biblioteca
 
+    @Override
     public BibliotecaDto anadirJuego(Long idUsuario, Long idJuego) throws ValidationException {
         List<ErrorModel> errores = new ArrayList<>();
 
@@ -138,6 +141,7 @@ public class BibliotecaControlador {
 
     // Eliminar juego de biblioteca
 
+    @Override
     public void eliminarJuego(Long idUsuario, Long idJuego) throws ValidationException {
         List<ErrorModel> errores = new ArrayList<>();
 
@@ -151,6 +155,7 @@ public class BibliotecaControlador {
 
     // Actualizar tiempo de juego
 
+    @Override
     public void anadirTiempoDeJuego(Long idUsuario, Long idJuego, double horas) throws ValidationException {
 
         List<ErrorModel> errores = new ArrayList<>();
@@ -180,6 +185,7 @@ public class BibliotecaControlador {
 
     // Consultar última sesión
 
+    @Override
     public String consultarUltimaSesion(Long idUsuario, Long idJuego) throws ValidationException {
         List<ErrorModel> errores = new ArrayList<>();
 
@@ -214,6 +220,7 @@ public class BibliotecaControlador {
     }
     // Filtrar biblioteca
 
+    @Override
     public List<BibliotecaDto> buscarSegunCriterios(Long idUsuario, String texto, Boolean estadoInstalacion) throws ValidationException {
         List<ErrorModel> errores = new ArrayList<>();
 
@@ -247,6 +254,7 @@ public class BibliotecaControlador {
 
     // Ver estadísticas de biblioteca
 
+    @Override
     public EstadisticasBibliotecaDto estadisticasBiblioteca(Long idUsuario) throws ValidationException {
 
         List<ErrorModel> errores = new ArrayList<>();

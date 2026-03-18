@@ -3,7 +3,7 @@ package org.davidparada.repositorio.implementacionMemoria;
 import org.davidparada.modelo.entidad.CompraEntidad;
 import org.davidparada.modelo.formulario.CompraForm;
 import org.davidparada.modelo.mapper.CompraFormularioAEntidadMapper;
-import org.davidparada.repositorio.interfaces.ICompraRepo;
+import org.davidparada.repositorio.interfaceRepositorio.ICompraRepo;
 
 import java.util.ArrayList;
 import java.util.List;

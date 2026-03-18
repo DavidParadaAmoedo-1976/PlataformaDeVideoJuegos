@@ -4,7 +4,7 @@ import org.davidparada.excepcion.ValidationException;
 import org.davidparada.modelo.enums.ClasificacionJuegoEnum;
 import org.davidparada.modelo.enums.TipoErrorEnum;
 import org.davidparada.modelo.formulario.JuegoForm;
-import org.davidparada.repositorio.interfaces.IJuegoRepo;
+import org.davidparada.repositorio.interfaceRepositorio.IJuegoRepo;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

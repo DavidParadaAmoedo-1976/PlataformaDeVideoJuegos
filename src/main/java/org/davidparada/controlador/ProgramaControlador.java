@@ -1,5 +1,6 @@
 package org.davidparada.controlador;
 
+import org.davidparada.controlador.interfaceControlador.IProgramaControlador;
 import org.davidparada.excepcion.ValidationException;
 import org.davidparada.modelo.dto.*;
 import org.davidparada.modelo.entidad.*;
@@ -7,7 +8,7 @@ import org.davidparada.modelo.enums.CriterioPopularidadEnum;
 import org.davidparada.modelo.enums.TipoErrorEnum;
 import org.davidparada.modelo.formulario.validacion.ErrorModel;
 import org.davidparada.modelo.mapper.JuegoEntidadADtoMapper;
-import org.davidparada.repositorio.interfaces.*;
+import org.davidparada.repositorio.interfaceRepositorio.*;
 
 import java.time.Instant;
 import java.util.*;
@@ -15,7 +16,7 @@ import java.util.*;
 import static org.davidparada.controlador.util.ComprobarErrores.comprobarListaErrores;
 import static org.davidparada.controlador.util.ObtenerEntidadesOptional.*;
 
-public class ProgramaControlador {
+public class ProgramaControlador implements IProgramaControlador {
 
     public static final double POR_CIENTO_DOUBLE = 100.0;
     public static final double VALOR_POR_DEFECTO = 0.0;
@@ -42,6 +43,7 @@ public class ProgramaControlador {
 
     // Generar reportes de ventas
 
+    @Override
     public ReporteVentasDto generarReporteVentas(Instant inicio,
                                                  Instant fin,
                                                  Long idJuego,
@@ -91,6 +93,7 @@ public class ProgramaControlador {
 
     // Generar reportes de usuarios
 
+    @Override
     public ReporteUsuariosDto generarReporteUsuarios(Instant inicio, Instant fin) throws ValidationException {
         List<ErrorModel> errores = new ArrayList<>();
         if (inicio == null || fin == null) {
@@ -118,6 +121,7 @@ public class ProgramaControlador {
 
     // Consultar juegos mas populares
 
+    @Override
     public List<JuegosPopularesDto> consultarJuegosMasPopulares(CriterioPopularidadEnum criterio, Integer limite) throws ValidationException {
         List<ErrorModel> errores = new ArrayList<>();
         List<JuegosPopularesDto> resultado;

@@ -1,5 +1,6 @@
 package org.davidparada.controlador;
 
+import org.davidparada.controlador.interfaceControlador.IJuegoControlador;
 import org.davidparada.excepcion.ValidationException;
 import org.davidparada.modelo.dto.JuegoDto;
 import org.davidparada.modelo.entidad.JuegoEntidad;
@@ -11,7 +12,7 @@ import org.davidparada.modelo.formulario.JuegoForm;
 import org.davidparada.modelo.formulario.validacion.ErrorModel;
 import org.davidparada.modelo.formulario.validacion.JuegoFormValidador;
 import org.davidparada.modelo.mapper.JuegoEntidadADtoMapper;
-import org.davidparada.repositorio.interfaces.IJuegoRepo;
+import org.davidparada.repositorio.interfaceRepositorio.IJuegoRepo;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -20,7 +21,7 @@ import java.util.List;
 import static org.davidparada.controlador.util.ComprobarErrores.comprobarListaErrores;
 import static org.davidparada.controlador.util.ObtenerEntidadesOptional.*;
 
-public class JuegoControlador {
+public class JuegoControlador implements IJuegoControlador {
 
     public static final int DESCUENTO_MINIMO = 0;
     public static final int DESCUENTO_MAXIMO = 100;
@@ -31,6 +32,7 @@ public class JuegoControlador {
     }
 
     // Anadir Juego
+    @Override
     public JuegoDto crearJuego(JuegoForm form) throws ValidationException {
         List<ErrorModel> errores = new ArrayList<>();
 
@@ -47,6 +49,7 @@ public class JuegoControlador {
     }
 
     // Buscar juegos
+    @Override
     public List<JuegoDto> buscarJuegos(
             String titulo,
             String categoria,
@@ -66,6 +69,7 @@ public class JuegoControlador {
     }
 
     // Consultar catalogo completo
+    @Override
     public List<JuegoDto> consultarCatalogo(OrdenarJuegosEnum orden) {
 
         List<JuegoEntidad> juegos = juegoRepo.listarTodos();
@@ -86,6 +90,7 @@ public class JuegoControlador {
     }
 
     // Consultar detalles de un juego
+    @Override
     public JuegoDto consultarDetalles(Long idJuego) throws ValidationException {
         List<ErrorModel> errores = new ArrayList<>();
 
@@ -101,6 +106,7 @@ public class JuegoControlador {
     }
 
     // Aplicar descuento
+    @Override
     public void aplicarDescuento(Long id, Integer descuento) throws ValidationException {
         List<ErrorModel> errores = new ArrayList<>();
 
@@ -126,6 +132,7 @@ public class JuegoControlador {
     }
 
     // Cambiar estado del juego
+    @Override
     public void cambiarEstado(Long id, EstadoJuegoEnum nuevoEstado) throws ValidationException {
         List<ErrorModel> errores = new ArrayList<>();
 
@@ -151,6 +158,7 @@ public class JuegoControlador {
     // Método no aparece en la gestion de juego.
     // Se deja comentado por si hace falta en el futuro.
 
+    @Override
     public boolean eliminar(Long id) throws ValidationException {
         List<ErrorModel> errores = new ArrayList<>();
         if (id == null) {

@@ -4,7 +4,7 @@ import org.davidparada.excepcion.ValidationException;
 import org.davidparada.modelo.entidad.*;
 import org.davidparada.modelo.enums.TipoErrorEnum;
 import org.davidparada.modelo.formulario.validacion.ErrorModel;
-import org.davidparada.repositorio.interfaces.*;
+import org.davidparada.repositorio.interfaceRepositorio.*;
 
 import java.util.List;
 

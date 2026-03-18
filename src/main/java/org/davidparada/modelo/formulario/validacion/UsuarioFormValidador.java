@@ -4,7 +4,7 @@ import org.davidparada.excepcion.ValidationException;
 import org.davidparada.modelo.enums.PaisEnum;
 import org.davidparada.modelo.enums.TipoErrorEnum;
 import org.davidparada.modelo.formulario.UsuarioForm;
-import org.davidparada.repositorio.interfaces.IUsuarioRepo;
+import org.davidparada.repositorio.interfaceRepositorio.IUsuarioRepo;
 
 import java.time.LocalDate;
 import java.time.Period;

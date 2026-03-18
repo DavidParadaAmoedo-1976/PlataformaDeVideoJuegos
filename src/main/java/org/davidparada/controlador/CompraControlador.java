@@ -1,5 +1,6 @@
 package org.davidparada.controlador;
 
+import org.davidparada.controlador.interfaceControlador.ICompraControlador;
 import org.davidparada.excepcion.ValidationException;
 import org.davidparada.modelo.dto.*;
 import org.davidparada.modelo.entidad.BibliotecaEntidad;
@@ -13,10 +14,10 @@ import org.davidparada.modelo.formulario.validacion.ErrorModel;
 import org.davidparada.modelo.mapper.CompraEntidadADtoMapper;
 import org.davidparada.modelo.mapper.JuegoEntidadADtoMapper;
 import org.davidparada.modelo.mapper.UsuarioEntidadADtoMapper;
-import org.davidparada.repositorio.interfaces.IBibliotecaRepo;
-import org.davidparada.repositorio.interfaces.ICompraRepo;
-import org.davidparada.repositorio.interfaces.IJuegoRepo;
-import org.davidparada.repositorio.interfaces.IUsuarioRepo;
+import org.davidparada.repositorio.interfaceRepositorio.IBibliotecaRepo;
+import org.davidparada.repositorio.interfaceRepositorio.ICompraRepo;
+import org.davidparada.repositorio.interfaceRepositorio.IJuegoRepo;
+import org.davidparada.repositorio.interfaceRepositorio.IUsuarioRepo;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -26,7 +27,7 @@ import java.util.List;
 import static org.davidparada.controlador.util.ComprobarErrores.comprobarListaErrores;
 import static org.davidparada.controlador.util.ObtenerEntidadesOptional.*;
 
-public class CompraControlador {
+public class CompraControlador implements ICompraControlador {
 
     public static final int UNO = 1;
     private static final int FECHA_LIMITE_PARA_REEMBOLSO = 30;
@@ -57,6 +58,7 @@ public class CompraControlador {
     }
 
     // Realizar compra
+    @Override
     public CompraDto realizarCompra(
             Long idUsuario,
             Long idJuego,
@@ -142,6 +144,7 @@ public class CompraControlador {
     }
 
     // Procesar pago
+    @Override
     public void procesarPago(Long idCompra, MetodoPagoEnum metodoPago) throws ValidationException {
         List<ErrorModel> errores = new ArrayList<>();
 
@@ -278,6 +281,7 @@ public class CompraControlador {
     }
 
     // Consultar historial de compras
+    @Override
     public List<CompraDto> listarCompras(Long idUsuario) throws ValidationException {
         List<ErrorModel> errores = new ArrayList<>();
 
@@ -309,6 +313,7 @@ public class CompraControlador {
 
     // Consultar compra
 
+    @Override
     public CompraDto consultarCompra(Long idCompra, Long idUsuario) throws ValidationException {
 
         List<ErrorModel> errores = new ArrayList<>();
@@ -337,6 +342,7 @@ public class CompraControlador {
     }
 
     // Consultar detalles de una compra
+    @Override
     public DetallesCompraDto detallesDeUnaCompra(Long idCompra, Long idUsuario) throws ValidationException {
 
         List<ErrorModel> errores = new ArrayList<>();
@@ -371,6 +377,7 @@ public class CompraControlador {
     }
 
     // Solicitar reembolso
+    @Override
     public void solicitarReembolso(Long idCompra) throws ValidationException {
         List<ErrorModel> errores = new ArrayList<>();
 
@@ -432,6 +439,7 @@ public class CompraControlador {
     }
 
     // Generar factura
+    @Override
     public FacturaDto generarFactura(Long idCompra) throws ValidationException {
         List<ErrorModel> errores = new ArrayList<>();
 

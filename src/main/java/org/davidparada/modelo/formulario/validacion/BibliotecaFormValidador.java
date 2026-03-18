@@ -3,7 +3,7 @@ package org.davidparada.modelo.formulario.validacion;
 import org.davidparada.excepcion.ValidationException;
 import org.davidparada.modelo.enums.TipoErrorEnum;
 import org.davidparada.modelo.formulario.BibliotecaForm;
-import org.davidparada.repositorio.interfaces.IBibliotecaRepo;
+import org.davidparada.repositorio.interfaceRepositorio.IBibliotecaRepo;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;

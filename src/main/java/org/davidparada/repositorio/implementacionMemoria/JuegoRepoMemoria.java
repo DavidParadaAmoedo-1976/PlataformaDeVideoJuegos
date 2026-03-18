@@ -5,7 +5,7 @@ import org.davidparada.modelo.enums.ClasificacionJuegoEnum;
 import org.davidparada.modelo.enums.EstadoJuegoEnum;
 import org.davidparada.modelo.formulario.JuegoForm;
 import org.davidparada.modelo.mapper.JuegoFormularioAEntidadMapper;
-import org.davidparada.repositorio.interfaces.IJuegoRepo;
+import org.davidparada.repositorio.interfaceRepositorio.IJuegoRepo;
 
 import java.util.ArrayList;
 import java.util.List;

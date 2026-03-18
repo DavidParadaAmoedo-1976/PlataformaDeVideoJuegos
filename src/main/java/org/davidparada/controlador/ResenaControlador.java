@@ -1,5 +1,6 @@
 package org.davidparada.controlador;
 
+import org.davidparada.controlador.interfaceControlador.IResenaControlador;
 import org.davidparada.excepcion.ValidationException;
 import org.davidparada.modelo.dto.EstadisticasResenasJuegoDto;
 import org.davidparada.modelo.dto.JuegoDto;
@@ -16,7 +17,7 @@ import org.davidparada.modelo.formulario.validacion.ResenaFormValidador;
 import org.davidparada.modelo.mapper.JuegoEntidadADtoMapper;
 import org.davidparada.modelo.mapper.ResenaEntidadADtoMapper;
 import org.davidparada.modelo.mapper.UsuarioEntidadADtoMapper;
-import org.davidparada.repositorio.interfaces.IResenaRepo;
+import org.davidparada.repositorio.interfaceRepositorio.IResenaRepo;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -27,7 +28,7 @@ import java.util.Optional;
 import static org.davidparada.controlador.util.ComprobarErrores.comprobarListaErrores;
 import static org.davidparada.controlador.util.ObtenerEntidadesOptional.*;
 
-public class ResenaControlador {
+public class ResenaControlador implements IResenaControlador {
 
     public static final double CANTIDAD_HORAS_JUGADAS_POR_DEFECTO = 0.0;
     public static final int VALOR_MIN_POS_EN_ESTADISTICA = 60;
@@ -48,6 +49,7 @@ public class ResenaControlador {
      * @return Lo muestra en un objeto DTO.
      * @throws ValidationException
      */
+    @Override
     public ResenaDto escribirResena(
             Long idUsuario,
             Long idJuego,
@@ -105,6 +107,7 @@ public class ResenaControlador {
      * @return Indica si la operación a tenido éxito.
      * @throws ValidationException
      */
+    @Override
     public boolean eliminarResena(Long idResena, Long idUsuario) throws ValidationException {
         List<ErrorModel> errores = new ArrayList<>();
         if (idResena == null) {
@@ -129,6 +132,7 @@ public class ResenaControlador {
      * @return Lista de objetos DTO
      * @throws ValidationException
      */
+    @Override
     public List<ResenaDto> obtenerResenas(Long idJuego,
                                           boolean recomendado,
                                           OrdenarResenaEnum orden) throws ValidationException {
@@ -211,6 +215,7 @@ public class ResenaControlador {
      * @return Lo muestra en un objeto DTO.
      * @throws ValidationException
      */
+    @Override
     public ResenaDto ocultarResena(Long idResena, Long idUsuario) throws ValidationException {
         List<ErrorModel> errores = new ArrayList<>();
         if (idResena == null) {
@@ -252,6 +257,7 @@ public class ResenaControlador {
      * @return Muestra un objeto DTO.
      * @throws ValidationException
      */
+    @Override
     public EstadisticasResenasJuegoDto consultarEstadisticasResenaPorJuego(Long idJuego) throws ValidationException {
 
         List<ErrorModel> errores = new ArrayList<>();
@@ -314,6 +320,7 @@ public class ResenaControlador {
      * @return Lista de objetos DTO.
      * @throws ValidationException
      */
+    @Override
     public List<ResenaDto> obtenerResenasUsuario(Long idUsuario) throws ValidationException {
         List<ErrorModel> errores = new ArrayList<>();
         if (idUsuario == null) {

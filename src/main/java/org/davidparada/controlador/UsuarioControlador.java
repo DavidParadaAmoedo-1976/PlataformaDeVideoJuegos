@@ -1,5 +1,6 @@
 package org.davidparada.controlador;
 
+import org.davidparada.controlador.interfaceControlador.IUsuarioControlador;
 import org.davidparada.excepcion.ValidationException;
 import org.davidparada.modelo.dto.UsuarioDto;
 import org.davidparada.modelo.entidad.UsuarioEntidad;
@@ -9,7 +10,7 @@ import org.davidparada.modelo.formulario.UsuarioForm;
 import org.davidparada.modelo.formulario.validacion.ErrorModel;
 import org.davidparada.modelo.formulario.validacion.UsuarioFormValidador;
 import org.davidparada.modelo.mapper.UsuarioEntidadADtoMapper;
-import org.davidparada.repositorio.interfaces.IUsuarioRepo;
+import org.davidparada.repositorio.interfaceRepositorio.IUsuarioRepo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +18,7 @@ import java.util.List;
 import static org.davidparada.controlador.util.ComprobarErrores.comprobarListaErrores;
 import static org.davidparada.controlador.util.ObtenerEntidadesOptional.*;
 
-public class UsuarioControlador {
+public class UsuarioControlador implements IUsuarioControlador {
 
     public static final double SALDO_MIN_A_ANADIR = 5.0;
     public static final double SALDO_MAX_A_ANADIR = 500.0;
@@ -34,6 +35,7 @@ public class UsuarioControlador {
      * @return Lo muestra en un ObjetoDTO.
      * @throws ValidationException
      */
+    @Override
     public UsuarioDto registrarUsuario(UsuarioForm form) throws ValidationException {
         List<ErrorModel> errores = new ArrayList<>();
         UsuarioFormValidador.validarUsuario(form);
@@ -56,6 +58,7 @@ public class UsuarioControlador {
      * @return Lo muestra en un objetoDTO.
      * @throws ValidationException
      */
+    @Override
     public UsuarioDto consultarPerfil(Long idUsuario) throws ValidationException {
         List<ErrorModel> errores = new ArrayList<>();
 
@@ -73,6 +76,7 @@ public class UsuarioControlador {
      * @param nombreUsuario
      * @return Lo muestra en un objetoDTO.
      */
+    @Override
     public UsuarioDto consultarPerfil(String nombreUsuario) {
 
         if (nombreUsuario == null || nombreUsuario.isBlank()) {
@@ -90,6 +94,7 @@ public class UsuarioControlador {
      * @param cantidad
      * @throws ValidationException
      */
+    @Override
     public void anadirSaldo(Long idUsuario, Double cantidad) throws ValidationException {
         List<ErrorModel> errores = new ArrayList<>();
 
@@ -132,6 +137,7 @@ public class UsuarioControlador {
      * @return saldo en formato double.
      * @throws ValidationException
      */
+    @Override
     public Double consultarSaldo(Long idUsuario) throws ValidationException {
         List<ErrorModel> errores = new ArrayList<>();
 

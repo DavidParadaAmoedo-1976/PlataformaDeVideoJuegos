@@ -3,7 +3,7 @@ package org.davidparada.repositorio.implementacionMemoria;
 import org.davidparada.modelo.entidad.ResenaEntidad;
 import org.davidparada.modelo.formulario.ResenaForm;
 import org.davidparada.modelo.mapper.ResenaFormularioAEntidadMapper;
-import org.davidparada.repositorio.interfaces.IResenaRepo;
+import org.davidparada.repositorio.interfaceRepositorio.IResenaRepo;
 
 import java.util.ArrayList;
 import java.util.List;

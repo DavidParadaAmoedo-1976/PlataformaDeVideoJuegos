@@ -3,7 +3,7 @@ package org.davidparada.repositorio.implementacionMemoria;
 import org.davidparada.modelo.entidad.UsuarioEntidad;
 import org.davidparada.modelo.formulario.UsuarioForm;
 import org.davidparada.modelo.mapper.UsuarioFormularioAEntidadMapper;
-import org.davidparada.repositorio.interfaces.IUsuarioRepo;
+import org.davidparada.repositorio.interfaceRepositorio.IUsuarioRepo;
 
 import java.util.ArrayList;
 import java.util.List;
