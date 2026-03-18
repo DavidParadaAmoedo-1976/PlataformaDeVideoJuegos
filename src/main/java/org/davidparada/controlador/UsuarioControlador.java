@@ -19,14 +19,21 @@ import static org.davidparada.controlador.util.ObtenerEntidadesOptional.*;
 
 public class UsuarioControlador {
 
+    public static final double SALDO_MIN_A_ANADIR = 5.0;
+    public static final double SALDO_MAX_A_ANADIR = 500.0;
     private final IUsuarioRepo usuarioRepo;
 
     public UsuarioControlador(IUsuarioRepo usuarioRepo) {
         this.usuarioRepo = usuarioRepo;
     }
 
-    //Registrar nuevo usuario
 
+    /**
+     * Crea un usuario nuevo a partir de un formulario.
+     * @param form
+     * @return Lo muestra en un ObjetoDTO.
+     * @throws ValidationException
+     */
     public UsuarioDto registrarUsuario(UsuarioForm form) throws ValidationException {
         List<ErrorModel> errores = new ArrayList<>();
         UsuarioFormValidador.validarUsuario(form);
@@ -43,20 +50,29 @@ public class UsuarioControlador {
         return UsuarioEntidadADtoMapper.usuarioEntidadADto(usuario);
     }
 
-    // Consultar perfil
-
-    public UsuarioDto consultarPerfil(Long id) throws ValidationException {
+    /**
+     * Muestra el perfil de un usuario a partir de su ID que es único.
+     * @param idUsuario
+     * @return Lo muestra en un objetoDTO.
+     * @throws ValidationException
+     */
+    public UsuarioDto consultarPerfil(Long idUsuario) throws ValidationException {
         List<ErrorModel> errores = new ArrayList<>();
 
-        if (id == null) {
+        if (idUsuario == null) {
             errores.add(new ErrorModel("id", TipoErrorEnum.OBLIGATORIO));
         }
         comprobarListaErrores(errores);
-        UsuarioEntidad usuario = obtenerUsuario(id, errores);
+        UsuarioEntidad usuario = obtenerUsuario(idUsuario, errores);
 
         return UsuarioEntidadADtoMapper.usuarioEntidadADto(usuario);
     }
 
+    /**
+     * Muestra el perfil de un usuario a partir de su nombre de usuario que es único.
+     * @param nombreUsuario
+     * @return Lo muestra en un objetoDTO.
+     */
     public UsuarioDto consultarPerfil(String nombreUsuario) {
 
         if (nombreUsuario == null || nombreUsuario.isBlank()) {
@@ -68,12 +84,16 @@ public class UsuarioControlador {
                 .orElse(null);
     }
 
-    // Anadir saldo a cartera
-
-    public void anadirSaldo(Long id, Double cantidad) throws ValidationException {
+    /**
+     * Añade la cantidad recivida por parametro al saldo del usuario perteneciente al ID recibido.
+     * @param idUsuario
+     * @param cantidad
+     * @throws ValidationException
+     */
+    public void anadirSaldo(Long idUsuario, Double cantidad) throws ValidationException {
         List<ErrorModel> errores = new ArrayList<>();
 
-        if (id == null)
+        if (idUsuario == null)
             errores.add(new ErrorModel("id", TipoErrorEnum.OBLIGATORIO));
 
         if (cantidad == null) {
@@ -82,13 +102,13 @@ public class UsuarioControlador {
             if (cantidad <= 0)
                 errores.add(new ErrorModel("saldo", TipoErrorEnum.VALOR_NEGATIVO));
 
-            if (cantidad < 5.0 || cantidad > 500.0)
+            if (cantidad < SALDO_MIN_A_ANADIR || cantidad > SALDO_MAX_A_ANADIR)
                 errores.add(new ErrorModel("saldo", TipoErrorEnum.RANGO_INVALIDO));
         }
         comprobarListaErrores(errores);
         java.util.Objects.requireNonNull(cantidad);
 
-        UsuarioEntidad usuario = obtenerUsuario(id, errores);
+        UsuarioEntidad usuario = obtenerUsuario(idUsuario, errores);
 
         if (usuario.getEstadoCuenta() != EstadoCuentaEnum.ACTIVA)
             errores.add(new ErrorModel("estadoCuenta", TipoErrorEnum.ESTADO_INCORRECTO));
@@ -106,29 +126,37 @@ public class UsuarioControlador {
                 usuario.getEstadoCuenta()));
     }
 
-    // Consultar saldo
-
-    public Double consultarSaldo(Long id) throws ValidationException {
+    /**
+     * Devuelve el saldo en cartera del usuario al que pertenece el ID recibido.
+     * @param idUsuario
+     * @return saldo en formato double.
+     * @throws ValidationException
+     */
+    public Double consultarSaldo(Long idUsuario) throws ValidationException {
         List<ErrorModel> errores = new ArrayList<>();
 
-        if (id == null) {
+        if (idUsuario == null) {
             errores.add(new ErrorModel("id", TipoErrorEnum.OBLIGATORIO));
         }
         comprobarListaErrores(errores);
-        UsuarioEntidad usuario = obtenerUsuario(id, errores);
+        UsuarioEntidad usuario = obtenerUsuario(idUsuario, errores);
         return usuario.getSaldo();
     }
 
-//
-//    // Cambiar estado
-//
-//    public void cambiarEstado(Long id,
+//    /**
+//     * Cambia el estado de la cuenta del usuario que pertenece al ID recibido,
+//     * le pone el valor recibido como segundo parametro.
+//     * @param idUsuario
+//     * @param nuevoEstado
+//     * @throws ValidationException
+//     */
+//    public void cambiarEstado(Long idUsuario,
 //                                    EstadoCuentaEnum nuevoEstado)
 //            throws ValidationException {
 //
 //        List<ErrorModel> errores = new ArrayList<>();
 //
-//        if (id == null)
+//        if (idUsuario == null)
 //            errores.add(new ErrorModel("id", TipoErrorEnum.OBLIGATORIO));
 //
 //        if (nuevoEstado == null)
@@ -137,7 +165,7 @@ public class UsuarioControlador {
 //        if (!errores.isEmpty())
 //            throw new ValidationException(errores);
 //
-//        UsuarioEntidad usuario = obtenerUsuario(id, errores);
+//        UsuarioEntidad usuario = obtenerUsuario(idUsuario, errores);
 //
 //        usuarioRepo.actualizar(usuario.getIdUsuario(), new UsuarioForm(
 //                usuario.getNombreUsuario(),
@@ -153,9 +181,19 @@ public class UsuarioControlador {
 //        ));
 //    }
 //
-//    // Eliminar usuario
+//    /**
+//     * Elimina el usuario al que pertenece el ID recibido.
+//     * @param id
+//     * @return Indica si la operación a tenido éxito.
+//     * @throws ValidationException
+//     */
+//    public boolean eliminarUsuario(Long id) throws ValidationException {
+//        List<ErrorModel> errores = new ArrayList<>();
+//        if (id == null)
+//            errores.add(new ErrorModel("id", TipoErrorEnum.OBLIGATORIO));
+//        comprobarListaErrores(errores);
 //
-//    public boolean eliminarUsuario(Long id) {
-//        return usuarioRepo.eliminar(id);
+//        UsuarioEntidad usuario = obtenerUsuario(id, errores);
+//        return usuarioRepo.eliminar(usuario.getIdUsuario());
 //    }
 }

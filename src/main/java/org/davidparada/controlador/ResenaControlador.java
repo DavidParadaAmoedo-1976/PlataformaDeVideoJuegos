@@ -1,6 +1,7 @@
 package org.davidparada.controlador;
 
 import org.davidparada.excepcion.ValidationException;
+import org.davidparada.modelo.dto.EstadisticasResenasJuegoDto;
 import org.davidparada.modelo.dto.JuegoDto;
 import org.davidparada.modelo.dto.ResenaDto;
 import org.davidparada.modelo.entidad.JuegoEntidad;
@@ -29,13 +30,24 @@ import static org.davidparada.controlador.util.ObtenerEntidadesOptional.*;
 public class ResenaControlador {
 
     public static final double CANTIDAD_HORAS_JUGADAS_POR_DEFECTO = 0.0;
+    public static final int VALOR_MIN_POS_EN_ESTADISTICA = 60;
+    public static final int VALOR_MAX_NEG_EN_ESTADISTICA = 40;
+    public static final double CALCULO_PORCENTAJE = 100.0;
     private final IResenaRepo resenaRepo;
 
     public ResenaControlador(IResenaRepo reseniaRepo) {
         this.resenaRepo = reseniaRepo;
     }
 
-    // Escribir reseña
+    /**
+     * Crea una reseña a partir de los datos recibidos por parametros.
+     * @param idUsuario
+     * @param idJuego
+     * @param recomendado
+     * @param texto
+     * @return Lo muestra en un objeto DTO.
+     * @throws ValidationException
+     */
     public ResenaDto escribirResena(
             Long idUsuario,
             Long idJuego,
@@ -86,7 +98,13 @@ public class ResenaControlador {
         return ResenaEntidadADtoMapper.resenaEntidadADto(resena, usuario, juego);
     }
 
-    // Eliminar reseña
+    /**
+     * Elimina una reseña indicada por el ID recibido y que pertenecea un usuario del que se recibe su ID.
+     * @param idResena
+     * @param idUsuario
+     * @return Indica si la operación a tenido éxito.
+     * @throws ValidationException
+     */
     public boolean eliminarResena(Long idResena, Long idUsuario) throws ValidationException {
         List<ErrorModel> errores = new ArrayList<>();
         if (idResena == null) {
@@ -102,7 +120,15 @@ public class ResenaControlador {
         return resenaRepo.eliminar(resenaEntidad.getIdResena());
     }
 
-    // Ver reseñas de un juego
+    /**
+     * Obtiene las reseñas de un juego recibido su ID, muestra los juegos recomendados o no segun el segundo parametro,
+     * y los muestra ordenados segun la clasificacion seleccionada en el tercer parametro.
+     * @param idJuego
+     * @param recomendado
+     * @param orden
+     * @return Lista de objetos DTO
+     * @throws ValidationException
+     */
     public List<ResenaDto> obtenerResenas(Long idJuego,
                                           boolean recomendado,
                                           OrdenarResenaEnum orden) throws ValidationException {
@@ -178,7 +204,13 @@ public class ResenaControlador {
         return resultado;
     }
 
-    // Ocultar reseña
+    /**
+     * Oculta una reseña recibido su ID y que pertenece a un usuario que también recibimos su ID.
+     * @param idResena
+     * @param idUsuario
+     * @return Lo muestra en un objeto DTO.
+     * @throws ValidationException
+     */
     public ResenaDto ocultarResena(Long idResena, Long idUsuario) throws ValidationException {
         List<ErrorModel> errores = new ArrayList<>();
         if (idResena == null) {
@@ -214,39 +246,74 @@ public class ResenaControlador {
         );
     }
 
-    // Consultar estadisticas de una reseña
-    public List<ResenaDto> consultarEstadisticasResenaPorJuego(Long idJuego) throws ValidationException {
+    /**
+     * Muestra las estadisticas de las reseñas de un juego del cual recibimos su ID.
+     * @param idJuego
+     * @return Muestra un objeto DTO.
+     * @throws ValidationException
+     */
+    public EstadisticasResenasJuegoDto consultarEstadisticasResenaPorJuego(Long idJuego) throws ValidationException {
+
         List<ErrorModel> errores = new ArrayList<>();
+
         if (idJuego == null) {
             errores.add(new ErrorModel("idJuego", TipoErrorEnum.OBLIGATORIO));
         }
+
         comprobarListaErrores(errores);
-        JuegoEntidad juegoEntidad = obtenerJuego(idJuego, errores);
 
-        List<ResenaEntidad> resenasEntidad = resenaRepo.buscarPorJuego(idJuego);
-        List<ResenaDto> resenasDto = new ArrayList<>();
+        // Validar que el juego existe
+        obtenerJuego(idJuego, errores);
 
-        for (ResenaEntidad r : resenasEntidad) {
-            UsuarioEntidad usuarioEntidad = obtenerUsuario(r.getIdUsuario(), errores);
+        List<ResenaEntidad> resenas = resenaRepo.buscarPorJuego(idJuego);
 
-            resenasDto.add(new ResenaDto(
-                    r.getIdResena(),
-                    r.getIdUsuario(),
-                    UsuarioEntidadADtoMapper.usuarioEntidadADto(usuarioEntidad),
-                    r.getIdJuego(),
-                    JuegoEntidadADtoMapper.juegoEntidadADto(juegoEntidad),
-                    r.isRecomendado(),
-                    r.getTextoResena(),
-                    r.getCantidadHorasJugadas(),
-                    r.getFechaPublicacion(),
-                    r.getFechaUltimaEdicion(),
-                    r.getEstadoPublicacion()
-            ));
+        int total = resenas.size();
+
+        if (total == 0) {
+            return new EstadisticasResenasJuegoDto(0, 0, 0, 0, "NEUTRA");
         }
-        return resenasDto;
+
+        int positivas = 0;
+        double sumaHoras = 0;
+
+        for (ResenaEntidad r : resenas) {
+            if (r.isRecomendado()) {
+                positivas++;
+            }
+            sumaHoras += r.getCantidadHorasJugadas();
+        }
+
+        int negativas = total - positivas;
+
+        double porcentajePositivas = (positivas * CALCULO_PORCENTAJE) / total;
+        double porcentajeNegativas = (negativas * CALCULO_PORCENTAJE) / total;
+        double promedioHoras = sumaHoras / total;
+
+        // Ejemplo simple de tendencia (puedes mejorarla)
+        String tendencia;
+        if (porcentajePositivas > VALOR_MIN_POS_EN_ESTADISTICA) {
+            tendencia = "POSITIVA";
+        } else if (porcentajePositivas < VALOR_MAX_NEG_EN_ESTADISTICA) {
+            tendencia = "NEGATIVA";
+        } else {
+            tendencia = "NEUTRA";
+        }
+
+        return new EstadisticasResenasJuegoDto(
+                total,
+                porcentajePositivas,
+                porcentajeNegativas,
+                promedioHoras,
+                tendencia
+        );
     }
 
-    // Ver reseñas de un usuario
+    /**
+     *
+     * @param idUsuario
+     * @return Lista de objetos DTO.
+     * @throws ValidationException
+     */
     public List<ResenaDto> obtenerResenasUsuario(Long idUsuario) throws ValidationException {
         List<ErrorModel> errores = new ArrayList<>();
         if (idUsuario == null) {
