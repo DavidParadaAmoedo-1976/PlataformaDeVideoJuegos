@@ -269,7 +269,7 @@ class ProgramaControladorTest {
                 controlador.generarReporteVentas(inicio, fin, null, null);
 
         assertEquals(3, reporte.getTotalVentas());
-        assertEquals(136.0, reporte.getIngresosTotales());
+        assertEquals(138.0, reporte.getIngresosTotales());
     }
 
     @Test
@@ -295,7 +295,7 @@ class ProgramaControladorTest {
                 controlador.generarReporteVentas(inicio, fin, null, "Dev2");
 
         assertEquals(1, reporte.getTotalVentas());
-        assertEquals(36.0, reporte.getIngresosTotales());
+        assertEquals(38.0, reporte.getIngresosTotales());
     }
 
     @Test

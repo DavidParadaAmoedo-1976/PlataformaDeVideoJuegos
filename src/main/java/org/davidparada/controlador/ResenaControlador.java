@@ -124,11 +124,24 @@ public class ResenaControlador {
 
         Comparator<ResenaEntidad> comparador;
 
-        if (orden == OrdenarResenaEnum.RECIENTES) {
-            comparador = (ResenaEntidad r1, ResenaEntidad r2) ->
-                    r2.getFechaPublicacion().compareTo(r1.getFechaPublicacion());
-        } else {
-            comparador = (ResenaEntidad r1, ResenaEntidad r2) -> 0;
+        switch (orden) {
+            case RECIENTES:
+                comparador = (r1, r2) ->
+                        r2.getFechaPublicacion().compareTo(r1.getFechaPublicacion());
+                break;
+
+            case HORAS_JUGADAS:
+                comparador = (r1, r2) ->
+                        r2.getCantidadHorasJugadas().compareTo(r1.getCantidadHorasJugadas());
+                break;
+
+            case ACTUALIZADAS:
+                comparador = (r1, r2) ->
+                        r2.getFechaUltimaEdicion().compareTo(r1.getFechaUltimaEdicion());
+                break;
+
+            default:
+                comparador = Comparator.comparing(ResenaEntidad::getIdResena);
         }
 
         List<ResenaEntidad> resenasFiltradasYOrdenadas
