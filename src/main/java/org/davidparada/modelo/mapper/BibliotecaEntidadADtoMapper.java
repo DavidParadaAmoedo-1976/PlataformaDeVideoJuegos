@@ -15,7 +15,9 @@ public class BibliotecaEntidadADtoMapper {
                                                       UsuarioEntidad usuarioEntidad,
                                                       JuegoEntidad juegoEntidad) {
 
-        if (biblioteca == null) return null;
+        if (biblioteca == null) {
+            return null;
+        }
 
         return new BibliotecaDto(
                 biblioteca.getIdBiblioteca(),

@@ -10,7 +10,9 @@ public class UsuarioEntidadADtoMapper {
 
     public static UsuarioDto usuarioEntidadADto(UsuarioEntidad usuario) {
 
-        if (usuario == null) return null;
+        if (usuario == null) {
+            return null;
+        }
 
         return new UsuarioDto(
                 usuario.getIdUsuario(),

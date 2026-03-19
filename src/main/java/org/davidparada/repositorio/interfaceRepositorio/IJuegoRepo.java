@@ -11,6 +11,7 @@ public interface IJuegoRepo extends ICrud<JuegoEntidad, JuegoForm, Long> {
 
     /**
      * Comprueba que exista el título del juego.
+     *
      * @param titulo
      * @return Confirmación de si existe o no.
      */
@@ -18,6 +19,7 @@ public interface IJuegoRepo extends ICrud<JuegoEntidad, JuegoForm, Long> {
 
     /**
      * Muestra los objetos filtrando según los parametros indicados.
+     *
      * @param titulo
      * @param categoria
      * @param precioMin

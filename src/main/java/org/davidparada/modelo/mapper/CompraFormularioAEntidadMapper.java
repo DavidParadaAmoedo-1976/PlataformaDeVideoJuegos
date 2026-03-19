@@ -9,6 +9,7 @@ import java.time.Instant;
 public class CompraFormularioAEntidadMapper {
 
     public static final int DESCUENTO_POR_DEFECTO = 0;
+    public static final double REDONDEO = 100.0;
 
     private CompraFormularioAEntidadMapper() {
     }
@@ -43,16 +44,7 @@ public class CompraFormularioAEntidadMapper {
         );
     }
 
-    private static int calcularDescuento(double precioBase, double precioFinal) {
-
-        if (precioBase == 0) return 0;
-
-        double porcentaje = 100 * (1 - (precioFinal / precioBase));
-
-        return (int) Math.round(porcentaje);
-    }
-
     private static double redondear(double valor) {
-        return Math.round(valor * 100.0) / 100.0;
+        return Math.round(valor * REDONDEO) / REDONDEO;
     }
 }

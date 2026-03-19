@@ -22,6 +22,7 @@ public class UsuarioControlador implements IUsuarioControlador {
 
     public static final double SALDO_MIN_A_ANADIR = 5.0;
     public static final double SALDO_MAX_A_ANADIR = 500.0;
+    public static final int CERO = 0;
     private final IUsuarioRepo usuarioRepo;
 
     public UsuarioControlador(IUsuarioRepo usuarioRepo) {
@@ -75,13 +76,13 @@ public class UsuarioControlador implements IUsuarioControlador {
     public void anadirSaldo(Long idUsuario, Double cantidad) throws ValidationException {
         List<ErrorModel> errores = new ArrayList<>();
 
-        if (idUsuario == null)
+        if (idUsuario == null) {
             errores.add(new ErrorModel("id", TipoErrorEnum.OBLIGATORIO));
-
+        }
         if (cantidad == null) {
             errores.add(new ErrorModel("saldo", TipoErrorEnum.OBLIGATORIO));
         } else {
-            if (cantidad <= 0)
+            if (cantidad <= CERO)
                 errores.add(new ErrorModel("saldo", TipoErrorEnum.VALOR_NEGATIVO));
 
             if (cantidad < SALDO_MIN_A_ANADIR || cantidad > SALDO_MAX_A_ANADIR)
@@ -92,9 +93,11 @@ public class UsuarioControlador implements IUsuarioControlador {
 
         UsuarioEntidad usuario = obtenerUsuario(idUsuario, errores);
 
-        if (usuario.getEstadoCuenta() != EstadoCuentaEnum.ACTIVA)
+        if (usuario.getEstadoCuenta() != EstadoCuentaEnum.ACTIVA) {
             errores.add(new ErrorModel("estadoCuenta", TipoErrorEnum.ESTADO_INCORRECTO));
+        }
         comprobarListaErrores(errores);
+
         usuarioRepo.actualizar(usuario.getIdUsuario(), new UsuarioForm(
                 usuario.getNombreUsuario(),
                 usuario.getEmail(),
@@ -133,15 +136,15 @@ public class UsuarioControlador implements IUsuarioControlador {
 //
 //        List<ErrorModel> errores = new ArrayList<>();
 //
-//        if (idUsuario == null)
+//        if (idUsuario == null) {
 //            errores.add(new ErrorModel("id", TipoErrorEnum.OBLIGATORIO));
-//
-//        if (nuevoEstado == null)
+//        }
+//        if (nuevoEstado == null) {
 //            errores.add(new ErrorModel("estadoCuenta", TipoErrorEnum.OBLIGATORIO));
-//
-//        if (!errores.isEmpty())
+//        }
+//        if (!errores.isEmpty()) {
 //            throw new ValidationException(errores);
-//
+//        }
 //        UsuarioEntidad usuario = obtenerUsuario(idUsuario, errores);
 //
 //        usuarioRepo.actualizar(usuario.getIdUsuario(), new UsuarioForm(
@@ -166,8 +169,9 @@ public class UsuarioControlador implements IUsuarioControlador {
 //     */
 //    public boolean eliminarUsuario(Long id) throws ValidationException {
 //        List<ErrorModel> errores = new ArrayList<>();
-//        if (id == null)
+//        if (id == null) {
 //            errores.add(new ErrorModel("id", TipoErrorEnum.OBLIGATORIO));
+//        }
 //        comprobarListaErrores(errores);
 //
 //        UsuarioEntidad usuario = obtenerUsuario(id, errores);

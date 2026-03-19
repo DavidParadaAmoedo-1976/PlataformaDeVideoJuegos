@@ -13,6 +13,7 @@ public interface IJuegoControlador {
 
     /**
      * Crea un juego a partir de un formulario.
+     *
      * @param form
      * @return Muestra un objeto DTO.
      * @throws ValidationException
@@ -31,6 +32,7 @@ public interface IJuegoControlador {
 
     /**
      * Muestra una lista de juegos en el orden especificado.
+     *
      * @param orden
      * @return Lista de objetos DTO.
      */
@@ -38,6 +40,7 @@ public interface IJuegoControlador {
 
     /**
      * Muestra las especificaciones de un juego recibido por ID.
+     *
      * @param idJuego
      * @return Muestra un objeto DTO.
      * @throws ValidationException
@@ -46,6 +49,7 @@ public interface IJuegoControlador {
 
     /**
      * Pone el descuento recibido a un juego recibido por ID.
+     *
      * @param id
      * @param descuento
      * @throws ValidationException
@@ -54,6 +58,7 @@ public interface IJuegoControlador {
 
     /**
      * Pone el estado recibido a un juego indicado por ID.
+     *
      * @param id
      * @param nuevoEstado
      * @throws ValidationException

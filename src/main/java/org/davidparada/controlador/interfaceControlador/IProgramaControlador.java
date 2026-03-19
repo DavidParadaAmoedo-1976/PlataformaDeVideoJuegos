@@ -13,6 +13,7 @@ public interface IProgramaControlador {
 
     /**
      * Muestra un reporte de las ventas de un juego o desarrolador entre unas fechas indicadas
+     *
      * @param inicio
      * @param fin
      * @param idJuego
@@ -27,6 +28,7 @@ public interface IProgramaControlador {
 
     /**
      * Hace un reporte de todos los usuarios entre unas fechas indicadas.
+     *
      * @param inicio
      * @param fin
      * @return Muestra un objeto DTO.
@@ -36,6 +38,7 @@ public interface IProgramaControlador {
 
     /**
      * Muestra una lista de juegos ordenados por un criterio recibido.
+     *
      * @param criterio
      * @param limite
      * @return Lista de objetos DTO.

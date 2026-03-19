@@ -10,7 +10,9 @@ public class JuegoEntidadADtoMapper {
 
     public static JuegoDto juegoEntidadADto(JuegoEntidad juego) {
 
-        if (juego == null) return null;
+        if (juego == null) {
+            return null;
+        }
 
         return new JuegoDto(
                 juego.getIdJuego(),

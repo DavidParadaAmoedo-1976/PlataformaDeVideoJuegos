@@ -58,7 +58,8 @@ public class BibliotecaRepoMemoria implements IBibliotecaRepo {
     @Override
     public boolean eliminar(Long idEntidad) {
         Optional<BibliotecaEntidad> bibliotecaEntidad = buscarPorId(idEntidad);
-        if (bibliotecaEntidad.isEmpty()) return false;
+        if (bibliotecaEntidad.isEmpty()){ return false;
+            }
         return bibliotecasEntidad.remove(bibliotecaEntidad.get());
     }
 

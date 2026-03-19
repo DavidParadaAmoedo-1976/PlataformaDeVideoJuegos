@@ -9,6 +9,7 @@ public interface IUsuarioRepo extends ICrud<UsuarioEntidad, UsuarioForm, Long> {
 
     /**
      * Muestra un usuario a partir de un mail(Único).
+     *
      * @param email
      * @return Muestra un objeto de la Entidad usuario.
      */
@@ -16,6 +17,7 @@ public interface IUsuarioRepo extends ICrud<UsuarioEntidad, UsuarioForm, Long> {
 
     /**
      * Busca un usuario a partir del nombre de usuario(Único).
+     *
      * @param nombreUsuario
      * @return Muestra un objeto de la Entidad usuario.
      */

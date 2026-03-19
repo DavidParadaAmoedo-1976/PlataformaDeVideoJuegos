@@ -15,7 +15,6 @@ public class ResenaEntidadADtoMapper {
                                               JuegoEntidad juegoEntidad) {
 
         if (resenaEntidad == null) {
-
             return null;
         }
 

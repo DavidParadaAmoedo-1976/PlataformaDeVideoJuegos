@@ -11,6 +11,7 @@ public interface IResenaControlador {
 
     /**
      * Crea una reseña a partir de los datos recibidos por parametros.
+     *
      * @param idUsuario
      * @param idJuego
      * @param recomendado
@@ -27,6 +28,7 @@ public interface IResenaControlador {
 
     /**
      * Elimina una reseña indicada por el ID recibido y que pertenecea un usuario del que se recibe su ID.
+     *
      * @param idResena
      * @param idUsuario
      * @return Indica si la operación a tenido éxito.
@@ -37,6 +39,7 @@ public interface IResenaControlador {
     /**
      * Obtiene las reseñas de un juego recibido su ID, muestra los juegos recomendados o no segun el segundo parametro,
      * y los muestra ordenados segun la clasificacion seleccionada en el tercer parametro.
+     *
      * @param idJuego
      * @param recomendado
      * @param orden
@@ -49,6 +52,7 @@ public interface IResenaControlador {
 
     /**
      * Oculta una reseña recibido su ID y que pertenece a un usuario que también recibimos su ID.
+     *
      * @param idResena
      * @param idUsuario
      * @return Lo muestra en un objeto DTO.
@@ -58,6 +62,7 @@ public interface IResenaControlador {
 
     /**
      * Muestra las estadisticas de las reseñas de un juego del cual recibimos su ID.
+     *
      * @param idJuego
      * @return Estrada un objeto DTO.
      * @throws ValidationException
@@ -66,6 +71,7 @@ public interface IResenaControlador {
 
     /**
      * Muestra las reseñas de un usuario del cual recibimos su ID.
+     *
      * @param idUsuario
      * @return Lista de objetos DTO.
      * @throws ValidationException

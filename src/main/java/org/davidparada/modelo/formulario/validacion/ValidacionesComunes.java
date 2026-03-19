@@ -57,7 +57,9 @@ public class ValidacionesComunes {
     }
 
     public static void maxDosDecimales(String campo, Double valor, List<ErrorModel> errores) {
-        if (valor == null) return;
+        if (valor == null) {
+            return;
+        }
 
         if (BigDecimal.valueOf(valor).scale() > MAX_DECIMALES_DOS) {
             errores.add(new ErrorModel(campo, TipoErrorEnum.FORMATO_INVALIDO));

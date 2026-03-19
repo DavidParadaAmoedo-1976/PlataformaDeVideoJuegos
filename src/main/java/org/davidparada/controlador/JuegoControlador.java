@@ -136,12 +136,12 @@ public class JuegoControlador implements IJuegoControlador {
     public void cambiarEstado(Long id, EstadoJuegoEnum nuevoEstado) throws ValidationException {
         List<ErrorModel> errores = new ArrayList<>();
 
-        if (id == null)
+        if (id == null) {
             errores.add(new ErrorModel("id", TipoErrorEnum.OBLIGATORIO));
-
-        if (nuevoEstado == null)
+        }
+        if (nuevoEstado == null) {
             errores.add(new ErrorModel("estado", TipoErrorEnum.OBLIGATORIO));
-
+        }
         comprobarListaErrores(errores);
 
         JuegoEntidad juego = obtenerJuego(id, errores);

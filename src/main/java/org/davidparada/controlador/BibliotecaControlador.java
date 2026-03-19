@@ -34,6 +34,7 @@ public class BibliotecaControlador implements IBibliotecaControlador {
     public static final double HORAS_DE_JUEGO_POR_DEFECTO = 0.0;
     public static final double INICIO_VARIABLE_DOUBLE = 0.0;
     public static final int INICIO_VARIABLE_NEG = -1;
+    public static final int CERO = 0;
     private final IBibliotecaRepo bibliotecaRepo;
     private final IJuegoRepo juegoRepo;
 
@@ -163,7 +164,7 @@ public class BibliotecaControlador implements IBibliotecaControlador {
         comprobarIdUsuario(idUsuario, errores);
         comprobarIdJuego(idJuego, errores);
 
-        if (horas < 0) {
+        if (horas < CERO) {
             errores.add(new ErrorModel("horas", TipoErrorEnum.RANGO_INVALIDO));
         }
 

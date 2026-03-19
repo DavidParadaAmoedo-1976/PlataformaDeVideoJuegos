@@ -11,6 +11,8 @@ import java.util.List;
 public class ResenaFormValidador {
 
     public static final int MAX_DE_DECIMALES_UNO = 1;
+    public static final double CARACTERES_MIN = 50d;
+    public static final double CARACTERES_MAX = 8000d;
 
     private ResenaFormValidador() {
     }
@@ -33,7 +35,7 @@ public class ResenaFormValidador {
 
         // Texto de la reseña
         ValidacionesComunes.obligatorio("textResena", form.getTextoResena(), errores);
-        ValidacionesComunes.valorFueraDeRango("textoResena", form.getTextoResena().length(), 50d, 8000d, errores);
+        ValidacionesComunes.valorFueraDeRango("textoResena", form.getTextoResena().length(), CARACTERES_MIN, CARACTERES_MAX, errores);
 
         // Horas jugadas al momento de la reseña
         ValidacionesComunes.valorNoNegativo("cantidadHorasJugadas", form.getCantidadHorasJugadas(), errores);
@@ -51,7 +53,9 @@ public class ResenaFormValidador {
     }
 
     public static void validarMaxUnDecimal(String campo, Double valor, List<ErrorModel> errores) {
-        if (valor == null) return;
+        if (valor == null){
+            return;
+        }
 
         if (BigDecimal.valueOf(valor).scale() > MAX_DE_DECIMALES_UNO) {
             errores.add(new ErrorModel(campo, TipoErrorEnum.FORMATO_INVALIDO));

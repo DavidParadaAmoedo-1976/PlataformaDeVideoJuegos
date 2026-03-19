@@ -9,6 +9,7 @@ import java.util.Optional;
 public interface IBibliotecaRepo extends ICrud<BibliotecaEntidad, BibliotecaForm, Long> {
     /**
      * Buscar biblioteca a partir de un nombre de usuario(Único).
+     *
      * @param idUsuario
      * @return Lista de objetos de la Entidad biblioteca.
      */
@@ -16,6 +17,7 @@ public interface IBibliotecaRepo extends ICrud<BibliotecaEntidad, BibliotecaForm
 
     /**
      * Buscar biblioteca que tenga el usuario y el juego al que pertenecen los ID enviados
+     *
      * @param idUsuario
      * @param idJuego
      * @return Objeto de la Entidad biblioteca

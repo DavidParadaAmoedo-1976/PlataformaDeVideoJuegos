@@ -68,7 +68,9 @@ public class CompraRepoMemoria implements ICompraRepo {
 
     @Override
     public Optional<CompraEntidad> buscarPorCompraYUsuario(Long idCompra, Long idUsuario) {
-        if (idCompra == null || idUsuario == null) return Optional.empty();
+        if (idCompra == null || idUsuario == null) {
+            return Optional.empty();
+        }
         return comprasEntidad.stream()
                 .filter(c -> c.getIdCompra().equals(idCompra) && c.getIdUsuario().equals(idUsuario))
                 .findFirst();

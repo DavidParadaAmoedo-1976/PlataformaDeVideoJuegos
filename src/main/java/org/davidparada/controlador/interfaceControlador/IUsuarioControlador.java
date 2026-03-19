@@ -8,6 +8,7 @@ public interface IUsuarioControlador {
 
     /**
      * Crea un usuario nuevo a partir de un formulario.
+     *
      * @param form
      * @return Lo muestra en un Objeto DTO.
      * @throws ValidationException
@@ -16,6 +17,7 @@ public interface IUsuarioControlador {
 
     /**
      * Muestra el perfil de un usuario a partir de su ID que es único.
+     *
      * @param idUsuario
      * @return Lo muestra en un objeto DTO.
      * @throws ValidationException
@@ -24,6 +26,7 @@ public interface IUsuarioControlador {
 
     /**
      * Muestra el perfil de un usuario a partir de su nombre de usuario que es único.
+     *
      * @param nombreUsuario
      * @return Lo muestra en un objeto DTO.
      */
@@ -31,6 +34,7 @@ public interface IUsuarioControlador {
 
     /**
      * Añade la cantidad recibida por parametro al saldo del usuario perteneciente al ID recibido.
+     *
      * @param idUsuario
      * @param cantidad
      * @throws ValidationException
@@ -39,6 +43,7 @@ public interface IUsuarioControlador {
 
     /**
      * Devuelve el saldo en cartera del usuario al que pertenece el ID recibido.
+     *
      * @param idUsuario
      * @return saldo en formato double.
      * @throws ValidationException

@@ -12,6 +12,7 @@ public interface ICompraControlador {
 
     /**
      * Crea una compra con los datos recibidos.
+     *
      * @param idUsuario
      * @param idJuego
      * @param metodoPago
@@ -26,6 +27,7 @@ public interface ICompraControlador {
 
     /**
      * Realiza el pago de la compra recibida con el metodo de pago indicado.
+     *
      * @param idCompra
      * @param metodoPago
      * @throws ValidationException
@@ -34,6 +36,7 @@ public interface ICompraControlador {
 
     /**
      * Muestra todas las compras de un usuario recibido.
+     *
      * @param idUsuario
      * @return Lista de objetos DTO.
      * @throws ValidationException
@@ -42,6 +45,7 @@ public interface ICompraControlador {
 
     /**
      * Muestra una compra recibida por ID con el usuario también recibido por ID.
+     *
      * @param idCompra
      * @param idUsuario
      * @return Muestra un Objeto DTO.
@@ -51,6 +55,7 @@ public interface ICompraControlador {
 
     /**
      * Muestra información de una compra recibida por ID con el usuario también recibido por ID.
+     *
      * @param idCompra
      * @param idUsuario
      * @return Muestra un objeto DTO.
@@ -60,6 +65,7 @@ public interface ICompraControlador {
 
     /**
      * Reembolsa el dinero pagado por un juego. Siempre reembolsa a cartera.
+     *
      * @param idCompra
      * @throws ValidationException
      */
@@ -67,6 +73,7 @@ public interface ICompraControlador {
 
     /**
      * Crea la factura de la compra.
+     *
      * @param idCompra
      * @return muestra un objeto DTO.
      * @throws ValidationException

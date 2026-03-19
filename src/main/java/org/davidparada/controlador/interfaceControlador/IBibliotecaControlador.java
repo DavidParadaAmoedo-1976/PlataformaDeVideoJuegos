@@ -11,6 +11,7 @@ public interface IBibliotecaControlador {
 
     /**
      * Muestra todos los juegos de un usuario recibido por ID en un orden también recibido.
+     *
      * @param idUsuario
      * @param orden
      * @return Lista de objetos DTO.
@@ -20,6 +21,7 @@ public interface IBibliotecaControlador {
 
     /**
      * añade un juego recibido por ID al usuario recibido por ID.
+     *
      * @param idUsuario
      * @param idJuego
      * @return muestra un objeto DTO.
@@ -29,6 +31,7 @@ public interface IBibliotecaControlador {
 
     /**
      * Elimina el juego recibido por ID que pertenece al usuario recibido por ID.
+     *
      * @param idUsuario
      * @param idJuego
      * @throws ValidationException
@@ -37,6 +40,7 @@ public interface IBibliotecaControlador {
 
     /**
      * Añadir tiempo de juego recibido, a un juego recibido por ID que pertenece al usuario recibido por ID
+     *
      * @param idUsuario
      * @param idJuego
      * @param horas
@@ -46,6 +50,7 @@ public interface IBibliotecaControlador {
 
     /**
      * Muestra cuando un usuario recibido jugó por última vez a un juego indicado.
+     *
      * @param idUsuario
      * @param idJuego
      * @return Mensaje con los datos.
@@ -55,6 +60,7 @@ public interface IBibliotecaControlador {
 
     /**
      * Buscar segun estado de instalacion recibido y con el texto indicado en el título.
+     *
      * @param idUsuario
      * @param texto
      * @param estadoInstalacion
@@ -65,6 +71,7 @@ public interface IBibliotecaControlador {
 
     /**
      * Muestra las estadisticas de la biblioteca de un usuario.
+     *
      * @param idUsuario
      * @return muestra un objeto DTO.
      * @throws ValidationException

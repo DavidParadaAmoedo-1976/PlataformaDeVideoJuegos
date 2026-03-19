@@ -10,6 +10,9 @@ import java.util.List;
 
 public class CompraFormValidador {
 
+    public static final double DESCUENTO_MIN = 0d;
+    public static final double DESCUENTO_MAX = 100d;
+
     private CompraFormValidador() {
     }
 
@@ -45,7 +48,7 @@ public class CompraFormValidador {
 
         // Descuento
 
-        ValidacionesComunes.valorFueraDeRango("descuento", form.getPrecioBase(), 0d, 100d, errores);
+        ValidacionesComunes.valorFueraDeRango("descuento", form.getPrecioBase(), DESCUENTO_MIN, DESCUENTO_MAX, errores);
 
         // Estado
 

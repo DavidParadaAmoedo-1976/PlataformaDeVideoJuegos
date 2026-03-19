@@ -42,8 +42,9 @@ public class BibliotecaFormValidador {
     }
 
     private static void validarUnSoloDecimal(String campo, Double valor, List<ErrorModel> errores) {
-        if (valor == null) return;
-
+        if (valor == null) {
+            return;
+        }
         if (BigDecimal.valueOf(valor).scale() > MAXIMO_DE_DECIMALES_UNO) {
             errores.add(new ErrorModel(campo, TipoErrorEnum.FORMATO_INVALIDO));
         }

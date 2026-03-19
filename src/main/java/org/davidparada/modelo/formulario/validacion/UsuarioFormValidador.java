@@ -124,8 +124,8 @@ public class UsuarioFormValidador {
         if (fecha.isAfter(LocalDate.now())) {
             errores.add(new ErrorModel("fechaNacimiento", TipoErrorEnum.VALOR_NEGATIVO));
         }
-
         int edad = Period.between(fecha, LocalDate.now()).getYears();
+
         if (edad < EDAD_MINIMA) {
             errores.add(new ErrorModel("fechaNacimiento", TipoErrorEnum.VALOR_EXCEDIDO));
         }

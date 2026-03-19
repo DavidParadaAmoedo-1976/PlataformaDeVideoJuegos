@@ -34,6 +34,7 @@ public class ResenaControlador implements IResenaControlador {
     public static final int VALOR_MIN_POS_EN_ESTADISTICA = 60;
     public static final int VALOR_MAX_NEG_EN_ESTADISTICA = 40;
     public static final double CALCULO_PORCENTAJE = 100.0;
+    public static final int INICIO_VARIABLE_A_CERO = 0;
     private final IResenaRepo resenaRepo;
 
     public ResenaControlador(IResenaRepo reseniaRepo) {
@@ -237,12 +238,12 @@ public class ResenaControlador implements IResenaControlador {
 
         int total = resenas.size();
 
-        if (total == 0) {
-            return new EstadisticasResenasJuegoDto(0, 0, 0, 0, "NEUTRA");
+        if (total == INICIO_VARIABLE_A_CERO) {
+            return new EstadisticasResenasJuegoDto(INICIO_VARIABLE_A_CERO, INICIO_VARIABLE_A_CERO, INICIO_VARIABLE_A_CERO, INICIO_VARIABLE_A_CERO, "NEUTRA");
         }
 
-        int positivas = 0;
-        double sumaHoras = 0;
+        int positivas = INICIO_VARIABLE_A_CERO;
+        double sumaHoras = INICIO_VARIABLE_A_CERO;
 
         for (ResenaEntidad r : resenas) {
             if (r.isRecomendado()) {

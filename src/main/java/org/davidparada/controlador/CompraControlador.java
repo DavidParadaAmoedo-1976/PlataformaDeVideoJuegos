@@ -67,15 +67,15 @@ public class CompraControlador implements ICompraControlador {
 
         List<ErrorModel> errores = new ArrayList<>();
 
-        if (idUsuario == null)
+        if (idUsuario == null) {
             errores.add(new ErrorModel("idUsuario", TipoErrorEnum.OBLIGATORIO));
-
-        if (idJuego == null)
+        }
+        if (idJuego == null) {
             errores.add(new ErrorModel("idJuego", TipoErrorEnum.OBLIGATORIO));
-
-        if (metodoPago == null)
+        }
+        if (metodoPago == null) {
             errores.add(new ErrorModel("metodoPago", TipoErrorEnum.OBLIGATORIO));
-
+        }
         comprobarListaErrores(errores);
 
         UsuarioEntidad usuario = obtenerUsuario(idUsuario, errores);

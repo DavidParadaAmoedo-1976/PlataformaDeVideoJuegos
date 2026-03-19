@@ -21,6 +21,10 @@ public class ProgramaControlador implements IProgramaControlador {
     public static final double POR_CIENTO_DOUBLE = 100.0;
     public static final double VALOR_POR_DEFECTO = 0.0;
     public static final int POSICION_INICIAL = 1;
+    public static final int CERO = 0;
+    public static final int RECOMENDADA = 1;
+    public static final int NO_RECOMENDADA = 0;
+    public static final double VALOR_SIN_RESEÑAS = 0.0;
     private final ICompraRepo compraRepo;
     private final IJuegoRepo juegoRepo;
     private final IUsuarioRepo usuarioRepo;
@@ -129,7 +133,7 @@ public class ProgramaControlador implements IProgramaControlador {
             errores.add(new ErrorModel("criterio", TipoErrorEnum.OBLIGATORIO));
         } else if (limite == null) {
             errores.add(new ErrorModel("limite", TipoErrorEnum.OBLIGATORIO));
-        } else if (limite <= 0) {
+        } else if (limite <= CERO) {
             errores.add(new ErrorModel("limite", TipoErrorEnum.NO_PERMITIDO));
         }
         comprobarListaErrores(errores);
@@ -176,9 +180,9 @@ public class ProgramaControlador implements IProgramaControlador {
         for (Map.Entry<Long, List<ResenaEntidad>> entry : agrupadas.entrySet()) {
 
             double media = entry.getValue().stream()
-                    .mapToInt(r -> r.isRecomendado() ? 1 : 0)
+                    .mapToInt(r -> r.isRecomendado() ? RECOMENDADA : NO_RECOMENDADA)
                     .average()
-                    .orElse(0.0);
+                    .orElse(VALOR_SIN_RESEÑAS);
 
             ranking.put(entry.getKey(), media);
         }

@@ -10,6 +10,7 @@ public interface IResenaRepo extends ICrud<ResenaEntidad, ResenaForm, Long> {
 
     /**
      * Lista de reseñas del usuario indicado en el ID.
+     *
      * @param idUsuario
      * @return Lista de objetos de la entidad resena.
      */
@@ -17,6 +18,7 @@ public interface IResenaRepo extends ICrud<ResenaEntidad, ResenaForm, Long> {
 
     /**
      * Lista de reseñas de un juego indicado en el ID.
+     *
      * @param idJuego
      * @return Lista de objetos de la entidad resena.
      */
@@ -24,6 +26,7 @@ public interface IResenaRepo extends ICrud<ResenaEntidad, ResenaForm, Long> {
 
     /**
      * Muestra una reseña con el ID indicado y que pertenezca al usuario indicado en el ID
+     *
      * @param idResena
      * @param idUsuario
      * @return Muestra el objeto de la Entidad resena.
