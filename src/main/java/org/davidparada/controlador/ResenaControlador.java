@@ -40,15 +40,6 @@ public class ResenaControlador implements IResenaControlador {
         this.resenaRepo = reseniaRepo;
     }
 
-    /**
-     * Crea una reseña a partir de los datos recibidos por parametros.
-     * @param idUsuario
-     * @param idJuego
-     * @param recomendado
-     * @param texto
-     * @return Lo muestra en un objeto DTO.
-     * @throws ValidationException
-     */
     @Override
     public ResenaDto escribirResena(
             Long idUsuario,
@@ -100,13 +91,6 @@ public class ResenaControlador implements IResenaControlador {
         return ResenaEntidadADtoMapper.resenaEntidadADto(resena, usuario, juego);
     }
 
-    /**
-     * Elimina una reseña indicada por el ID recibido y que pertenecea un usuario del que se recibe su ID.
-     * @param idResena
-     * @param idUsuario
-     * @return Indica si la operación a tenido éxito.
-     * @throws ValidationException
-     */
     @Override
     public boolean eliminarResena(Long idResena, Long idUsuario) throws ValidationException {
         List<ErrorModel> errores = new ArrayList<>();
@@ -123,15 +107,6 @@ public class ResenaControlador implements IResenaControlador {
         return resenaRepo.eliminar(resenaEntidad.getIdResena());
     }
 
-    /**
-     * Obtiene las reseñas de un juego recibido su ID, muestra los juegos recomendados o no segun el segundo parametro,
-     * y los muestra ordenados segun la clasificacion seleccionada en el tercer parametro.
-     * @param idJuego
-     * @param recomendado
-     * @param orden
-     * @return Lista de objetos DTO
-     * @throws ValidationException
-     */
     @Override
     public List<ResenaDto> obtenerResenas(Long idJuego,
                                           boolean recomendado,
@@ -208,13 +183,6 @@ public class ResenaControlador implements IResenaControlador {
         return resultado;
     }
 
-    /**
-     * Oculta una reseña recibido su ID y que pertenece a un usuario que también recibimos su ID.
-     * @param idResena
-     * @param idUsuario
-     * @return Lo muestra en un objeto DTO.
-     * @throws ValidationException
-     */
     @Override
     public ResenaDto ocultarResena(Long idResena, Long idUsuario) throws ValidationException {
         List<ErrorModel> errores = new ArrayList<>();
@@ -251,12 +219,6 @@ public class ResenaControlador implements IResenaControlador {
         );
     }
 
-    /**
-     * Muestra las estadisticas de las reseñas de un juego del cual recibimos su ID.
-     * @param idJuego
-     * @return Muestra un objeto DTO.
-     * @throws ValidationException
-     */
     @Override
     public EstadisticasResenasJuegoDto consultarEstadisticasResenaPorJuego(Long idJuego) throws ValidationException {
 
@@ -314,12 +276,6 @@ public class ResenaControlador implements IResenaControlador {
         );
     }
 
-    /**
-     *
-     * @param idUsuario
-     * @return Lista de objetos DTO.
-     * @throws ValidationException
-     */
     @Override
     public List<ResenaDto> obtenerResenasUsuario(Long idUsuario) throws ValidationException {
         List<ErrorModel> errores = new ArrayList<>();

@@ -28,13 +28,6 @@ public class UsuarioControlador implements IUsuarioControlador {
         this.usuarioRepo = usuarioRepo;
     }
 
-
-    /**
-     * Crea un usuario nuevo a partir de un formulario.
-     * @param form
-     * @return Lo muestra en un ObjetoDTO.
-     * @throws ValidationException
-     */
     @Override
     public UsuarioDto registrarUsuario(UsuarioForm form) throws ValidationException {
         List<ErrorModel> errores = new ArrayList<>();
@@ -52,12 +45,7 @@ public class UsuarioControlador implements IUsuarioControlador {
         return UsuarioEntidadADtoMapper.usuarioEntidadADto(usuario);
     }
 
-    /**
-     * Muestra el perfil de un usuario a partir de su ID que es único.
-     * @param idUsuario
-     * @return Lo muestra en un objetoDTO.
-     * @throws ValidationException
-     */
+
     @Override
     public UsuarioDto consultarPerfil(Long idUsuario) throws ValidationException {
         List<ErrorModel> errores = new ArrayList<>();
@@ -71,11 +59,6 @@ public class UsuarioControlador implements IUsuarioControlador {
         return UsuarioEntidadADtoMapper.usuarioEntidadADto(usuario);
     }
 
-    /**
-     * Muestra el perfil de un usuario a partir de su nombre de usuario que es único.
-     * @param nombreUsuario
-     * @return Lo muestra en un objetoDTO.
-     */
     @Override
     public UsuarioDto consultarPerfil(String nombreUsuario) {
 
@@ -88,12 +71,6 @@ public class UsuarioControlador implements IUsuarioControlador {
                 .orElse(null);
     }
 
-    /**
-     * Añade la cantidad recivida por parametro al saldo del usuario perteneciente al ID recibido.
-     * @param idUsuario
-     * @param cantidad
-     * @throws ValidationException
-     */
     @Override
     public void anadirSaldo(Long idUsuario, Double cantidad) throws ValidationException {
         List<ErrorModel> errores = new ArrayList<>();
@@ -131,12 +108,6 @@ public class UsuarioControlador implements IUsuarioControlador {
                 usuario.getEstadoCuenta()));
     }
 
-    /**
-     * Devuelve el saldo en cartera del usuario al que pertenece el ID recibido.
-     * @param idUsuario
-     * @return saldo en formato double.
-     * @throws ValidationException
-     */
     @Override
     public Double consultarSaldo(Long idUsuario) throws ValidationException {
         List<ErrorModel> errores = new ArrayList<>();

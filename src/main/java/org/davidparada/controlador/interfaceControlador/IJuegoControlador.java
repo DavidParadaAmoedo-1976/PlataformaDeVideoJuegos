@@ -10,7 +10,13 @@ import org.davidparada.modelo.formulario.JuegoForm;
 import java.util.List;
 
 public interface IJuegoControlador {
-    // Anadir Juego
+
+    /**
+     * Crea un juego a partir de un formulario.
+     * @param form
+     * @return Muestra un objeto DTO.
+     * @throws ValidationException
+     */
     JuegoDto crearJuego(JuegoForm form) throws ValidationException;
 
     // Buscar juegos
@@ -23,17 +29,36 @@ public interface IJuegoControlador {
             EstadoJuegoEnum estado
     );
 
-    // Consultar catalogo completo
+    /**
+     * Muestra una lista de juegos en el orden especificado.
+     * @param orden
+     * @return Lista de objetos DTO.
+     */
     List<JuegoDto> consultarCatalogo(OrdenarJuegosEnum orden);
 
-    // Consultar detalles de un juego
+    /**
+     * Muestra las especificaciones de un juego recibido por ID.
+     * @param idJuego
+     * @return Muestra un objeto DTO.
+     * @throws ValidationException
+     */
     JuegoDto consultarDetalles(Long idJuego) throws ValidationException;
 
-    // Aplicar descuento
+    /**
+     * Pone el descuento recibido a un juego recibido por ID.
+     * @param id
+     * @param descuento
+     * @throws ValidationException
+     */
     void aplicarDescuento(Long id, Integer descuento) throws ValidationException;
 
-    // Cambiar estado del juego
+    /**
+     * Pone el estado recibido a un juego indicado por ID.
+     * @param id
+     * @param nuevoEstado
+     * @throws ValidationException
+     */
     void cambiarEstado(Long id, EstadoJuegoEnum nuevoEstado) throws ValidationException;
 
-    boolean eliminar(Long id) throws ValidationException;
+
 }

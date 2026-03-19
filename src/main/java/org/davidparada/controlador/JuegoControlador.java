@@ -157,15 +157,15 @@ public class JuegoControlador implements IJuegoControlador {
 
     // Método no aparece en la gestion de juego.
     // Se deja comentado por si hace falta en el futuro.
-
-    @Override
-    public boolean eliminar(Long id) throws ValidationException {
-        List<ErrorModel> errores = new ArrayList<>();
-        if (id == null) {
-            errores.add(new ErrorModel("id", TipoErrorEnum.OBLIGATORIO));
-        }
-        obtenerJuego(id, errores);
-
-        return juegoRepo.eliminar(id);
-    }
+//
+//    @Override
+//    public boolean eliminar(Long id) throws ValidationException {
+//        List<ErrorModel> errores = new ArrayList<>();
+//        if (id == null) {
+//            errores.add(new ErrorModel("id", TipoErrorEnum.OBLIGATORIO));
+//        }
+//        obtenerJuego(id, errores);
+//
+//        return juegoRepo.eliminar(id);
+//    }
 }
