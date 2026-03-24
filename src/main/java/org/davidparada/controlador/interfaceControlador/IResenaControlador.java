@@ -34,7 +34,7 @@ public interface IResenaControlador {
      * @return Indica si la operación a tenido éxito.
      * @throws ValidationException
      */
-    boolean eliminarResena(Long idResena, Long idUsuario) throws ValidationException;
+    ResenaDto eliminarResena(Long idResena, Long idUsuario) throws ValidationException;
 
     /**
      * Obtiene las reseñas de un juego recibido su ID, muestra los juegos recomendados o no segun el segundo parametro,

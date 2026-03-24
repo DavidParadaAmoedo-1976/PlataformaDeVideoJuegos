@@ -36,7 +36,7 @@ public interface IBibliotecaControlador {
      * @param idJuego
      * @throws ValidationException
      */
-    void eliminarJuego(Long idUsuario, Long idJuego) throws ValidationException;
+    BibliotecaDto eliminarJuego(Long idUsuario, Long idJuego) throws ValidationException;
 
     /**
      * Añadir tiempo de juego recibido, a un juego recibido por ID que pertenece al usuario recibido por ID
@@ -46,7 +46,7 @@ public interface IBibliotecaControlador {
      * @param horas
      * @throws ValidationException
      */
-    void anadirTiempoDeJuego(Long idUsuario, Long idJuego, double horas) throws ValidationException;
+    BibliotecaDto anadirTiempoDeJuego(Long idUsuario, Long idJuego, double horas) throws ValidationException;
 
     /**
      * Muestra cuando un usuario recibido jugó por última vez a un juego indicado.
@@ -56,7 +56,7 @@ public interface IBibliotecaControlador {
      * @return Mensaje con los datos.
      * @throws ValidationException
      */
-    String consultarUltimaSesion(Long idUsuario, Long idJuego) throws ValidationException;
+    BibliotecaDto consultarUltimaSesion(Long idUsuario, Long idJuego) throws ValidationException;
 
     /**
      * Buscar segun estado de instalacion recibido y con el texto indicado en el título.

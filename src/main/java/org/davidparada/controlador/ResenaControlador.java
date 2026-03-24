@@ -93,7 +93,7 @@ public class ResenaControlador implements IResenaControlador {
     }
 
     @Override
-    public boolean eliminarResena(Long idResena, Long idUsuario) throws ValidationException {
+    public ResenaDto eliminarResena(Long idResena, Long idUsuario) throws ValidationException {
         List<ErrorModel> errores = new ArrayList<>();
         if (idResena == null) {
             errores.add(new ErrorModel("idResena", TipoErrorEnum.OBLIGATORIO));
@@ -104,8 +104,12 @@ public class ResenaControlador implements IResenaControlador {
         comprobarListaErrores(errores);
 
         ResenaEntidad resenaEntidad = obtenerResenaPorIdYUsuario(idResena, idUsuario, errores);
+        UsuarioEntidad usuarioEntidad = obtenerUsuario(idUsuario, errores);
+        JuegoEntidad juegoEntidad = obtenerJuego(resenaEntidad.getIdJuego(), errores);
 
-        return resenaRepo.eliminar(resenaEntidad.getIdResena());
+        resenaRepo.eliminar(resenaEntidad.getIdResena());
+
+        return ResenaEntidadADtoMapper.resenaEntidadADto(resenaEntidad, usuarioEntidad, juegoEntidad);
     }
 
     @Override

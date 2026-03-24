@@ -54,7 +54,7 @@ public interface IJuegoControlador {
      * @param descuento
      * @throws ValidationException
      */
-    void aplicarDescuento(Long id, Integer descuento) throws ValidationException;
+    JuegoDto aplicarDescuento(Long id, Integer descuento) throws ValidationException;
 
     /**
      * Pone el estado recibido a un juego indicado por ID.
@@ -63,7 +63,7 @@ public interface IJuegoControlador {
      * @param nuevoEstado
      * @throws ValidationException
      */
-    void cambiarEstado(Long id, EstadoJuegoEnum nuevoEstado) throws ValidationException;
+    JuegoDto cambiarEstado(Long id, EstadoJuegoEnum nuevoEstado) throws ValidationException;
 
 
 }

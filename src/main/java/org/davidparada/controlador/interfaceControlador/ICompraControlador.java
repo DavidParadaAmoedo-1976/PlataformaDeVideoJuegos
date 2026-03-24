@@ -32,7 +32,7 @@ public interface ICompraControlador {
      * @param metodoPago
      * @throws ValidationException
      */
-    void procesarPago(Long idCompra, MetodoPagoEnum metodoPago) throws ValidationException;
+    CompraDto procesarPago(Long idCompra, MetodoPagoEnum metodoPago) throws ValidationException;
 
     /**
      * Muestra todas las compras de un usuario recibido.
@@ -69,7 +69,7 @@ public interface ICompraControlador {
      * @param idCompra
      * @throws ValidationException
      */
-    void solicitarReembolso(Long idCompra) throws ValidationException;
+    CompraDto solicitarReembolso(Long idCompra) throws ValidationException;
 
     /**
      * Crea la factura de la compra.

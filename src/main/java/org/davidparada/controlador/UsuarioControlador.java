@@ -73,7 +73,7 @@ public class UsuarioControlador implements IUsuarioControlador {
     }
 
     @Override
-    public void anadirSaldo(Long idUsuario, Double cantidad) throws ValidationException {
+    public UsuarioDto anadirSaldo(Long idUsuario, Double cantidad) throws ValidationException {
         List<ErrorModel> errores = new ArrayList<>();
 
         if (idUsuario == null) {
@@ -109,10 +109,11 @@ public class UsuarioControlador implements IUsuarioControlador {
                 usuario.getAvatar(),
                 usuario.getSaldo() + cantidad,
                 usuario.getEstadoCuenta()));
+        return UsuarioEntidadADtoMapper.usuarioEntidadADto(usuario);
     }
 
     @Override
-    public Double consultarSaldo(Long idUsuario) throws ValidationException {
+    public UsuarioDto consultarSaldo(Long idUsuario) throws ValidationException {
         List<ErrorModel> errores = new ArrayList<>();
 
         if (idUsuario == null) {
@@ -120,7 +121,8 @@ public class UsuarioControlador implements IUsuarioControlador {
         }
         comprobarListaErrores(errores);
         UsuarioEntidad usuario = obtenerUsuario(idUsuario, errores);
-        return usuario.getSaldo();
+
+        return UsuarioEntidadADtoMapper.usuarioEntidadADto(usuario);
     }
 
 //    /**

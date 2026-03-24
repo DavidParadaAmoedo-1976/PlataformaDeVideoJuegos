@@ -143,21 +143,25 @@ public class BibliotecaControlador implements IBibliotecaControlador {
     // Eliminar juego de biblioteca
 
     @Override
-    public void eliminarJuego(Long idUsuario, Long idJuego) throws ValidationException {
+    public BibliotecaDto eliminarJuego(Long idUsuario, Long idJuego) throws ValidationException {
         List<ErrorModel> errores = new ArrayList<>();
 
         comprobarIdUsuario(idUsuario, errores);
         comprobarIdJuego(idJuego, errores);
 
         BibliotecaEntidad bibliotecaEntidad = obtenerBiblioteca(idUsuario, idJuego, errores);
+        UsuarioEntidad usuarioEntidad = obtenerUsuario(idUsuario, errores);
+        JuegoEntidad juegoEntidad = obtenerJuego(idJuego, errores);
 
         bibliotecaRepo.eliminar(bibliotecaEntidad.getIdBiblioteca());
+
+        return BibliotecaEntidadADtoMapper.bibliotecaEntidadADto(bibliotecaEntidad, usuarioEntidad, juegoEntidad);
     }
 
     // Actualizar tiempo de juego
 
     @Override
-    public void anadirTiempoDeJuego(Long idUsuario, Long idJuego, double horas) throws ValidationException {
+    public BibliotecaDto anadirTiempoDeJuego(Long idUsuario, Long idJuego, double horas) throws ValidationException {
 
         List<ErrorModel> errores = new ArrayList<>();
 
@@ -170,32 +174,40 @@ public class BibliotecaControlador implements IBibliotecaControlador {
 
         comprobarListaErrores(errores);
 
-        BibliotecaEntidad biblioteca = obtenerBiblioteca(idUsuario, idJuego, errores);
+        BibliotecaEntidad bibliotecaEntidad = obtenerBiblioteca(idUsuario, idJuego, errores);
+        UsuarioEntidad usuarioEntidad = obtenerUsuario(idUsuario, errores);
+        JuegoEntidad juegoEntidad = obtenerJuego(idJuego, errores);
 
         BibliotecaForm actualizarTiempoDeJuego = new BibliotecaForm(
                 idUsuario,
                 idJuego,
-                biblioteca.getFechaAdquisicion(),
-                biblioteca.getHorasDeJuego() + horas,
+                bibliotecaEntidad.getFechaAdquisicion(),
+                bibliotecaEntidad.getHorasDeJuego() + horas,
                 Instant.now(), // actualizar última sesión
-                biblioteca.isEstadoInstalacion()
+                bibliotecaEntidad.isEstadoInstalacion()
         );
 
-        bibliotecaRepo.actualizar(biblioteca.getIdBiblioteca(), actualizarTiempoDeJuego);
+        bibliotecaRepo.actualizar(bibliotecaEntidad.getIdBiblioteca(), actualizarTiempoDeJuego);
+
+        return BibliotecaEntidadADtoMapper.bibliotecaEntidadADto(bibliotecaEntidad, usuarioEntidad, juegoEntidad);
     }
 
     // Consultar última sesión
 
     @Override
-    public String consultarUltimaSesion(Long idUsuario, Long idJuego) throws ValidationException {
+    public BibliotecaDto consultarUltimaSesion(Long idUsuario, Long idJuego) throws ValidationException {
         List<ErrorModel> errores = new ArrayList<>();
 
         comprobarIdUsuario(idUsuario, errores);
         comprobarIdJuego(idJuego, errores);
         BibliotecaEntidad bibliotecaEntidad = obtenerBiblioteca(idUsuario, idJuego, errores);
+        UsuarioEntidad usuarioEntidad = obtenerUsuario(idUsuario, errores);
+        JuegoEntidad juegoEntidad = obtenerJuego(idJuego, errores);
 
         if (bibliotecaEntidad.getUltimaFechaDeJuego() == null) {
-            return "Nunca Jugado"; // en realidad enviaría mensaje la vista.
+            return BibliotecaEntidadADtoMapper.bibliotecaEntidadADto(
+                    bibliotecaEntidad, usuarioEntidad, juegoEntidad
+            );
         }
         Instant ultimaFechaHoraDeJuego = bibliotecaEntidad.getUltimaFechaDeJuego();
         Instant horaActual = Instant.now();
@@ -212,11 +224,9 @@ public class BibliotecaControlador implements IBibliotecaControlador {
         DateTimeFormatter formato =
                 DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
 
-        return "Hace " + horasEnTotal
-                + " horas de la última vez que jugó, "
-                + "que fue: ( "
-                + fechaLocal.format(formato)
-                + " ).";
+        return BibliotecaEntidadADtoMapper.bibliotecaEntidadADto(
+                bibliotecaEntidad, usuarioEntidad, juegoEntidad
+        );
 
     }
     // Filtrar biblioteca

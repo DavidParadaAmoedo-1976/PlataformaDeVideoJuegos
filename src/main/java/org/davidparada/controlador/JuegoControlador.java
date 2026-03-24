@@ -107,7 +107,7 @@ public class JuegoControlador implements IJuegoControlador {
 
     // Aplicar descuento
     @Override
-    public void aplicarDescuento(Long id, Integer descuento) throws ValidationException {
+    public JuegoDto aplicarDescuento(Long id, Integer descuento) throws ValidationException {
         List<ErrorModel> errores = new ArrayList<>();
 
         if (id == null)
@@ -129,11 +129,13 @@ public class JuegoControlador implements IJuegoControlador {
                 juego.getPrecioBase(), descuento,
                 juego.getCategoria(), juego.getClasificacionPorEdad(),
                 juego.getIdiomas(), juego.getEstado()));
+
+        return JuegoEntidadADtoMapper.juegoEntidadADto(juego);
     }
 
     // Cambiar estado del juego
     @Override
-    public void cambiarEstado(Long id, EstadoJuegoEnum nuevoEstado) throws ValidationException {
+    public JuegoDto cambiarEstado(Long id, EstadoJuegoEnum nuevoEstado) throws ValidationException {
         List<ErrorModel> errores = new ArrayList<>();
 
         if (id == null) {
@@ -151,6 +153,8 @@ public class JuegoControlador implements IJuegoControlador {
                 juego.getPrecioBase(), juego.getDescuento(),
                 juego.getCategoria(), juego.getClasificacionPorEdad(),
                 juego.getIdiomas(), nuevoEstado));
+
+        return JuegoEntidadADtoMapper.juegoEntidadADto(juego);
     }
 
     // Eliminar el juego

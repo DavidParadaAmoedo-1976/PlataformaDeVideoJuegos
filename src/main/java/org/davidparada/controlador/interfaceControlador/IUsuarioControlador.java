@@ -39,7 +39,7 @@ public interface IUsuarioControlador {
      * @param cantidad
      * @throws ValidationException
      */
-    void anadirSaldo(Long idUsuario, Double cantidad) throws ValidationException;
+    UsuarioDto anadirSaldo(Long idUsuario, Double cantidad) throws ValidationException;
 
     /**
      * Devuelve el saldo en cartera del usuario al que pertenece el ID recibido.
@@ -48,5 +48,5 @@ public interface IUsuarioControlador {
      * @return saldo en formato double.
      * @throws ValidationException
      */
-    Double consultarSaldo(Long idUsuario) throws ValidationException;
+    UsuarioDto consultarSaldo(Long idUsuario) throws ValidationException;
 }
