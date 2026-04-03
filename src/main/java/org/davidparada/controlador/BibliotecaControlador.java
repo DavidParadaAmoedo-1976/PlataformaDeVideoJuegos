@@ -45,68 +45,6 @@ public class BibliotecaControlador implements IBibliotecaControlador {
         this.juegoRepo = juegoRepo;
     }
 
-    // Ver Biblioteca personal
-
-    @Override
-    public List<BibliotecaDto> verBiblioteca(Long idUsuario, OrdenarJuegosBibliotecaEnum orden) throws ValidationException {
-        List<ErrorModel> errores = new ArrayList<>();
-        comprobarIdUsuario(idUsuario, errores);
-
-        List<BibliotecaEntidad> juegosEntidad = bibliotecaRepo.buscarPorUsuario(idUsuario); // Guarda todos los juegos de la biblioteca del usuario en una lista.
-
-        // Mapea la lista de Entidad a un DTO para poder mostrar los datos del juego
-
-        UsuarioEntidad usuario = obtenerUsuario(idUsuario, errores);
-
-        List<BibliotecaDto> juegos = juegosEntidad.stream()
-                .map(b -> {
-                    JuegoEntidad juego = juegoRepo.buscarPorId(b.getIdJuego()).orElseThrow();
-
-                    return new BibliotecaDto(
-                            b.getIdBiblioteca(),
-                            b.getIdUsuario(),
-                            UsuarioEntidadADtoMapper.usuarioEntidadADto(usuario),
-                            b.getIdJuego(),
-                            JuegoEntidadADtoMapper.juegoEntidadADto(juego),
-                            b.getFechaAdquisicion(),
-                            b.getHorasDeJuego(),
-                            b.getUltimaFechaDeJuego(),
-                            b.isEstadoInstalacion()
-                    );
-                })
-                .toList();
-
-        // Ahora que tengo la lista de juegos en Dto para mostrar toca ver como la ordeno.
-
-        if (orden != null) {        // Si la variable orden no es nula pasa al switch para ver como tiene que ordenar.
-
-            switch (orden) {
-                // Orden alfabetico
-                case ALFABETICO -> juegos = juegos.stream()
-                        .sorted(Comparator.comparing(b -> b.juegoDto().titulo()))
-                        .toList();
-
-                // Ordena por tiempo de Juego
-                case TIEMPO_DE_JUEGO -> juegos = juegos.stream()
-                        .sorted(Comparator.comparing((BibliotecaDto b) -> b.horasDeJuego()).reversed())
-                        .toList();
-
-                // Ordena por la última sesión
-                case ULTIMA_SESION -> juegos = juegos.stream()
-                        .sorted(Comparator.comparing((BibliotecaDto j) -> j.ultimaFechaDeJuego()).reversed())
-                        .toList();
-
-                // Ordena por fecha de adquisición
-                case FECHA_DE_ADQUISICION -> juegos = juegos.stream()
-                        .sorted(Comparator.comparing((BibliotecaDto b) -> b.fechaAdquisicion()).reversed())
-                        .toList();
-
-                default -> throw new IllegalArgumentException("No se encontro el orden");
-            }
-        }
-        return juegos;
-    }
-
     // Añadir juego a biblioteca
 
     @Override
@@ -157,6 +95,80 @@ public class BibliotecaControlador implements IBibliotecaControlador {
 
         return BibliotecaEntidadADtoMapper.bibliotecaEntidadADto(bibliotecaEntidad, usuarioEntidad, juegoEntidad);
     }
+
+
+    // Ver Biblioteca personal
+    @Override
+    public List<BibliotecaDto> verBiblioteca(Long idUsuario, OrdenarJuegosBibliotecaEnum orden) throws ValidationException {
+        List<ErrorModel> errores = new ArrayList<>();
+        comprobarIdUsuario(idUsuario, errores);
+
+        UsuarioEntidad usuario = obtenerUsuario(idUsuario, errores);
+
+        List<BibliotecaDto> juegos = construirBiblioteca(idUsuario, usuario);
+
+        return ordenarBiblioteca(juegos, orden);
+    }
+
+    private List<BibliotecaDto> construirBiblioteca(Long idUsuario, UsuarioEntidad usuario) {
+
+        List<BibliotecaEntidad> juegosEntidad = bibliotecaRepo.buscarPorUsuario(idUsuario);
+
+        List<BibliotecaDto> juegos = juegosEntidad.stream()
+                .map(b -> {
+
+                    JuegoEntidad juego = juegoRepo.buscarPorId(b.getIdJuego()).orElseThrow();
+
+                    return new BibliotecaDto(
+                            b.getIdBiblioteca(),
+                            b.getIdUsuario(),
+                            UsuarioEntidadADtoMapper.usuarioEntidadADto(usuario),
+                            b.getIdJuego(),
+                            JuegoEntidadADtoMapper.juegoEntidadADto(juego),
+                            b.getFechaAdquisicion(),
+                            b.getHorasDeJuego(),
+                            b.getUltimaFechaDeJuego(),
+                            b.isEstadoInstalacion()
+                    );
+                })
+                .toList();
+
+        return juegos;
+    }
+
+    private List<BibliotecaDto> ordenarBiblioteca(List<BibliotecaDto> juegos, OrdenarJuegosBibliotecaEnum orden) {
+
+        if (orden == null) {
+            return juegos;
+        }
+
+        switch (orden) {
+
+            case ALFABETICO:
+                return juegos.stream()
+                        .sorted(Comparator.comparing(b -> b.juegoDto().titulo()))
+                        .toList();
+
+            case TIEMPO_DE_JUEGO:
+                return juegos.stream()
+                        .sorted(Comparator.comparing((BibliotecaDto b) -> b.horasDeJuego()).reversed())
+                        .toList();
+
+            case ULTIMA_SESION:
+                return juegos.stream()
+                        .sorted(Comparator.comparing((BibliotecaDto b) -> b.ultimaFechaDeJuego()).reversed())
+                        .toList();
+
+            case FECHA_DE_ADQUISICION:
+                return juegos.stream()
+                        .sorted(Comparator.comparing((BibliotecaDto b) -> b.fechaAdquisicion()).reversed())
+                        .toList();
+
+            default:
+                throw new IllegalArgumentException("No se encontró el orden");
+        }
+    }
+
 
     // Actualizar tiempo de juego
 

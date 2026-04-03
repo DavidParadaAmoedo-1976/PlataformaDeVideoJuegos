@@ -91,25 +91,26 @@ public class UsuarioControlador implements IUsuarioControlador {
         comprobarListaErrores(errores);
         java.util.Objects.requireNonNull(cantidad);
 
-        UsuarioEntidad usuario = obtenerUsuario(idUsuario, errores);
+        UsuarioEntidad usuarioEntidad = obtenerUsuario(idUsuario, errores);
 
-        if (usuario.getEstadoCuenta() != EstadoCuentaEnum.ACTIVA) {
+        if (usuarioEntidad.getEstadoCuenta() != EstadoCuentaEnum.ACTIVA) {
             errores.add(new ErrorModel("estadoCuenta", TipoErrorEnum.ESTADO_INCORRECTO));
         }
         comprobarListaErrores(errores);
 
-        usuarioRepo.actualizar(usuario.getIdUsuario(), new UsuarioForm(
-                usuario.getNombreUsuario(),
-                usuario.getEmail(),
-                usuario.getPassword(),
-                usuario.getNombreReal(),
-                usuario.getPais(),
-                usuario.getFechaNacimiento(),
-                usuario.getFechaRegistro(),
-                usuario.getAvatar(),
-                usuario.getSaldo() + cantidad,
-                usuario.getEstadoCuenta()));
-        return UsuarioEntidadADtoMapper.usuarioEntidadADto(usuario);
+        usuarioRepo.actualizar(usuarioEntidad.getIdUsuario(), new UsuarioForm(
+                usuarioEntidad.getNombreUsuario(),
+                usuarioEntidad.getEmail(),
+                usuarioEntidad.getPassword(),
+                usuarioEntidad.getNombreReal(),
+                usuarioEntidad.getPais(),
+                usuarioEntidad.getFechaNacimiento(),
+                usuarioEntidad.getFechaRegistro(),
+                usuarioEntidad.getAvatar(),
+                usuarioEntidad.getSaldo() + cantidad,
+                usuarioEntidad.getEstadoCuenta()));
+
+        return UsuarioEntidadADtoMapper.usuarioEntidadADto(usuarioEntidad);
     }
 
     @Override

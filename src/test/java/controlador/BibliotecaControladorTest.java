@@ -204,43 +204,6 @@ class BibliotecaControladorTest {
     }
 
     // ======================================================
-    // CONSULTAR ÚLTIMA SESIÓN
-    // ======================================================
-
-    @Test
-    void consultarUltimaSesion_nuncaJugado() throws Exception {
-        controlador.anadirJuego(idUsuario, idJuego);
-        String mensaje =
-                controlador.consultarUltimaSesion(idUsuario, idJuego);
-        assertEquals("Nunca Jugado", mensaje);
-    }
-
-    @Test
-    void consultarUltimaSesion_conFecha() throws Exception {
-
-        controlador.anadirJuego(idUsuario, idJuego);
-
-        var entidad =
-                bibliotecaRepoMemoria.buscarPorUsuarioYJuego(idUsuario, idJuego);
-
-        BibliotecaForm form = new BibliotecaForm(
-                idUsuario,
-                idJuego,
-                entidad.get().getFechaAdquisicion(),
-                entidad.get().getHorasDeJuego(),
-                Instant.now().minusSeconds(3600),
-                entidad.get().isEstadoInstalacion()
-        );
-
-        bibliotecaRepoMemoria.actualizar(entidad.get().getIdBiblioteca(), form);
-
-        String mensaje =
-                controlador.consultarUltimaSesion(idUsuario, idJuego);
-
-        assertTrue(mensaje.contains("Hace"));
-    }
-
-    // ======================================================
     // BUSCAR SEGÚN CRITERIOS
     // ======================================================
 

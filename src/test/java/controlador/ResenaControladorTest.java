@@ -196,7 +196,7 @@ class ResenaControladorTest {
                 controlador.eliminarResena(
                         resena.getIdResena(),
                         resena.getIdUsuario()
-                );
+                ).recomendado();
 
         assertTrue(eliminado);
     }
